@@ -5,24 +5,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import find.com.find.R;
 
 /**
- * Created by Jaelson on 31/08/2017.
+ * Created by Jaelson on 13/09/2017.
  */
 
-public class Account_Fragmento extends Fragment {
-
+public class Login_Fragmento extends Fragment{
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage;
 
-    public static Account_Fragmento newInstance(int page){
+    public static Login_Fragmento newInstance(int page){
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE,page);
-        Account_Fragmento fragmento = new Account_Fragmento();
+        Login_Fragmento fragmento = new Login_Fragmento();
         fragmento.setArguments(args);
         return fragmento;
     }
@@ -37,15 +34,8 @@ public class Account_Fragmento extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_login,container,false);
-        ImageView imgPerfil = (ImageView) view.findViewById(R.id.imgPerfil);
-        EditText edtEmail = (EditText) view.findViewById(R.id.edtEmail);
-        EditText edtSenha = (EditText) view.findViewById(R.id.edtSenha);
-
-        imgPerfil.setClipToOutline(true);
 
 
         return view;
     }
-
-
 }

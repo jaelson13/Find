@@ -26,8 +26,6 @@ public class TabAdapter extends FragmentPagerAdapter {
         switch (position){
             case 0:
                 return Ranking_Fragmento.newInstance(position+1);
-            case 1:
-                return Maps_Fragmento.newInstance(position+1);
             case 2:
                 return Account_Fragmento.newInstance(position+1);
             default:

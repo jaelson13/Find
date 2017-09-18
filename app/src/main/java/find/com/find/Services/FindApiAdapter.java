@@ -1,10 +1,12 @@
 package find.com.find.Services;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+//import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -15,28 +17,26 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FindApiAdapter {
     //URL Base do endpoint. Deve terminar com /
-    public static final String BASE_URL = "";
+    public static final String BASE_URL = "http://nossocariri.com/webservice/public/index.php/";
     private static FindApiAdapter findService;
 
-    public static FindApiAdapter createService(){
+    public static <S> S createService(Class<S> serviceClass){
 
-        //Instancia do interceptador das requisições
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder().readTimeout(15, TimeUnit.SECONDS);
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .readTimeout(15, TimeUnit.SECONDS);
 
         httpClient.addInterceptor(loggingInterceptor);
 
-        if(findService==null) {
-            //Instancia do Retrofit
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(new Gson()))
-                    .client(httpClient.build()).build();
-            findService = retrofit.create(FindApiAdapter.class);
-        }
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
+                        .create()))
+                .client(httpClient.build())
+                .build();
 
-        return findService;
-
-
+        return retrofit.create(serviceClass);
     }
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:title="Dados Pessoais">
+            <menu xmlns:android="http://schemas.android.com/apk/res/android">
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/nav_meusdados"
+                        android:title="Meud Dados" />
+                </group>
+            </menu>
+        </item>
+        <item android:title="Meus Mapeamentos">
+            <menu xmlns:android="http://schemas.android.com/apk/res/android">
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/nav_mapearlocal"
+                        android:title="Mapear Local" />
+                    <item
+                        android:id="@+id/nav_ativos"
+                        android:title="Ativos" />
+                    <item
+                        android:id="@+id/nav_pendentes"
+                        android:title="Pendentes" />
+                </group>
+            </menu>
+        </item>
+        <item android:title="FeedBacks">
+            <menu xmlns:android="http://schemas.android.com/apk/res/android">
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/nav_item2"
+                        android:title="Meus FeedBacks" />
+                </group>
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/nav_item3"
+            android:title="Sair" />
+    </group>
+
+
+</menu>

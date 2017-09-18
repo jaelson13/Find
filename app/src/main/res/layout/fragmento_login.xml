@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/home_tblayout"
+    android:background="#343434"
+    android:orientation="vertical"
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+
+    >
+
+    <ImageButton
+        android:id="@+id/imgPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/ic_icone"
+        android:background="@android:color/transparent"
+        />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgPerfil"
+        android:layout_marginTop="55dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvStatusLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Usuário ou Senha invalidos!"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="5pt"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="30dp"
+            android:text="Email"
+            android:textColor="#FFFFFF"
+            android:textSize="6pt" />
+
+        <EditText
+            android:id="@+id/edtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="7dp"
+            android:background="#FFFFFF"
+            android:drawableLeft="@android:color/transparent"
+            android:drawablePadding="5dp"
+            android:hint="Informe o email"
+            android:textSize="5.5pt" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:text="Senha"
+            android:textColor="#FFFFFF"
+            android:textSize="6pt" />
+
+        <EditText
+            android:id="@+id/edtSenha"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="7dp"
+            android:background="#FFFFFF"
+            android:drawableLeft="@android:color/transparent"
+            android:drawablePadding="5dp"
+            android:hint="Informe a senha"
+            android:inputType="textPassword"
+            android:textSize="5.5pt" />
+
+        <Button
+            android:id="@+id/btnLogar"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="30dp"
+            android:background="#ce6b01"
+            android:textSize="7pt"
+            android:text="Entrar"
+            android:textColor="@android:color/white" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:id="@+id/btnCriarConta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:background="@android:color/transparent"
+                android:hint="Cadastre-se"
+                android:textColorHint="#ce6b01"
+                android:textSize="6pt" />
+
+            <Button
+                android:id="@+id/btnRecupSenha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="7dp"
+                android:background="@android:color/transparent"
+                android:hint="Esqueceu senha?"
+                android:textColorHint="#ce6b01"
+                android:textSize="6pt" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

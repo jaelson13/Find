@@ -9,7 +9,21 @@ public class Usuario {
     private int idUsuario;
     private String nome;
     private String email;
+    private String sexo;
     private String senha;
+    private boolean status;
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public String getSexo() { return sexo; }
+
+    public void setSexo(String sexo) { this.sexo = sexo; }
 
     public int getIdUsuario() {
         return idUsuario;
