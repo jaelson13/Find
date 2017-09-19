@@ -10,6 +10,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/nav_login"
     >
 
     <ImageButton
@@ -27,7 +28,7 @@
         android:layout_marginTop="10dp">
     <Button
         android:id="@+id/header_btnLogin"
-        android:layout_width="150dp"
+        android:layout_width="100dp"
         android:layout_height="30dp"
         android:layout_marginRight="5dp"
         android:background="#ce6b01"
@@ -37,7 +38,7 @@
 
     <Button
         android:id="@+id/header_btnCadastrar"
-        android:layout_width="150dp"
+        android:layout_width="130dp"
         android:layout_height="30dp"
         android:background="#135ec5"
         android:layout_marginLeft="5dp"

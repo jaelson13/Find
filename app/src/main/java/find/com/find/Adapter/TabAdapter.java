@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import find.com.find.Fragments.Account_Fragmento;
-import find.com.find.Fragments.Maps_Fragmento;
 import find.com.find.Fragments.Ranking_Fragmento;
 
 /**

@@ -24,7 +24,7 @@ public class Login_Activity extends AppCompatActivity {
         btnLogar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login_Activity.this,Home2_Activity.class);
+                Intent intent = new Intent(Login_Activity.this,Principal_Activity.class);
                 startActivity(intent);
             }
         });
@@ -34,8 +34,7 @@ public class Login_Activity extends AppCompatActivity {
         btnCriarConta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login_Activity.this,Register_Activity.class);
-                startActivity(intent);
+
             }
         });
 

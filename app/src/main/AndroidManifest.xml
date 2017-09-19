@@ -27,7 +27,7 @@
 
         <activity android:name=".Activies.Login_Activity" />
         <activity
-            android:name=".Activies.Home2_Activity"
+            android:name=".Activies.Principal_Activity"
             android:theme="@style/TemaPrincipal">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
