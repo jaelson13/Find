@@ -1,17 +1,19 @@
 package find.com.find.Activies;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,6 +27,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -39,34 +42,34 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 
-import find.com.find.Fragments.Login_Fragmento;
-import find.com.find.Fragments.Register_Fragmento;
+import find.com.find.Fragments.Register_Map_Fragmento;
 import find.com.find.Model.UsuarioAtivoSingleton;
 import find.com.find.R;
 import find.com.find.Util.PermissionUtils;
 
 public class Principal_Activity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback,
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private NavigationView navigationView;
+    private CoordinatorLayout mCoordinatorLayout;
+    private Button btn_Header_Login;
+    private Button btn_Header_Cadastro;
     private static final String TAG = Principal_Activity.class.getSimpleName();
     private GoogleApiClient googleApiClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final int REQUEST_CHECAR_GPS = 2;
     private static final int REQUEST_ERRO_PLAY_SERVICES = 1;
     private static final String EXTRA_DIALOG = "dialog";
-    private boolean mDeveExibirDialog;
+    private boolean mDeveExibirDialog, flagEnableMap=false;
     int mTentativas;
     Handler mHandler;
     GoogleMap mMap;
@@ -83,17 +86,18 @@ public class Principal_Activity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationMenu();
+        btn_Header_Login = (Button) findViewById(R.id.header_btnLogin);
+
+        btn_Header_Cadastro = (Button) findViewById(R.id.header_btnCadastrar);
 
         mHandler = new Handler();
         mDeveExibirDialog = savedInstanceState == null;
@@ -105,6 +109,10 @@ public class Principal_Activity extends AppCompatActivity
                 ultimaLocalizacao();
             }
         });
+
+        //Testar
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -118,14 +126,18 @@ public class Principal_Activity extends AppCompatActivity
 
     //CONFIGURAÇÃO LAYOUT
     private void navigationMenu() {
+        //navigationView.getMenu().clear();
+        //navigationView.inflateHeaderView(R.layout.nav_header_principal_);
+        //navigationView.inflateMenu(R.menu.activity_home2_drawer);
+
         if (UsuarioAtivoSingleton.getUsuario() == null) {
             navigationView.getMenu().clear();
-            navigationView.inflateHeaderView(R.layout.nav_header_home2_login);
+            navigationView.inflateHeaderView(R.layout.nav_header_principal_login);
             navigationView.inflateMenu(R.menu.activity_home2_drawerlogin);
 
         } else {
             navigationView.getMenu().clear();
-            navigationView.inflateHeaderView(R.layout.nav_header_home2_);
+            navigationView.inflateHeaderView(R.layout.nav_header_principal_);
             navigationView.inflateMenu(R.menu.activity_home2_drawer);
 
         }
@@ -147,16 +159,10 @@ public class Principal_Activity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_fazerlogin) {
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Login_Fragmento.newInstance(1));
-            ft.addToBackStack(null);
-            ft.commit();
 
-
-        } else if (id == R.id.nav_criarconta) {
+       if (id == R.id.nav_mapearlocal) {
             FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Register_Fragmento.newInstance(1));
+            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance(1));
             ft.addToBackStack(null);
             ft.commit();
         }
@@ -186,7 +192,6 @@ public class Principal_Activity extends AppCompatActivity
         estilizarMap();
         mMap.setMinZoomPreference(10);
         enableMyLocation();
-
     }
 
     private void estilizarMap() {
@@ -229,12 +234,12 @@ public class Principal_Activity extends AppCompatActivity
                 }
             }, 2000);
         }
-        Log.e(TAG,String.valueOf(location.getLatitude()));
-        Log.e(TAG,String.valueOf(location.getLongitude()));
+        Log.e(TAG, String.valueOf(location.getLatitude()));
+        Log.e(TAG, String.valueOf(location.getLongitude()));
 
     }
 
-    private void enableMyLocation() {
+    private boolean enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
@@ -246,9 +251,12 @@ public class Principal_Activity extends AppCompatActivity
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setRotateGesturesEnabled(false);
+            flagEnableMap = true;
 
-
+        } else {
+            flagEnableMap = false;
         }
+        return flagEnableMap;
     }
 
 
@@ -341,5 +349,30 @@ public class Principal_Activity extends AppCompatActivity
             }
         }
 
+    }
+
+    public boolean verificaConexao() {
+        boolean conectado;
+        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (conectivtyManager.getActiveNetworkInfo() != null
+                && conectivtyManager.getActiveNetworkInfo().isAvailable()
+                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
+            conectado = true;
+        } else {
+            conectado = false;
+        }
+        return conectado;
+    }
+
+    public void header_btnLogin(View view) {
+        Intent intent = new Intent(Principal_Activity.this,Login_Activity.class);
+        intent.putExtra("chave","login");
+        startActivity(intent);
+    }
+
+    public void header_btnCadastrar(View view) {
+        Intent intent = new Intent(Principal_Activity.this,Login_Activity.class);
+        intent.putExtra("chave","cadastro");
+        startActivity(intent);
     }
 }

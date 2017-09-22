@@ -10,6 +10,24 @@
     android:theme="@style/Theme.AppCompat.Light.NoActionBar"
 
     >
+    <RelativeLayout
+        android:id="@+id/layoutTab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/login_btnVoltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="25dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_seta"
+            android:textColor="#ce6b01"
+            android:background="@android:color/transparent"
+            />
+
+    </RelativeLayout>
 
     <ImageButton
         android:id="@+id/imgPerfil"
@@ -49,7 +67,7 @@
             android:textSize="6pt" />
 
         <EditText
-            android:id="@+id/edtEmail"
+            android:id="@+id/login_edtEmail"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_gravity="center"
@@ -73,7 +91,7 @@
             android:textSize="6pt" />
 
         <EditText
-            android:id="@+id/edtSenha"
+            android:id="@+id/login_edtSenha"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_gravity="center"
@@ -88,7 +106,7 @@
             android:textSize="5.5pt" />
 
         <Button
-            android:id="@+id/btnLogar"
+            android:id="@+id/login_btnLogar"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_gravity="center"

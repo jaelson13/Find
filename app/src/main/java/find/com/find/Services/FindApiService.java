@@ -43,12 +43,12 @@ public interface FindApiService {
     Call<Usuario> desativarUsuario(@Field("idUsuario") int idUsuario);
 
     //Fazer login
-    @GET("")
+    @GET("usuario/login")
     Call<Usuario> fazerLogin(@Query("email") String email, @Query("senha") String senha);
 
     //Verificar Email
-    @GET("FindWebService/webresources/com.find.usuario/find")
-    Call<String> verificarEmail(@Path("email") String email);
+    @GET("usuario/valida/{email}")
+    Call<Boolean> verificarEmail(@Path("email") String email);
 
 
     //MAPEAMENTO

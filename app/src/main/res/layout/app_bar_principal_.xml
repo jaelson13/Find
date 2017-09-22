@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     >
 
-    <include layout="@layout/content_home2_" />
+    <include layout="@layout/content_principal_" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

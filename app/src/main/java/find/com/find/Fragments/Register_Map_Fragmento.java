@@ -3,24 +3,22 @@ package find.com.find.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import find.com.find.Activies.Login_Activity;
-import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Usuario;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
@@ -30,13 +28,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by Jaelson on 13/09/2017.
+ * Created by Jaelson on 19/09/2017.
  */
 
-public class Register_Fragmento extends Fragment{
+public class Register_Map_Fragmento extends Fragment {
+
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage;
-
+    private String[] categorias = {"Escolha uma categoria","Bares / Alimentação","Educação","Mercado","Shopping Center","Banco","Lazer","Saúde","Religião","Pontos Turísticos"};
     private EditText edtNome;
     private EditText edtEmail;
     private EditText edtSenha;
@@ -45,13 +44,13 @@ public class Register_Fragmento extends Fragment{
     private RadioButton rbFeminino;
     private RadioButton rbMasculino;
     private Button btnCadastrar;
-    private ImageButton btnVoltar;
+    private Spinner spnCategorias;
     private boolean flag;
 
-    public static Register_Fragmento newInstance(int page){
+    public static Register_Map_Fragmento newInstance(int page){
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE,page);
-        Register_Fragmento fragmento = new Register_Fragmento();
+        Register_Map_Fragmento fragmento = new Register_Map_Fragmento();
         fragmento.setArguments(args);
         return fragmento;
     }
@@ -65,7 +64,7 @@ public class Register_Fragmento extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmento_register,container,false);
+        View view = inflater.inflate(R.layout.fragmento_cadastro_mapeamento,container,false);
 
         edtNome = (EditText) view.findViewById(R.id.register_edtNome);
         edtEmail = (EditText) view.findViewById(R.id.register_edtEmail);
@@ -75,17 +74,11 @@ public class Register_Fragmento extends Fragment{
         rbFeminino = (RadioButton) view.findViewById(R.id.register_rbFeminino);
         rbMasculino = (RadioButton) view.findViewById(R.id.register_rbMasculino);
         radioGenero = (RadioGroup) view.findViewById(R.id.radioGenero);
-        btnVoltar = (ImageButton) view.findViewById(R.id.register_btnVoltar);
 
-        btnVoltar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Principal_Activity.class);
-                startActivity(intent);
-                getActivity().finish();
+        spnCategorias = (Spinner) view.findViewById(R.id.spnCategorias);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(),R.layout.layout_spinner,categorias);
+        spnCategorias.setAdapter(arrayAdapter);
 
-            }
-        });
 
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,11 +144,6 @@ public class Register_Fragmento extends Fragment{
             return false;
         }
 
-        if(!validarEmail(edtEmail.getText().toString())){
-            edtEmail.setError("E-mail inválido");
-            return false;
-        }
-
         if(!edtConfSenha.getText().toString().equals(edtSenha.getText().toString())){
             edtSenha.setError("Senhas não são iguais");
             return false;
@@ -166,39 +154,9 @@ public class Register_Fragmento extends Fragment{
             return false;
         }
 
-        if(!validarEmailBanco(edtEmail.getText().toString())){
-            edtEmail.setError("Email já existe");
-            return false;
-        }
 
         return true;
     }
 
-    private boolean validarEmail(String email) {
-        Pattern pattern;
-        Matcher matcher;
-        String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        pattern = Pattern.compile(EMAIL_PATTERN);
-        matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-    //TESTAR
-    private boolean validarEmailBanco(String email) {
-        FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-        final Call<Boolean> call = servicos.verificarEmail(email);
 
-        call.enqueue(new Callback<Boolean>() {
-            @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                flag = response.body();
-            }
-
-            @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
-                Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        return flag;
-    }
 }
