@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Usuario;
+import find.com.find.Model.UsuarioAtivoSingleton;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
@@ -89,8 +90,12 @@ public class Login_Fragmento extends Fragment{
                             Usuario usuario = response.body();
                             if(usuario != null) {
                                 Toast.makeText(getContext(), "Login efetuado", Toast.LENGTH_SHORT).show();
+                                UsuarioAtivoSingleton.setUsuario(usuario);
+                                Intent intent = new Intent(getActivity(), Principal_Activity.class);
+                                startActivity(intent);
+                                getActivity().finish();
                             }else{
-                                Toast.makeText(getContext(), "Login nulo", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Usuario ou senha invalidos", Toast.LENGTH_SHORT).show();
                             }
                         }
 
