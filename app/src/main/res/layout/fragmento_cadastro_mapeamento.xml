@@ -73,7 +73,7 @@
             android:textSize="6pt" />
 
         <EditText
-            android:id="@+id/register_edtNome"
+            android:id="@+id/register_map_edtEstabelecimento"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_gravity="center"
@@ -101,7 +101,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/register_edtEndereco"
+                android:id="@+id/register_map_edtEndereco"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
@@ -115,7 +115,7 @@
                 android:textSize="5pt" />
 
             <EditText
-                android:id="@+id/register_edtNumero"
+                android:id="@+id/register_map_edtNumero"
                 android:layout_width="50dp"
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
@@ -141,7 +141,7 @@
             android:textSize="6pt" />
 
         <Spinner
-            android:id="@+id/spnCategorias"
+            android:id="@+id/register_map_spnCategorias"
             android:layout_width="match_parent"
             android:layout_marginRight="30dp"
             android:layout_marginLeft="30dp"
@@ -164,7 +164,7 @@
             android:textSize="6pt" />
 
         <EditText
-            android:id="@+id/register_edtDescricao"
+            android:id="@+id/register_map_edtDescricao"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_gravity="center"
@@ -180,7 +180,7 @@
             android:textSize="5pt" />
 
         <Button
-            android:id="@+id/register_btnCadastrar"
+            android:id="@+id/register_map_btnSolicitar"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_gravity="center"

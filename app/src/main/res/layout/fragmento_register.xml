@@ -7,40 +7,52 @@
     android:layout_above="@+id/home_tblayout"
     android:background="#343434"
     android:orientation="vertical"
-    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-    >
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
     <RelativeLayout
         android:id="@+id/layoutTab"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-    <ImageButton
-        android:id="@+id/register_btnVoltar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="25dp"
-        android:layout_centerVertical="true"
-        android:src="@drawable/ic_seta"
-        android:textColor="#ce6b01"
-        android:background="@android:color/transparent"
-        />
+        android:layout_height="wrap_content">
 
+        <ImageButton
+            android:id="@+id/register_btnVoltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="50dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_seta"
+            android:textColor="#ce6b01" />
     </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layoutTab"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
-        <ImageButton
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_imagelog"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/icImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_imagelog" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:layout_marginLeft="65dp"
+                android:src="@drawable/ic_cam"
+                android:background="@android:color/transparent"/>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/tvStatusLogin"
@@ -71,9 +83,9 @@
             android:layout_marginRight="30dp"
             android:layout_marginTop="7dp"
             android:background="#FFFFFF"
-            android:hint="Informe o nome"
             android:drawableLeft="@android:color/transparent"
             android:drawablePadding="5dp"
+            android:hint="Informe o nome"
             android:textSize="5pt" />
 
         <TextView
@@ -90,6 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp">
+
             <RadioGroup
                 android:id="@+id/radioGenero"
                 android:layout_width="wrap_content"

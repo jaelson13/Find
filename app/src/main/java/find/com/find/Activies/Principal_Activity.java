@@ -69,11 +69,12 @@ public class Principal_Activity extends AppCompatActivity
     private static final int REQUEST_CHECAR_GPS = 2;
     private static final int REQUEST_ERRO_PLAY_SERVICES = 1;
     private static final String EXTRA_DIALOG = "dialog";
-    private boolean mDeveExibirDialog, flagEnableMap=false;
+    private boolean mDeveExibirDialog, flagEnableMap = false;
     int mTentativas;
     Handler mHandler;
     GoogleMap mMap;
     LatLng mOrigem;
+    public static Location localizacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +161,8 @@ public class Principal_Activity extends AppCompatActivity
         int id = item.getItemId();
 
 
-       if (id == R.id.nav_mapearlocal) {
+        if (id == R.id.nav_mapearlocal) {
+            ultimaLocalizacao();
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance(1));
             ft.addToBackStack(null);
@@ -234,6 +236,7 @@ public class Principal_Activity extends AppCompatActivity
                 }
             }, 2000);
         }
+        localizacao = location;
         Log.e(TAG, String.valueOf(location.getLatitude()));
         Log.e(TAG, String.valueOf(location.getLongitude()));
 
@@ -283,6 +286,12 @@ public class Principal_Activity extends AppCompatActivity
         mHandler.removeCallbacksAndMessages(null);
         super.onStop();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        enableMyLocation();
     }
 
     private void verificarGPS() {
@@ -365,14 +374,14 @@ public class Principal_Activity extends AppCompatActivity
     }
 
     public void header_btnLogin(View view) {
-        Intent intent = new Intent(Principal_Activity.this,Login_Activity.class);
-        intent.putExtra("chave","login");
+        Intent intent = new Intent(Principal_Activity.this, Login_Activity.class);
+        intent.putExtra("chave", "login");
         startActivity(intent);
     }
 
     public void header_btnCadastrar(View view) {
-        Intent intent = new Intent(Principal_Activity.this,Login_Activity.class);
-        intent.putExtra("chave","cadastro");
+        Intent intent = new Intent(Principal_Activity.this, Login_Activity.class);
+        intent.putExtra("chave", "cadastro");
         startActivity(intent);
     }
 }

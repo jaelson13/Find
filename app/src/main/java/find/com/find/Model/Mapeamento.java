@@ -9,6 +9,7 @@ import java.util.Date;
 public class Mapeamento {
     private int idMapeamento;
     private String nomeLocal;
+    private String endereco;
     private String numeroLocal;
     private String descricao;
     private String categoria;
@@ -16,6 +17,8 @@ public class Mapeamento {
     private String urlImagem;
     private int latitude;
     private int longitude;
+    private int idUsuario;
+
 
     public int getIdMapeamento() {
         return idMapeamento;
@@ -31,6 +34,14 @@ public class Mapeamento {
 
     public void setNomeLocal(String nomeLocal) {
         this.nomeLocal = nomeLocal;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     public String getNumeroLocal() {
@@ -87,5 +98,13 @@ public class Mapeamento {
 
     public void setLongitude(int longitude) {
         this.longitude = longitude;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 }

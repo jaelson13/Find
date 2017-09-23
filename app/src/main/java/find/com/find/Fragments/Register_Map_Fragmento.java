@@ -3,6 +3,8 @@ package find.com.find.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +15,18 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import find.com.find.Activies.Login_Activity;
+import find.com.find.Activies.Principal_Activity;
+import find.com.find.Model.Mapeamento;
 import find.com.find.Model.Usuario;
+import find.com.find.Model.UsuarioAtivoSingleton;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
@@ -36,15 +43,12 @@ public class Register_Map_Fragmento extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage;
     private String[] categorias = {"Escolha uma categoria","Bares / Alimentação","Educação","Mercado","Shopping Center","Banco","Lazer","Saúde","Religião","Pontos Turísticos"};
-    private EditText edtNome;
-    private EditText edtEmail;
-    private EditText edtSenha;
-    private EditText edtConfSenha;
-    private RadioGroup radioGenero;
-    private RadioButton rbFeminino;
-    private RadioButton rbMasculino;
-    private Button btnCadastrar;
-    private Spinner spnCategorias;
+    private EditText edtEstabelecimento;
+    private EditText edtEndereco;
+    private EditText edtNumero;
+    private EditText edtDescricao;
+    private Button btnSolicitar;
+    private Spinner spnCategoria;
     private boolean flag;
 
     public static Register_Map_Fragmento newInstance(int page){
@@ -66,52 +70,45 @@ public class Register_Map_Fragmento extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_cadastro_mapeamento,container,false);
 
-        edtNome = (EditText) view.findViewById(R.id.register_edtNome);
-        edtEmail = (EditText) view.findViewById(R.id.register_edtEmail);
-        edtSenha = (EditText) view.findViewById(R.id.register_edtSenha);
-        edtConfSenha = (EditText) view.findViewById(R.id.register_edtConfSenha);
-        btnCadastrar = (Button) view.findViewById(R.id.register_btnCadastrar);
-        rbFeminino = (RadioButton) view.findViewById(R.id.register_rbFeminino);
-        rbMasculino = (RadioButton) view.findViewById(R.id.register_rbMasculino);
-        radioGenero = (RadioGroup) view.findViewById(R.id.radioGenero);
+        edtEstabelecimento = (EditText) view.findViewById(R.id.register_map_edtEstabelecimento);
+        edtEndereco = (EditText) view.findViewById(R.id.register_map_edtEndereco);
+        edtNumero = (EditText) view.findViewById(R.id.register_map_edtNumero);
+        edtDescricao = (EditText) view.findViewById(R.id.register_map_edtDescricao);
+        btnSolicitar = (Button) view.findViewById(R.id.register_map_btnSolicitar);
 
-        spnCategorias = (Spinner) view.findViewById(R.id.spnCategorias);
+
+        spnCategoria = (Spinner) view.findViewById(R.id.spnCategorias);
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(),R.layout.layout_spinner,categorias);
-        spnCategorias.setAdapter(arrayAdapter);
+        spnCategoria.setAdapter(arrayAdapter);
 
 
-        btnCadastrar.setOnClickListener(new View.OnClickListener() {
+        btnSolicitar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(validarCampos()){
-                    Usuario usuario = new Usuario();
-                    usuario.setNome(edtNome.getText().toString());
-                    usuario.setEmail(edtEmail.getText().toString());
-                    usuario.setSenha(edtSenha.getText().toString());
-                    usuario.setStatus(true);
-                    if (rbFeminino.isChecked()) {
-                        usuario.setSexo(rbFeminino.getText().toString());
-                    } else {
-                        usuario.setSexo(rbMasculino.getText().toString());
-                    }
+                    Mapeamento mapeamento = new Mapeamento();
+                    mapeamento.setNomeLocal(edtEstabelecimento.getText().toString());
+                    mapeamento.setEndereco(edtEndereco.getText().toString());
+                    mapeamento.setNumeroLocal(edtNumero.getText().toString());
+                    mapeamento.setDescricao(edtDescricao.getText().toString());
+                    mapeamento.setData(new Date());
+                    mapeamento.setIdUsuario(UsuarioAtivoSingleton.getUsuario().getIdUsuario());
+                    mapeamento.setLatitude((int) Principal_Activity.localizacao.getLatitude());
+                    mapeamento.setLongitude((int) Principal_Activity.localizacao.getLongitude());
 
                     FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-                    final Call<Usuario> call = servicos.salvarUsuario(usuario);
-                    call.enqueue(new Callback<Usuario>() {
+                    final Call<Mapeamento> call = servicos.salvarMapeamento(mapeamento);
+                    call.enqueue(new Callback<Mapeamento>() {
                         @Override
-                        public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            //String retorno = response.body();
-
-                            Toast.makeText(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(),Login_Activity.class);
-                            startActivity(intent);
-
-
-
+                        public void onResponse(Call<Mapeamento> call, Response<Mapeamento> response) {
+                            Toast.makeText(getContext(), "Solicitação feita com sucesso!", Toast.LENGTH_SHORT).show();
+                            FragmentManager fm = getFragmentManager();
+                            FragmentTransaction ft = fm.beginTransaction();
+                            ft.addToBackStack(null);
                         }
 
                         @Override
-                        public void onFailure(Call<Usuario> call, Throwable t) {
+                        public void onFailure(Call<Mapeamento> call, Throwable t) {
                             Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -124,36 +121,31 @@ public class Register_Map_Fragmento extends Fragment {
 
 
     private boolean validarCampos() {
-        if (TextUtils.isEmpty(edtNome.getText().toString())) {
-            edtNome.setError("Preecha o nome");
+        if (TextUtils.isEmpty(edtEstabelecimento.getText().toString())) {
+            edtEstabelecimento.setError("Preecha o estabelecimento");
             return false;
         }
 
-        if (TextUtils.isEmpty(edtEmail.getText().toString())) {
-            edtEmail.setError("Preecha o email");
+        if (TextUtils.isEmpty(edtEndereco.getText().toString())) {
+            edtEndereco.setError("Preecha o endereço");
             return false;
         }
 
-        if (TextUtils.isEmpty(edtSenha.getText().toString())) {
-            edtSenha.setError("Preecha a senha");
+        if (TextUtils.isEmpty(edtNumero.getText().toString())) {
+            edtNumero.setError("Preecha o numero");
             return false;
         }
 
-        if (TextUtils.isEmpty(edtConfSenha.getText().toString())) {
-            edtSenha.setError("Confirme a senha");
+        if (spnCategoria.getPrompt() == "Escolha uma categoria") {
+            TextView errorText = (TextView) spnCategoria.getSelectedView();
+            errorText.setError("Escolha uma categoria");
             return false;
         }
 
-        if(!edtConfSenha.getText().toString().equals(edtSenha.getText().toString())){
-            edtSenha.setError("Senhas não são iguais");
+        if (TextUtils.isEmpty(edtDescricao.getText().toString())) {
+            edtNumero.setError("Preecha a descricao");
             return false;
         }
-        if (!rbFeminino.isChecked() && !rbMasculino.isChecked()) {
-            rbFeminino.setError("Seleciona o sexo");
-            rbMasculino.setError("Seleciona o sexo");
-            return false;
-        }
-
 
         return true;
     }
