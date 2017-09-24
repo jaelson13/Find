@@ -77,7 +77,7 @@ public class Register_Map_Fragmento extends Fragment {
         btnSolicitar = (Button) view.findViewById(R.id.register_map_btnSolicitar);
 
 
-        spnCategoria = (Spinner) view.findViewById(R.id.spnCategorias);
+        spnCategoria = (Spinner) view.findViewById(R.id.register_map_spnCategorias);
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(),R.layout.layout_spinner,categorias);
         spnCategoria.setAdapter(arrayAdapter);
 
