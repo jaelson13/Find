@@ -1,7 +1,11 @@
 package find.com.find.Fragments;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,9 +16,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,13 +47,18 @@ public class Register_Fragmento extends Fragment{
     private EditText edtNome;
     private EditText edtEmail;
     private EditText edtSenha;
-    private EditText edtConfSenha;
     private RadioGroup radioGenero;
     private RadioButton rbFeminino;
     private RadioButton rbMasculino;
     private Button btnCadastrar;
     private ImageButton btnVoltar;
+    private ImageButton btnOpImage;
+    private ImageButton btnCamera;
+    private ImageButton btnGalery;
+    private ImageView icImage;
+    private Uri imagemSelecionada;
     private boolean flag;
+    private boolean open;
 
     public static Register_Fragmento newInstance(int page){
         Bundle args = new Bundle();
@@ -70,12 +82,59 @@ public class Register_Fragmento extends Fragment{
         edtNome = (EditText) view.findViewById(R.id.register_edtNome);
         edtEmail = (EditText) view.findViewById(R.id.register_edtEmail);
         edtSenha = (EditText) view.findViewById(R.id.register_edtSenha);
-        edtConfSenha = (EditText) view.findViewById(R.id.register_edtConfSenha);
         btnCadastrar = (Button) view.findViewById(R.id.register_btnCadastrar);
         rbFeminino = (RadioButton) view.findViewById(R.id.register_rbFeminino);
         rbMasculino = (RadioButton) view.findViewById(R.id.register_rbMasculino);
         radioGenero = (RadioGroup) view.findViewById(R.id.radioGenero);
         btnVoltar = (ImageButton) view.findViewById(R.id.register_btnVoltar);
+
+        //Pegar imagem
+        btnOpImage = (ImageButton) view.findViewById(R.id.register_btnOpImage);
+        btnCamera = (ImageButton) view.findViewById(R.id.register_btnCamera);
+        btnGalery = (ImageButton) view.findViewById(R.id.register_btnGalery);
+        icImage = (ImageView) view.findViewById(R.id.register_icImage);
+        btnOpImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if(open){
+                    btnCamera.setVisibility(View.GONE);
+                    btnCamera.setClickable(false);
+
+                    btnGalery.setVisibility(View.GONE);
+                    btnGalery.setClickable(false);
+
+                    open = false;
+
+                } else {
+                    btnCamera.setVisibility(View.VISIBLE);
+                    btnCamera.setClickable(true);
+
+                    btnGalery.setVisibility(View.VISIBLE);
+                    btnGalery.setClickable(true);
+
+                    open = true;
+                }
+            }
+        });
+
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(Intent.createChooser(i,"Selecionar Foto"), 124);
+            }
+        });
+
+        btnGalery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                startActivityForResult(Intent.createChooser(i, "Selecionar Foto"), 123);
+            }
+        });
+        //Fim Pegar Imagem
 
         btnVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,20 +205,11 @@ public class Register_Fragmento extends Fragment{
             return false;
         }
 
-        if (TextUtils.isEmpty(edtConfSenha.getText().toString())) {
-            edtSenha.setError("Confirme a senha");
-            return false;
-        }
-
         if(!validarEmail(edtEmail.getText().toString())){
             edtEmail.setError("E-mail inválido");
             return false;
         }
 
-        if(!edtConfSenha.getText().toString().equals(edtSenha.getText().toString())){
-            edtSenha.setError("Senhas não são iguais");
-            return false;
-        }
         if (!rbFeminino.isChecked() && !rbMasculino.isChecked()) {
             rbFeminino.setError("Seleciona o sexo");
             rbMasculino.setError("Seleciona o sexo");
@@ -200,5 +250,27 @@ public class Register_Fragmento extends Fragment{
         });
 
         return flag;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+         if (requestCode == 123) {
+                imagemSelecionada = data.getData();
+                CropImage.activity(imagemSelecionada).setAspectRatio(1,1).start(getActivity());
+            }
+
+            if (requestCode == 124) {
+                Bundle bundle = data.getExtras();
+                Bitmap bitmap = (Bitmap) bundle.get("data");
+                icImage.setImageBitmap(bitmap);
+            }
+            if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                imagemSelecionada = result.getUri();
+                icImage.setImageURI(imagemSelecionada);
+            }
+        }
     }
 }

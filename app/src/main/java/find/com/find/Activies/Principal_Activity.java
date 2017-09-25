@@ -370,4 +370,9 @@ public class Principal_Activity extends AppCompatActivity
         intent.putExtra("chave", "cadastro");
         startActivity(intent);
     }
+
+    public void telaLogin(View view) {
+        Intent intent = new Intent(Principal_Activity.this, Login_Activity.class);
+        startActivity(intent);
+    }
 }

@@ -28,6 +28,7 @@
             android:layout_marginRight="10dp"
             android:background="@android:color/white"
             android:text="Entrar"
-            android:textSize="4pt" />
+            android:textSize="4pt"
+            android:onClick="telaLogin"/>
     </RelativeLayout>
 </FrameLayout>
