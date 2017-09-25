@@ -1,51 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/home_tblayout"
-    android:background="#343434"
     android:orientation="vertical"
     android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-
     >
+
     <RelativeLayout
         android:id="@+id/layoutTab"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        >
+        <android.support.v7.widget.Toolbar
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="#1dc2c6"
+            app:theme="@style/ToolbarColoredBackArrow"
+            app:popupTheme="@style/AppTheme"
+            />
         <ImageButton
             android:id="@+id/login_btnVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginLeft="25dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_seta"
-            android:textColor="#ce6b01"
+            android:layout_marginLeft="15dp"
             android:background="@android:color/transparent"
-            />
-
+            android:src="@drawable/ic_seta"
+            android:textColor="#ce6b01" />
     </RelativeLayout>
-
-    <ImageButton
-        android:id="@+id/imgPerfil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/ic_icone"
-        android:background="@android:color/transparent"
-        />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imgPerfil"
-        android:layout_marginTop="55dp"
-        android:orientation="vertical">
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="110dp"
+        android:background="@drawable/borda"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingTop="30dp">
 
         <TextView
             android:id="@+id/tvStatusLogin"
@@ -63,7 +64,6 @@
             android:layout_gravity="left"
             android:layout_marginLeft="30dp"
             android:text="Email"
-            android:textColor="#FFFFFF"
             android:textSize="6pt" />
 
         <EditText
@@ -74,10 +74,9 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="7dp"
-            android:background="#FFFFFF"
+            android:background="#eaecec"
             android:drawableLeft="@android:color/transparent"
             android:drawablePadding="5dp"
-            android:hint="Informe o email"
             android:textSize="5.5pt" />
 
         <TextView
@@ -87,7 +86,6 @@
             android:layout_marginLeft="30dp"
             android:layout_marginTop="10dp"
             android:text="Senha"
-            android:textColor="#FFFFFF"
             android:textSize="6pt" />
 
         <EditText
@@ -98,10 +96,9 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="7dp"
-            android:background="#FFFFFF"
+            android:background="#eaecec"
             android:drawableLeft="@android:color/transparent"
             android:drawablePadding="5dp"
-            android:hint="Informe a senha"
             android:inputType="textPassword"
             android:textSize="5.5pt" />
 
@@ -112,13 +109,114 @@
             android:layout_gravity="center"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            android:layout_marginTop="30dp"
-            android:background="#ce6b01"
-            android:textSize="7pt"
+            android:layout_marginTop="15dp"
+            android:background="#1dc2c6"
             android:text="Entrar"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="7pt" />
 
         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <view
+                    android:layout_width="125dp"
+                    android:layout_height="0.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="#FFC9CCCC" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="Login via rede social"
+                    android:textSize="4pt" />
+
+                <view
+                    android:layout_width="125dp"
+                    android:layout_height="0.5dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:background="#FFC9CCCC" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp">
+
+                <RelativeLayout
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginRight="6dp"
+                    android:background="#303F9F">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/radiobotao_socialF"
+                        android:src="@drawable/ic_facebook" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="#D50000">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/radiobotao_socialF"
+                        android:src="@drawable/ic_google" />
+
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center"
+            android:layout_marginLeft="27dp"
+           android:layout_marginTop="10dp">
+        <TextView
+            android:id="@+id/tvCriarConta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Não possui conta?"
+            android:textSize="5pt"/>
+
+        <Button
+            android:id="@+id/btnCriarConta"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@+id/tvCriarConta"
+            android:background="@android:color/transparent"
+            android:hint="Crie já"
+            android:paddingStart="5dp"
+            android:textAlignment="textStart"
+            android:textColorHint="#1dc2c6"
+            android:textSize="5pt" />
+        </LinearLayout>
+</LinearLayout><!--
+<RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
@@ -147,6 +245,4 @@
                 android:textColorHint="#ce6b01"
                 android:textSize="6pt" />
         </RelativeLayout>
-    </LinearLayout>
-
-</RelativeLayout>
+-->
