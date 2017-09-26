@@ -50,9 +50,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 
 import find.com.find.Fragments.Register_Map_Fragmento;
+import find.com.find.Model.Usuario;
 import find.com.find.Model.UsuarioAtivoSingleton;
 import find.com.find.R;
+import find.com.find.Services.FindApiAdapter;
+import find.com.find.Services.FindApiService;
 import find.com.find.Util.PermissionUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Principal_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -374,5 +380,53 @@ public class Principal_Activity extends AppCompatActivity
         return conectado;
     }
 
+    public void alterarDados() {
 
+        UsuarioAtivoSingleton.getUsuario().setNome("nome");
+        UsuarioAtivoSingleton.getUsuario().setSexo("Sexo");
+        UsuarioAtivoSingleton.getUsuario().setSenha("nome");
+        FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
+        final Call<Usuario> call = servicos.atualizarUsuario(UsuarioAtivoSingleton.getUsuario());
+        call.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                //String retorno = response.body();
+
+                Toast.makeText(getBaseContext(), "Dados Alterados com sucesso", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getBaseContext(), Login_Activity.class);
+                startActivity(intent);
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void desativarConta(){
+        FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
+        final Call<Boolean> call = servicos.desativarUsuario(UsuarioAtivoSingleton.getUsuario().getIdUsuario());
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                //String retorno = response.body();
+
+                Toast.makeText(getBaseContext(), "Conta Desativada", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getBaseContext(), Principal_Activity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
 }
+
+
+

@@ -30,21 +30,21 @@ public interface FindApiService {
 
     //Inserção de um Usuario
     //FindWebService/webresources/com.find.usuario/create
-    @POST("usuario/add")
+    @POST("user/add")
     Call<Usuario> salvarUsuario(@Body Usuario usuario);
 
     //Atualização de um Usuario
-    @POST("")
+    @POST("user/atualizar")
     Call<Usuario> atualizarUsuario(@Body Usuario usuario);
 
     //Desativar um Usuario
     @FormUrlEncoded
-    @DELETE
-    Call<Usuario> desativarUsuario(@Field("idUsuario") int idUsuario);
+    @PUT
+    Call<Boolean> desativarUsuario(@Path("idUsuario") int idUsuario);
 
     //Fazer login
-    @GET("usuario/login")
-    Call<Usuario> fazerLogin(@Query("email") String email, @Query("senha") String senha);
+    @POST("usuario/login")
+    Call<Usuario> fazerLogin(@Path("email") String email, @Path("senha") String senha);
 
     //Verificar Email
     @GET("usuario/valida/{email}")
