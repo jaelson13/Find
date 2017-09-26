@@ -1,51 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_login"
     android:layout_width="match_parent"
     android:layout_height="170dp"
-    android:background="#343434"
+    android:background="#1dc2c6"
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:id="@+id/nav_login"
-    >
+    android:paddingTop="@dimen/activity_vertical_margin">
 
     <ImageButton
-        android:layout_width="100dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_iconexhdpi"
-        android:layout_gravity="center"
-        android:background="@android:color/transparent"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="10dp">
-    <Button
-        android:id="@+id/header_btnLogin"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_marginRight="5dp"
-        android:background="#ce6b01"
-        android:text="Login"
-        android:textColor="@android:color/white"
-        android:textSize="7pt"
-        android:onClick="header_btnLogin"/>
-
-    <Button
-        android:id="@+id/header_btnCadastrar"
-        android:layout_width="130dp"
-        android:layout_height="30dp"
-        android:background="#135ec5"
-        android:layout_marginLeft="5dp"
-        android:text="Cadastre-se"
-        android:textColor="@android:color/white"
-        android:textSize="7pt"
-        android:onClick="header_btnCadastrar"/>
-    </LinearLayout>
-</LinearLayout>
+        android:background="@android:color/transparent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_icone"
+        android:layout_marginBottom="15dp"/>
+</RelativeLayout>

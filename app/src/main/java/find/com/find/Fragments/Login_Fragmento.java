@@ -3,6 +3,8 @@ package find.com.find.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,7 @@ public class Login_Fragmento extends Fragment{
     private EditText edtEmail;
     private EditText edtSenha;
     private Button btnCadastrar;
+    private Button btnLogar;
     private ImageButton btnVoltar;
     private boolean flag;
 
@@ -62,11 +65,21 @@ public class Login_Fragmento extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_login,container,false);
-
         edtEmail = (EditText) view.findViewById(R.id.login_edtEmail);
         edtSenha = (EditText) view.findViewById(R.id.login_edtSenha);
-        btnCadastrar = (Button) view.findViewById(R.id.login_btnLogar);
+        btnLogar = (Button) view.findViewById(R.id.login_btnLogar);
+        btnCadastrar = (Button) view.findViewById(R.id.btnCriarConta);
         btnVoltar = (ImageButton) view.findViewById(R.id.login_btnVoltar);
+
+        btnCadastrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Register_Fragmento.newInstance(1));
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
 
         btnVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +90,7 @@ public class Login_Fragmento extends Fragment{
             }
         });
 
-        btnCadastrar.setOnClickListener(new View.OnClickListener() {
+        btnLogar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(validarCampos()){

@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
-        <item android:title="">
-            <menu xmlns:android="http://schemas.android.com/apk/res/android">
-                <group android:checkableBehavior="single">
-                    <item
-                        android:id="@+id/nav_fazerlogin"
-                        android:title="Fazer Login" />
-                    <item
-                        android:id="@+id/nav_criarconta"
-                        android:title="Criar Conta" />
-                </group>
-            </menu>
-        </item>
-    </group>
-
-
+    <item android:title="Mapeamento">
+        <menu xmlns:android="http://schemas.android.com/apk/res/android">
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_meusdados"
+                    android:title="Mapear Local" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="Locais">
+        <menu xmlns:android="http://schemas.android.com/apk/res/android">
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_pendentes"
+                    android:title="Buscar Local" />
+            </group>
+        </menu>
+    </item>
 </menu>

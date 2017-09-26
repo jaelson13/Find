@@ -63,6 +63,7 @@ public class Principal_Activity extends AppCompatActivity
     private CoordinatorLayout mCoordinatorLayout;
     private Button btn_Header_Login;
     private Button btn_Header_Cadastro;
+    private Button btnEntrar;
     private static final String TAG = Principal_Activity.class.getSimpleName();
     private GoogleApiClient googleApiClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -81,6 +82,23 @@ public class Principal_Activity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
+        btnEntrar = (Button) findViewById(R.id.principal_btnEntrar);
+        if (UsuarioAtivoSingleton.getUsuario() != null) {
+            btnEntrar.setVisibility(View.GONE);
+            btnEntrar.setClickable(false);
+        } else {
+            btnEntrar.setVisibility(View.VISIBLE);
+            btnEntrar.setClickable(true);
+        }
+
+        btnEntrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Principal_Activity.this, Login_Activity.class);
+                startActivity(intent);
+            }
+        });
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -94,9 +112,6 @@ public class Principal_Activity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationMenu();
-        btn_Header_Login = (Button) findViewById(R.id.header_btnLogin);
-
-        btn_Header_Cadastro = (Button) findViewById(R.id.header_btnCadastrar);
 
         mHandler = new Handler();
         mDeveExibirDialog = savedInstanceState == null;
@@ -359,20 +374,5 @@ public class Principal_Activity extends AppCompatActivity
         return conectado;
     }
 
-    public void header_btnLogin(View view) {
-        Intent intent = new Intent(Principal_Activity.this, Login_Activity.class);
-        intent.putExtra("chave", "login");
-        startActivity(intent);
-    }
 
-    public void header_btnCadastrar(View view) {
-        Intent intent = new Intent(Principal_Activity.this, Login_Activity.class);
-        intent.putExtra("chave", "cadastro");
-        startActivity(intent);
-    }
-
-    public void telaLogin(View view) {
-        Intent intent = new Intent(Principal_Activity.this, Login_Activity.class);
-        startActivity(intent);
-    }
 }
