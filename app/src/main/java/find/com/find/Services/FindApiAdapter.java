@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FindApiAdapter {
     //URL Base do endpoint. Deve terminar com /
-    public static final String BASE_URL = "http://nossocariri.com/webservice/public/index.php/";
+    public static final String BASE_URL = "http://nossocariri.com/webservice/index.php/";
     private static FindApiAdapter findService;
 
     public static <S> S createService(Class<S> serviceClass){

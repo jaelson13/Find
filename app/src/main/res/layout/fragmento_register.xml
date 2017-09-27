@@ -46,19 +46,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/register_icImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
                 android:background="@android:color/transparent"
                 android:layout_centerHorizontal="true"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_imagelog" />
             <ImageButton
                 android:id="@+id/register_btnOpImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="190dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginLeft="200dp"
+                android:layout_marginTop="80dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_cam" />
             <LinearLayout

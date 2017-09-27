@@ -216,7 +216,7 @@ public class Register_Fragmento extends Fragment{
             return false;
         }
 
-        if(!validarEmailBanco(edtEmail.getText().toString())){
+        if(validarEmailBanco(edtEmail.getText().toString())){
             edtEmail.setError("Email já existe");
             return false;
         }
@@ -256,7 +256,7 @@ public class Register_Fragmento extends Fragment{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-         if (requestCode == 123) {
+            if (requestCode == 123) {
                 imagemSelecionada = data.getData();
                 CropImage.activity(imagemSelecionada).setAspectRatio(1,1).start(getActivity());
             }

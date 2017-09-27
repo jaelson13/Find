@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -67,20 +68,17 @@ public class Principal_Activity extends AppCompatActivity
 
     private NavigationView navigationView;
     private CoordinatorLayout mCoordinatorLayout;
-    private Button btn_Header_Login;
-    private Button btn_Header_Cadastro;
     private Button btnEntrar;
     private static final String TAG = Principal_Activity.class.getSimpleName();
     private GoogleApiClient googleApiClient;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private static final int REQUEST_CHECAR_GPS = 2;
-    private static final int REQUEST_ERRO_PLAY_SERVICES = 1;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1,REQUEST_CHECAR_GPS = 2,REQUEST_ERRO_PLAY_SERVICES = 1;
     private static final String EXTRA_DIALOG = "dialog";
     private boolean mDeveExibirDialog, flagEnableMap = false;
     int mTentativas;
     Handler mHandler;
     GoogleMap mMap;
     LatLng mOrigem;
+    Snackbar snackbar;
     public static Location localizacao;
 
     @Override
@@ -163,6 +161,7 @@ public class Principal_Activity extends AppCompatActivity
         }
     }
 
+    //Ao pressionar o botão voltar do proprio aparelho
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -173,6 +172,7 @@ public class Principal_Activity extends AppCompatActivity
         }
     }
 
+    //Evento para saver qual item menu foi clicado
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -195,6 +195,7 @@ public class Principal_Activity extends AppCompatActivity
     }
     // CONFIGURAÇÃO MAPA
 
+    //Carregar o mapa no fragmento
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -203,6 +204,7 @@ public class Principal_Activity extends AppCompatActivity
         enableMyLocation();
     }
 
+    //Estilo do mapa
     private void estilizarMap() {
         try {
             boolean success = mMap.setMapStyle(
@@ -217,6 +219,7 @@ public class Principal_Activity extends AppCompatActivity
         }
     }
 
+    //Pega a ultima localização do usuário/Requer permissão caso Android se >= 6
     private void ultimaLocalizacao() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -249,6 +252,7 @@ public class Principal_Activity extends AppCompatActivity
 
     }
 
+    //Ativa a localição atual do usuário
     private boolean enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -270,20 +274,24 @@ public class Principal_Activity extends AppCompatActivity
     }
 
 
+    //Connecção Google play services
     @Override
     public void onConnected(Bundle bundle) {
         verificarGPS();
     }
 
+    //Caso a conexão seja suspensa, connecta de novo
     @Override
     public void onConnectionSuspended(int i) {
         googleApiClient.connect();
     }
 
+    //Caso a conexão seja falha
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         googleApiClient.disconnect();
     }
+
 
     @Override
     public void onStop() {
@@ -295,12 +303,14 @@ public class Principal_Activity extends AppCompatActivity
 
     }
 
+    //Ao retornar o app mostra localização do usuário
     @Override
     protected void onResume() {
         super.onResume();
         enableMyLocation();
     }
 
+    //Método verificar se gps está aticvo
     private void verificarGPS() {
         final LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -349,6 +359,7 @@ public class Principal_Activity extends AppCompatActivity
         mDeveExibirDialog = savedInstanceState.getBoolean(EXTRA_DIALOG, true);
     }
 
+    //Verifica se o google play services está ativo e se o gps está ativo
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -360,31 +371,44 @@ public class Principal_Activity extends AppCompatActivity
                 mHandler.removeCallbacks(null);
                 ultimaLocalizacao();
             } else {
-                Toast.makeText(this, "É necessário habilitar a configuração de localização para utilizar o aplicativo", Toast.LENGTH_SHORT).show();
-                finish();
+                Toast.makeText(this, "É necessário habilitar a configuração de localização para utilizar o aplicativo", Toast.LENGTH_LONG).show();
             }
         }
 
     }
 
+
+    //Verifica se há conexao com a internet
     public boolean verificaConexao() {
         boolean conectado;
-        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (conectivtyManager.getActiveNetworkInfo() != null
-                && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-            conectado = true;
-        } else {
-            conectado = false;
-        }
-        return conectado;
+        do {
+            ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (conectivtyManager.getActiveNetworkInfo() != null
+                    && conectivtyManager.getActiveNetworkInfo().isAvailable()
+                    && conectivtyManager.getActiveNetworkInfo().isConnected()) {
+                conectado = true;
+                snackbar.dismiss();
+            } else {
+                conectado = false;
+                if(!snackbar.isShown()) {
+                    snackbar = Snackbar.make(mCoordinatorLayout, "Sem Conexao a internet", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setActionTextColor(Color.WHITE);
+                    View view = snackbar.getView();
+                    view.setBackgroundColor(Color.RED);
+                    snackbar.show();
+                }
+
+            }
+        }while (!conectado);
+        return verificaConexao();
     }
 
+    //Alterar Dados do usuário
     public void alterarDados() {
 
-        UsuarioAtivoSingleton.getUsuario().setNome("nome");
+        UsuarioAtivoSingleton.getUsuario().setNome("Nome");
         UsuarioAtivoSingleton.getUsuario().setSexo("Sexo");
-        UsuarioAtivoSingleton.getUsuario().setSenha("nome");
+        UsuarioAtivoSingleton.getUsuario().setSenha("Senha");
         FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
         final Call<Usuario> call = servicos.atualizarUsuario(UsuarioAtivoSingleton.getUsuario());
         call.enqueue(new Callback<Usuario>() {
@@ -406,6 +430,7 @@ public class Principal_Activity extends AppCompatActivity
         });
     }
 
+    //Desatiar conta do usuário
     public void desativarConta(){
         FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
         final Call<Boolean> call = servicos.desativarUsuario(UsuarioAtivoSingleton.getUsuario().getIdUsuario());

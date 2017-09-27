@@ -11,6 +11,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -30,10 +31,12 @@ public interface FindApiService {
 
     //Inserção de um Usuario
     //FindWebService/webresources/com.find.usuario/create
+    @Headers("Content-type:application/json")
     @POST("user/add")
     Call<Usuario> salvarUsuario(@Body Usuario usuario);
 
     //Atualização de um Usuario
+    @Headers("Content-type:application/json")
     @POST("user/atualizar")
     Call<Usuario> atualizarUsuario(@Body Usuario usuario);
 
@@ -43,12 +46,14 @@ public interface FindApiService {
     Call<Boolean> desativarUsuario(@Path("idUsuario") int idUsuario);
 
     //Fazer login
-    @POST("usuario/login")
-    Call<Usuario> fazerLogin(@Path("email") String email, @Path("senha") String senha);
+    @Headers("Content-type:application/json")
+    @POST("user/login")
+    Call<Usuario> fazerLogin(@Query("email") String email, @Query("senha") String senha);
 
     //Verificar Email
-    @GET("usuario/valida/{email}")
-    Call<Boolean> verificarEmail(@Path("email") String email);
+    @Headers("Content-type:application/json")
+    @POST("user/validar")
+    Call<Boolean> verificarEmail(@Query("email") String email);
 
 
     //MAPEAMENTO
