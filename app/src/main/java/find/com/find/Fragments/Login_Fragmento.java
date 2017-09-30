@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +37,7 @@ import retrofit2.Response;
  * Created by Jaelson on 13/09/2017.
  */
 
-public class Login_Fragmento extends Fragment{
+public class Login_Fragmento extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage;
 
@@ -47,9 +50,9 @@ public class Login_Fragmento extends Fragment{
     private boolean flag;
 
 
-    public static Login_Fragmento newInstance(int page){
+    public static Login_Fragmento newInstance(int page) {
         Bundle args = new Bundle();
-        args.putInt(ARG_PAGE,page);
+        args.putInt(ARG_PAGE, page);
         Login_Fragmento fragmento = new Login_Fragmento();
         fragmento.setArguments(args);
         return fragmento;
@@ -64,7 +67,7 @@ public class Login_Fragmento extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmento_login,container,false);
+        View view = inflater.inflate(R.layout.fragmento_login, container, false);
         edtEmail = (EditText) view.findViewById(R.id.login_edtEmail);
         edtSenha = (EditText) view.findViewById(R.id.login_edtSenha);
         btnLogar = (Button) view.findViewById(R.id.login_btnLogar);
@@ -93,27 +96,38 @@ public class Login_Fragmento extends Fragment{
         btnLogar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validarCampos()){
+                if (validarCampos()) {
 
                     FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-                    final Call<Usuario> call = servicos.fazerLogin(edtEmail.getText().toString(),edtSenha.getText().toString());
+                    final Call<Usuario> call = servicos.fazerLogin(edtEmail.getText().toString(), edtSenha.getText().toString());
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            Usuario usuario = response.body();
-                            if(usuario != null) {
-                                Toast.makeText(getContext(), "Login efetuado", Toast.LENGTH_SHORT).show();
-                                UsuarioAtivoSingleton.setUsuario(usuario);
-                                Intent intent = new Intent(getActivity(), Principal_Activity.class);
-                                startActivity(intent);
-                                getActivity().finish();
-                            }else{
-                                Toast.makeText(getContext(), "Usuario ou senha invalidos", Toast.LENGTH_SHORT).show();
+
+                            if (response.isSuccessful()) {
+                                switch (response.code()) {
+                                    case 200:
+                                        Usuario usuario = response.body();
+                                        Toast.makeText(getContext(), "Login efetuado", Toast.LENGTH_SHORT).show();
+                                        UsuarioAtivoSingleton.setUsuario(usuario);
+                                        Intent intent = new Intent(getActivity(), Principal_Activity.class);
+                                        startActivity(intent);
+                                        getActivity().finish();
+                                        break;
+                                    case 400:
+                                        Toast.makeText(getContext(), "Usuario desativado!", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 404:
+                                        Toast.makeText(getContext(), "Usuario ou senha invalidos", Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
+
                             }
                         }
 
                         @Override
                         public void onFailure(Call<Usuario> call, Throwable t) {
+                            Log.e("erroF",t.getMessage());
                             Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -122,6 +136,7 @@ public class Login_Fragmento extends Fragment{
         });
         return view;
     }
+
     private boolean validarCampos() {
 
         if (TextUtils.isEmpty(edtEmail.getText().toString())) {
@@ -134,7 +149,7 @@ public class Login_Fragmento extends Fragment{
             return false;
         }
 
-        if(!validarEmail(edtEmail.getText().toString())){
+        if (!validarEmail(edtEmail.getText().toString())) {
             edtEmail.setError("E-mail inválido");
             return false;
         }

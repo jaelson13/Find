@@ -6,8 +6,8 @@
             <menu xmlns:android="http://schemas.android.com/apk/res/android">
                 <group android:checkableBehavior="single">
                     <item
-                        android:id="@+id/nav_meusdados"
-                        android:title="Meud Dados" />
+                        android:id="@+id/nav_alterardados"
+                        android:title="Alterar Dados" />
                 </group>
             </menu>
         </item>

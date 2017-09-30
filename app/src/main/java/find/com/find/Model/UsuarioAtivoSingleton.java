@@ -9,7 +9,6 @@ import android.app.Application;
 public class UsuarioAtivoSingleton extends Application {
     private static Usuario usuario;
     private static UsuarioAtivoSingleton instacia = null;
-
     public static Usuario getUsuario() {
         return usuario;
     }

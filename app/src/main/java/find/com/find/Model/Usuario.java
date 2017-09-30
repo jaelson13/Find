@@ -1,24 +1,35 @@
 package find.com.find.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Jaelson on 31/08/2017.
  */
 
 public class Usuario {
 
-    private int idUsuario;
+    @SerializedName("idUsuario")
+    private Integer idUsuario;
+    @SerializedName("nome")
     private String nome;
+    @SerializedName("email")
     private String email;
-    private String sexo;
+    @SerializedName("senha")
     private String senha;
-    private boolean status;
+    @SerializedName("urlImgPerfil")
+    private String urlImgPerfil;
+    @SerializedName("sexo")
+    private String sexo;
 
-    public boolean isStatus() {
-        return status;
+    public Usuario() {
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public String getUrlImgPerfil() {
+        return urlImgPerfil;
+    }
+
+    public void setUrlImgPerfil(String urlImgPerfil) {
+        this.urlImgPerfil = urlImgPerfil;
     }
 
     public String getSexo() { return sexo; }

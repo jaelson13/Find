@@ -145,7 +145,7 @@ public class Register_Fragmento extends Fragment{
 
             }
         });
-
+/*
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,7 +154,6 @@ public class Register_Fragmento extends Fragment{
                     usuario.setNome(edtNome.getText().toString());
                     usuario.setEmail(edtEmail.getText().toString());
                     usuario.setSenha(edtSenha.getText().toString());
-                    usuario.setStatus(true);
                     if (rbFeminino.isChecked()) {
                         usuario.setSexo(rbFeminino.getText().toString());
                     } else {
@@ -184,7 +183,7 @@ public class Register_Fragmento extends Fragment{
                 }
             }
         });
-
+*/
         return view;
     }
 

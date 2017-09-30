@@ -29,7 +29,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -49,7 +52,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.vision.text.Text;
 
+import find.com.find.Fragments.Alterar_Dados__Usuario_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
 import find.com.find.Model.Usuario;
 import find.com.find.Model.UsuarioAtivoSingleton;
@@ -144,7 +149,7 @@ public class Principal_Activity extends AppCompatActivity
 
     //CONFIGURAÇÃO LAYOUT
     private void navigationMenu() {
-        //navigationView.getMenu().clear();
+       // navigationView.getMenu().clear();
         //navigationView.inflateHeaderView(R.layout.nav_header_principal_);
         //navigationView.inflateMenu(R.menu.activity_home2_drawer);
 
@@ -157,8 +162,14 @@ public class Principal_Activity extends AppCompatActivity
             navigationView.getMenu().clear();
             navigationView.inflateHeaderView(R.layout.nav_header_principal_);
             navigationView.inflateMenu(R.menu.activity_home2_drawer);
+            View header = navigationView.getHeaderView(0);
+            TextView tvNome = (TextView) header.findViewById(R.id.nome_user);
+            TextView tvEmail = (TextView) header.findViewById(R.id.email_user);
+            tvNome.setText(UsuarioAtivoSingleton.getInstacia().getUsuario().getNome());
+            tvEmail.setText(UsuarioAtivoSingleton.getInstacia().getUsuario().getEmail());
 
         }
+
     }
 
     //Ao pressionar o botão voltar do proprio aparelho
@@ -186,6 +197,12 @@ public class Principal_Activity extends AppCompatActivity
             FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance(1));
             ft.addToBackStack(null);
             ft.commit();
+        }else if(id == R.id.nav_alterardados){
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Alterar_Dados__Usuario_Fragmento.newInstance(1));
+            ft.addToBackStack(null);
+            ft.commit();
+
         }
 
 
@@ -237,6 +254,8 @@ public class Principal_Activity extends AppCompatActivity
             mOrigem = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+            Log.e(TAG, String.valueOf(location.getLatitude()));
+            Log.e(TAG, String.valueOf(location.getLongitude()));
         } else if (mTentativas < 10) {
             mTentativas++;
             mHandler.postDelayed(new Runnable() {
@@ -247,8 +266,7 @@ public class Principal_Activity extends AppCompatActivity
             }, 2000);
         }
         localizacao = location;
-        Log.e(TAG, String.valueOf(location.getLatitude()));
-        Log.e(TAG, String.valueOf(location.getLongitude()));
+
 
     }
 
@@ -265,6 +283,7 @@ public class Principal_Activity extends AppCompatActivity
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setRotateGesturesEnabled(false);
+            ultimaLocalizacao();
             flagEnableMap = true;
 
         } else {

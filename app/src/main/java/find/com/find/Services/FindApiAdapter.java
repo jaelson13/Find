@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FindApiAdapter {
     //URL Base do endpoint. Deve terminar com /
-    public static final String BASE_URL = "http://nossocariri.com/webservice/index.php/";
+    public static final String BASE_URL = "http://nossocariri.com/Findwebservice/index.php/";
     private static FindApiAdapter findService;
 
     public static <S> S createService(Class<S> serviceClass){
@@ -32,8 +32,8 @@ public class FindApiAdapter {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
-                        .create()))
+                .addConverterFactory(GsonConverterFactory
+                        .create())
                 .client(httpClient.build())
                 .build();
 
