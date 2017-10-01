@@ -1,6 +1,5 @@
 package find.com.find.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,21 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Mapeamento;
-import find.com.find.Model.Usuario;
-import find.com.find.Model.UsuarioAtivoSingleton;
+import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
@@ -92,7 +85,7 @@ public class Register_Map_Fragmento extends Fragment {
                     mapeamento.setNumeroLocal(edtNumero.getText().toString());
                     mapeamento.setDescricao(edtDescricao.getText().toString());
                     mapeamento.setData(new Date());
-                    mapeamento.setIdUsuario(UsuarioAtivoSingleton.getUsuario().getIdUsuario());
+                    mapeamento.setIdUsuario(UsuarioApplication.getUsuario().getIdUsuario());
                     mapeamento.setLatitude((int) Principal_Activity.localizacao.getLatitude());
                     mapeamento.setLongitude((int) Principal_Activity.localizacao.getLongitude());
 

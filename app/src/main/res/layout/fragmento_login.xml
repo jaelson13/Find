@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/home_tblayout"
@@ -40,7 +41,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="110dp"
+        android:layout_marginTop="80dp"
         android:background="@drawable/borda"
         android:orientation="vertical"
         android:paddingBottom="10dp"
@@ -99,6 +100,17 @@
             android:drawablePadding="5dp"
             android:inputType="textPassword"
             android:textSize="5.5pt" />
+
+        <Button
+            android:id="@+id/login_btnRecupSenha"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="30dp"
+            android:background="@android:color/transparent"
+            android:hint="Esqueceu senha?"
+            android:textColorHint="#1dc2c6"
+            android:textSize="6pt" />
 
         <Button
             android:id="@+id/login_btnLogar"
@@ -214,34 +226,4 @@
             android:textColorHint="#1dc2c6"
             android:textSize="6pt" />
     </LinearLayout>
-</LinearLayout><!--
-<RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-
-            <Button
-                android:id="@+id/btnCriarConta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:background="@android:color/transparent"
-                android:hint="Cadastre-se"
-                android:textColorHint="#ce6b01"
-                android:textSize="6pt" />
-
-            <Button
-                android:id="@+id/btnRecupSenha"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="7dp"
-                android:background="@android:color/transparent"
-                android:hint="Esqueceu senha?"
-                android:textColorHint="#ce6b01"
-                android:textSize="6pt" />
-        </RelativeLayout>
--->
+</LinearLayout>

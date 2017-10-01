@@ -9,7 +9,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -29,9 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,12 +49,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.vision.text.Text;
 
-import find.com.find.Fragments.Alterar_Dados__Usuario_Fragmento;
+import find.com.find.Fragments.Alterar_Usuario_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
-import find.com.find.Model.Usuario;
-import find.com.find.Model.UsuarioAtivoSingleton;
+import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
@@ -92,7 +87,7 @@ public class Principal_Activity extends AppCompatActivity
         setContentView(R.layout.activity_principal);
 
         btnEntrar = (Button) findViewById(R.id.principal_btnEntrar);
-        if (UsuarioAtivoSingleton.getUsuario() != null) {
+        if (UsuarioApplication.getUsuario() != null) {
             btnEntrar.setVisibility(View.GONE);
             btnEntrar.setClickable(false);
         } else {
@@ -153,7 +148,7 @@ public class Principal_Activity extends AppCompatActivity
         //navigationView.inflateHeaderView(R.layout.nav_header_principal_);
         //navigationView.inflateMenu(R.menu.activity_home2_drawer);
 
-        if (UsuarioAtivoSingleton.getUsuario() == null) {
+        if (UsuarioApplication.getUsuario() == null) {
             navigationView.getMenu().clear();
             navigationView.inflateHeaderView(R.layout.nav_header_principal_login);
             navigationView.inflateMenu(R.menu.activity_home2_drawerlogin);
@@ -165,8 +160,8 @@ public class Principal_Activity extends AppCompatActivity
             View header = navigationView.getHeaderView(0);
             TextView tvNome = (TextView) header.findViewById(R.id.nome_user);
             TextView tvEmail = (TextView) header.findViewById(R.id.email_user);
-            tvNome.setText(UsuarioAtivoSingleton.getInstacia().getUsuario().getNome());
-            tvEmail.setText(UsuarioAtivoSingleton.getInstacia().getUsuario().getEmail());
+            tvNome.setText(UsuarioApplication.getInstacia().getUsuario().getNome());
+            tvEmail.setText(UsuarioApplication.getInstacia().getUsuario().getEmail());
 
         }
 
@@ -199,7 +194,7 @@ public class Principal_Activity extends AppCompatActivity
             ft.commit();
         }else if(id == R.id.nav_alterardados){
             FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Alterar_Dados__Usuario_Fragmento.newInstance(1));
+            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Alterar_Usuario_Fragmento.newInstance(1));
             ft.addToBackStack(null);
             ft.commit();
 
@@ -329,6 +324,12 @@ public class Principal_Activity extends AppCompatActivity
         enableMyLocation();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        enableMyLocation();
+    }
+
     //Método verificar se gps está aticvo
     private void verificarGPS() {
         final LocationRequest locationRequest = LocationRequest.create();
@@ -345,6 +346,7 @@ public class Principal_Activity extends AppCompatActivity
                 final Status status = locationSettingsResult.getStatus();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
+                        enableMyLocation();
                         ultimaLocalizacao();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
@@ -422,37 +424,10 @@ public class Principal_Activity extends AppCompatActivity
         return verificaConexao();
     }
 
-    //Alterar Dados do usuário
-    public void alterarDados() {
-
-        UsuarioAtivoSingleton.getUsuario().setNome("Nome");
-        UsuarioAtivoSingleton.getUsuario().setSexo("Sexo");
-        UsuarioAtivoSingleton.getUsuario().setSenha("Senha");
-        FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-        final Call<Usuario> call = servicos.atualizarUsuario(UsuarioAtivoSingleton.getUsuario());
-        call.enqueue(new Callback<Usuario>() {
-            @Override
-            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                //String retorno = response.body();
-
-                Toast.makeText(getBaseContext(), "Dados Alterados com sucesso", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getBaseContext(), Login_Activity.class);
-                startActivity(intent);
-
-
-            }
-
-            @Override
-            public void onFailure(Call<Usuario> call, Throwable t) {
-                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     //Desatiar conta do usuário
     public void desativarConta(){
         FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-        final Call<Boolean> call = servicos.desativarUsuario(UsuarioAtivoSingleton.getUsuario().getIdUsuario());
+        final Call<Boolean> call = servicos.desativarUsuario(UsuarioApplication.getUsuario().getIdUsuario());
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {

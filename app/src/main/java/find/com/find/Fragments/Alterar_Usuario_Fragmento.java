@@ -2,28 +2,19 @@ package find.com.find.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Date;
-
-import find.com.find.Activies.Principal_Activity;
-import find.com.find.Model.Mapeamento;
 import find.com.find.Model.Usuario;
-import find.com.find.Model.UsuarioAtivoSingleton;
+import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
@@ -35,7 +26,7 @@ import retrofit2.Response;
  * Created by Jaelson on 19/09/2017.
  */
 
-public class Alterar_Dados__Usuario_Fragmento extends Fragment {
+public class Alterar_Usuario_Fragmento extends Fragment {
 
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage;
@@ -47,10 +38,10 @@ public class Alterar_Dados__Usuario_Fragmento extends Fragment {
     private RadioButton rbMasculino;
     private Button btnAlterar;
 
-    public static Alterar_Dados__Usuario_Fragmento newInstance(int page) {
+    public static Alterar_Usuario_Fragmento newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
-        Alterar_Dados__Usuario_Fragmento fragmento = new Alterar_Dados__Usuario_Fragmento();
+        Alterar_Usuario_Fragmento fragmento = new Alterar_Usuario_Fragmento();
         fragmento.setArguments(args);
         return fragmento;
     }
@@ -78,19 +69,21 @@ public class Alterar_Dados__Usuario_Fragmento extends Fragment {
             @Override
             public void onClick(View v) {
                 if (validarCampos()) {
-                    UsuarioAtivoSingleton.getUsuario().setNome(edtNome.getText().toString());
+                    UsuarioApplication.getUsuario().setNome(edtNome.getText().toString());
                     if (rbMasculino.isSelected()) {
-                        UsuarioAtivoSingleton.getUsuario().setSexo("Masculino");
+                        UsuarioApplication.getUsuario().setSexo("Masculino");
                     } else {
-                        UsuarioAtivoSingleton.getUsuario().setSexo("Feminino");
+                        UsuarioApplication.getUsuario().setSexo("Feminino");
                     }
 
                     FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioAtivoSingleton.getUsuario());
+                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getUsuario());
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-
+                            if(response.code() == 200){
+                                Toast.makeText(getContext(), "Dados Alterados", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         @Override
@@ -106,13 +99,12 @@ public class Alterar_Dados__Usuario_Fragmento extends Fragment {
     }
 
     private void atribuirDadosUser() {
-        edtNome.setText(UsuarioAtivoSingleton.getUsuario().getNome());
-        edtEmail.setText(UsuarioAtivoSingleton.getUsuario().getEmail());
+        edtNome.setText(UsuarioApplication.getUsuario().getNome());
+        edtEmail.setText(UsuarioApplication.getUsuario().getEmail());
         edtEmail.setClickable(false);
-        edtSenha.setText(UsuarioAtivoSingleton.getUsuario().getSenha());
+        edtSenha.setText(UsuarioApplication.getUsuario().getSenha());
         edtSenha.setClickable(false);
-        Log.i("sexo", UsuarioAtivoSingleton.getInstacia().getUsuario().getSexo());
-        if (UsuarioAtivoSingleton.getInstacia().getUsuario().getSexo().equals("Masculino")) {
+        if (UsuarioApplication.getInstacia().getUsuario().getSexo().equals("Masculino")) {
             rbMasculino.setChecked(true);
         } else {
             rbFeminino.setChecked(true);

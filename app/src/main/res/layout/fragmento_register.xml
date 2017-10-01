@@ -5,247 +5,253 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/home_tblayout"
+    android:background="@android:color/white"
     android:orientation="vertical"
-    android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-
-    <RelativeLayout
-        android:id="@+id/layoutTab"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal">
-
-        <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="#1dc2c6"
-            app:popupTheme="@style/AppTheme"
-            app:theme="@style/ToolbarColoredBackArrow" />
-
-        <ImageButton
-            android:id="@+id/register_btnVoltar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_seta"
-            android:textColor="#ce6b01" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutTab"
-        android:orientation="vertical">
+    >
 
         <RelativeLayout
+            android:id="@+id/layoutTab"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_height="40dp"
+            android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/register_icImage"
-                android:layout_width="135dp"
-                android:layout_height="135dp"
-                android:background="@android:color/transparent"
-                android:layout_centerHorizontal="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_imagelog" />
+            <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#1dc2c6"
+                app:popupTheme="@style/AppTheme"
+                app:theme="@style/ToolbarColoredBackArrow" />
+
             <ImageButton
-                android:id="@+id/register_btnOpImage"
+                android:id="@+id/register_btnVoltar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="200dp"
-                android:layout_marginTop="80dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_cam" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_marginTop="50dp">
-                <ImageButton
-                    android:id="@+id/register_btnCamera"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:layout_marginLeft="70dp"
-                    android:src="@drawable/ic_cam2"
-                    android:visibility="gone"/>
-
-                <ImageButton
-                    android:id="@+id/register_btnGalery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="70dp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_galery"
-                    android:visibility="gone"/>
-            </LinearLayout>
+                android:src="@drawable/ic_seta"
+                android:textColor="#ce6b01" />
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/linear"
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/borda"
-            android:orientation="vertical"
-            android:paddingBottom="20dp"
-            android:paddingTop="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="10dp"
-                android:text="Nome"
-                android:textSize="6pt" />
+            android:layout_below="@+id/layoutTab"
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/register_edtNome"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="7dp"
-                android:background="#eaecec"
-                android:drawableLeft="@android:color/transparent"
-                android:drawablePadding="5dp"
-                android:textSize="5.5pt" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="7dp"
-                android:text="Sexo"
-                android:textSize="6pt" />
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp">
+                android:layout_marginTop="20dp">
 
-                <RadioGroup
-                    android:id="@+id/radioGenero"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/register_icImage"
+                    android:layout_width="135dp"
+                    android:layout_height="135dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_imagelog" />
+
+                <ImageButton
+                    android:id="@+id/register_btnOpImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginLeft="200dp"
+                    android:layout_marginTop="80dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_cam" />
 
-                    <RadioButton
-                        android:id="@+id/register_rbMasculino"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/register_btnCamera"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:alpha="0.9"
-                        android:text="Masculino"
-                        android:textSize="7pt" />
+                        android:layout_marginLeft="70dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_cam2"
+                        android:visibility="gone" />
 
-                    <RadioButton
-                        android:id="@+id/register_rbFeminino"
+                    <ImageButton
+                        android:id="@+id/register_btnGalery"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:alpha="0.9"
-                        android:text="Feminino"
-                        android:textSize="7pt" />
+                        android:layout_marginLeft="70dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_galery"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </RelativeLayout>
 
-                </RadioGroup>
+            <LinearLayout
+                android:id="@+id/linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/borda"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Nome"
+                    android:textSize="6pt" />
+
+                <EditText
+                    android:id="@+id/register_edtNome"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#eaecec"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="5dp"
+                    android:textSize="5.5pt" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="7dp"
+                    android:text="Sexo"
+                    android:textSize="6pt" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp">
+
+                    <RadioGroup
+                        android:id="@+id/radioGenero"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/register_rbMasculino"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.9"
+                            android:text="Masculino"
+                            android:textSize="7pt" />
+
+                        <RadioButton
+                            android:id="@+id/register_rbFeminino"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.9"
+                            android:text="Feminino"
+                            android:textSize="7pt" />
+
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="7dp"
+                    android:text="Email"
+                    android:textSize="6pt" />
+
+                <EditText
+                    android:id="@+id/register_edtEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#eaecec"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="5dp"
+                    android:textSize="5.5pt" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Senha"
+                    android:textSize="6pt" />
+
+                <EditText
+                    android:id="@+id/register_edtSenha"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#eaecec"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="5dp"
+                    android:inputType="textPassword"
+                    android:textSize="5.5pt" />
+
+                <Button
+                    android:id="@+id/register_btnCadastrar"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="20dp"
+                    android:background="#1dc2c6"
+                    android:text="Cadastrar"
+                    android:textColor="@android:color/white"
+                    android:textSize="7pt" />
+
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="7dp"
-                android:text="Email"
-                android:textSize="6pt" />
+                android:layout_gravity="center_vertical|center"
+                android:layout_marginLeft="27dp"
+                android:layout_marginTop="10dp">
 
-            <EditText
-                android:id="@+id/register_edtEmail"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="7dp"
-                android:background="#eaecec"
-                android:drawableLeft="@android:color/transparent"
-                android:drawablePadding="5dp"
-                android:textSize="5.5pt" />
+                <TextView
+                    android:id="@+id/tvCriarConta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Já possui conta?"
+                    android:textSize="5pt" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="10dp"
-                android:text="Senha"
-                android:textSize="6pt" />
-
-            <EditText
-                android:id="@+id/register_edtSenha"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="7dp"
-                android:background="#eaecec"
-                android:drawableLeft="@android:color/transparent"
-                android:drawablePadding="5dp"
-                android:inputType="textPassword"
-                android:textSize="5.5pt" />
-
-            <Button
-                android:id="@+id/register_btnCadastrar"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="20dp"
-                android:background="#1dc2c6"
-                android:text="Cadastrar"
-                android:textColor="@android:color/white"
-                android:textSize="7pt" />
-
+                <Button
+                    android:id="@+id/btnCriarConta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_below="@+id/tvCriarConta"
+                    android:background="@android:color/transparent"
+                    android:hint="Entrar"
+                    android:paddingStart="5dp"
+                    android:textAlignment="textStart"
+                    android:textColorHint="#1dc2c6"
+                    android:textSize="5pt" />
+            </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center"
-            android:layout_marginLeft="27dp"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:id="@+id/tvCriarConta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Já possui conta?"
-                android:textSize="5pt"/>
-
-            <Button
-                android:id="@+id/btnCriarConta"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_below="@+id/tvCriarConta"
-                android:background="@android:color/transparent"
-                android:hint="Entrar"
-                android:paddingStart="5dp"
-                android:textAlignment="textStart"
-                android:textColorHint="#1dc2c6"
-                android:textSize="5pt" />
-        </LinearLayout>
-    </LinearLayout>
 
 </LinearLayout>

@@ -37,7 +37,7 @@ public interface FindApiService {
 
     //Atualização de um Usuario
     @Headers("Content-type:application/json")
-    @POST("user/atualizar")
+    @PUT("user/atualizar")
     Call<Usuario> atualizarUsuario(@Body Usuario usuario);
 
     //Desativar um Usuario

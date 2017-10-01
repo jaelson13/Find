@@ -13,22 +13,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Usuario;
-import find.com.find.Model.UsuarioAtivoSingleton;
+import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
+import find.com.find.Util.Validacoes;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -109,7 +102,7 @@ public class Login_Fragmento extends Fragment {
                                     case 200:
                                         Usuario usuario = response.body();
                                         Toast.makeText(getContext(), "Login efetuado", Toast.LENGTH_SHORT).show();
-                                        UsuarioAtivoSingleton.setUsuario(usuario);
+                                        UsuarioApplication.setUsuario(usuario);
                                         Intent intent = new Intent(getActivity(), Principal_Activity.class);
                                         startActivity(intent);
                                         getActivity().finish();
@@ -149,22 +142,12 @@ public class Login_Fragmento extends Fragment {
             return false;
         }
 
-        if (!validarEmail(edtEmail.getText().toString())) {
+        if (!Validacoes.validarEmail(edtEmail.getText().toString())) {
             edtEmail.setError("E-mail inválido");
             return false;
         }
 
         return true;
     }
-
-    private boolean validarEmail(String email) {
-        Pattern pattern;
-        Matcher matcher;
-        String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        pattern = Pattern.compile(EMAIL_PATTERN);
-        matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
 
 }

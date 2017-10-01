@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.regex.Matcher;
@@ -32,6 +36,7 @@ import find.com.find.Model.Usuario;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
+import find.com.find.Util.Validacoes;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,7 +62,7 @@ public class Register_Fragmento extends Fragment{
     private ImageButton btnGalery;
     private ImageView icImage;
     private Uri imagemSelecionada;
-    private boolean flag;
+    private boolean retorno;
     private boolean open;
 
     public static Register_Fragmento newInstance(int page){
@@ -145,7 +150,7 @@ public class Register_Fragmento extends Fragment{
 
             }
         });
-/*
+
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,11 +170,21 @@ public class Register_Fragmento extends Fragment{
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            //String retorno = response.body();
+                            if(response.code() == 201){
+                                Toast.makeText(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getActivity(),Login_Activity.class);
+                                startActivity(intent);
+                            }
 
-                            Toast.makeText(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(),Login_Activity.class);
-                            startActivity(intent);
+
+                            /*
+                            switch(response.code()){
+                                case 201:
+
+                                case 400:
+                                    Toast.makeText(getContext(), "Falha ao cadastrar", Toast.LENGTH_SHORT).show();
+                            }
+*/
 
 
 
@@ -183,7 +198,7 @@ public class Register_Fragmento extends Fragment{
                 }
             }
         });
-*/
+
         return view;
     }
 
@@ -204,7 +219,7 @@ public class Register_Fragmento extends Fragment{
             return false;
         }
 
-        if(!validarEmail(edtEmail.getText().toString())){
+        if(!Validacoes.validarEmail(edtEmail.getText().toString())){
             edtEmail.setError("E-mail inválido");
             return false;
         }
@@ -223,23 +238,14 @@ public class Register_Fragmento extends Fragment{
         return true;
     }
 
-    private boolean validarEmail(String email) {
-        Pattern pattern;
-        Matcher matcher;
-        String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        pattern = Pattern.compile(EMAIL_PATTERN);
-        matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-    //TESTAR
+    //Verifica se o email já existe
     private boolean validarEmailBanco(String email) {
         FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
         final Call<Boolean> call = servicos.verificarEmail(email);
-
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                flag = response.body();
+                retorno = response.body();
             }
 
             @Override
@@ -247,8 +253,7 @@ public class Register_Fragmento extends Fragment{
                 Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
             }
         });
-
-        return flag;
+        return retorno;
     }
 
     @Override
