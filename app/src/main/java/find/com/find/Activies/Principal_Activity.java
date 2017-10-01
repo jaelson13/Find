@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -86,14 +87,9 @@ public class Principal_Activity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
-        btnEntrar = (Button) findViewById(R.id.principal_btnEntrar);
-        if (UsuarioApplication.getUsuario() != null) {
-            btnEntrar.setVisibility(View.GONE);
-            btnEntrar.setClickable(false);
-        } else {
-            btnEntrar.setVisibility(View.VISIBLE);
-            btnEntrar.setClickable(true);
-        }
+        testarBotaoEntrar();
+        ajusteToolbarNav();
+
 
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +99,40 @@ public class Principal_Activity extends AppCompatActivity
             }
         });
 
+        //Mapa
+        mHandler = new Handler();
+        mDeveExibirDialog = savedInstanceState == null;
+        ImageView imv = (ImageView) findViewById(R.id.imgLocal);
+
+        imv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               enableMyLocation();
+            }
+        });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
+                .addConnectionCallbacks(this).addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API).addApi(Places.PLACE_DETECTION_API).build();
+        googleApiClient.connect();
+        mapFragment.getMapAsync(this);
+
+    }
+
+    //CONFIGURAÇÃO LAYOUT
+    private void testarBotaoEntrar() {
+        btnEntrar = (Button) findViewById(R.id.principal_btnEntrar);
+        if (UsuarioApplication.getUsuario() != null) {
+            btnEntrar.setVisibility(View.GONE);
+            btnEntrar.setClickable(false);
+        } else {
+            btnEntrar.setVisibility(View.VISIBLE);
+            btnEntrar.setClickable(true);
+        }
+    }
+
+    private void ajusteToolbarNav(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -116,33 +146,9 @@ public class Principal_Activity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationMenu();
-
-        mHandler = new Handler();
-        mDeveExibirDialog = savedInstanceState == null;
-        ImageView imv = (ImageView) findViewById(R.id.imgLocal);
-
-        imv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ultimaLocalizacao();
-            }
-        });
-
-        //Testar
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
-        googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
-                .addConnectionCallbacks(this).addApi(LocationServices.API)
-                .addApi(Places.GEO_DATA_API).addApi(Places.PLACE_DETECTION_API).build();
-        googleApiClient.connect();
-        mapFragment.getMapAsync(this);
-
     }
 
-    //CONFIGURAÇÃO LAYOUT
+
     private void navigationMenu() {
        // navigationView.getMenu().clear();
         //navigationView.inflateHeaderView(R.layout.nav_header_principal_);
@@ -194,12 +200,14 @@ public class Principal_Activity extends AppCompatActivity
             ft.commit();
         }else if(id == R.id.nav_alterardados){
             FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Alterar_Usuario_Fragmento.newInstance(1));
+            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Alterar_Usuario_Fragmento.newInstance());
             ft.addToBackStack(null);
             ft.commit();
 
+        }else if(id == R.id.nav_alterarsenha) {
+            CardView cardView = (CardView) findViewById(R.id.card_alterarsenha);
+            cardView.setVisibility(View.VISIBLE);
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -322,6 +330,7 @@ public class Principal_Activity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         enableMyLocation();
+        testarBotaoEntrar();
     }
 
     @Override
@@ -408,7 +417,7 @@ public class Principal_Activity extends AppCompatActivity
                     && conectivtyManager.getActiveNetworkInfo().isAvailable()
                     && conectivtyManager.getActiveNetworkInfo().isConnected()) {
                 conectado = true;
-                snackbar.dismiss();
+
             } else {
                 conectado = false;
                 if(!snackbar.isShown()) {
