@@ -35,13 +35,13 @@ import retrofit2.Response;
 
 public class Alterar_Usuario_Fragmento extends Fragment {
 
-    private TextView edtNome, edtEmail, edtSenha, edtSexo;
-    private CardView cardView;
-    private EditText edtUrlImagem, senhaAtual, novaSenha;
+    private TextView tvNome, tvEmail, tvSenha, tvSexo;
+    private CardView cardView,cardViewDados;
+    private EditText edtUrlImagem, senhaAtual, novaSenha,edtNome;
     private RadioButton rbFeminino;
     private RadioButton rbMasculino;
-    private FloatingActionButton btnAlterar;
-    private Button card_btnAlterar;
+    private FloatingActionButton card_btnAlterarDados;
+    private Button card_btnAlterar,btnAlterar;
 
     public static Alterar_Usuario_Fragmento newInstance() {
         Alterar_Usuario_Fragmento fragmento = new Alterar_Usuario_Fragmento();
@@ -58,22 +58,37 @@ public class Alterar_Usuario_Fragmento extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.cardview_alterar_dados_ususario, container, false);
 
-        edtNome = (TextView) view.findViewById(R.id.alterar_edtNome);
-        edtEmail = (TextView) view.findViewById(R.id.alterar_edtEmail);
-        edtSenha = (TextView) view.findViewById(R.id.alterar_edtSenha);
-        edtSexo = (TextView) view.findViewById(R.id.alterar_edtSexo);
+        //Principal
+        tvNome = (TextView) view.findViewById(R.id.alterar_tvNome);
+        tvEmail = (TextView) view.findViewById(R.id.alterar_tvEmail);
+        tvSenha = (TextView) view.findViewById(R.id.alterar_tvSenha);
+        tvSexo = (TextView) view.findViewById(R.id.alterar_tvSexo);
+        //Card Senha
         cardView = (CardView) view.findViewById(R.id.card_alterarsenha);
-        btnAlterar = (FloatingActionButton) view.findViewById(R.id.alterar_btnAlterar);
         card_btnAlterar = (Button) view.findViewById(R.id.card_btnAlterarSenha);
         senhaAtual = (EditText) view.findViewById(R.id.senha_atual);
         novaSenha = (EditText) view.findViewById(R.id.nova_senha);
+        //Card Dados
+        cardViewDados = (CardView) view.findViewById(R.id.card_alterarDados);
+        card_btnAlterarDados = (FloatingActionButton) view.findViewById(R.id.card_btnAlterarDados);
+        btnAlterar = (Button) view.findViewById(R.id.alterar_btnAlterar);
+        edtNome = (EditText) view.findViewById(R.id.alterar_edtNome);
+        rbFeminino = (RadioButton) view.findViewById(R.id.alterar_rbFeminino);
+        rbMasculino = (RadioButton) view.findViewById(R.id.alterar_rbMasculino);
         atribuirDadosUser();
 
-        edtSenha.setOnClickListener(new View.OnClickListener() {
+        tvSenha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 cardView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        card_btnAlterarDados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardViewDados.setVisibility(View.VISIBLE);
             }
         });
 
@@ -85,6 +100,13 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             }
         });
 
+        Button btnFecharCardDados = (Button) view.findViewById(R.id.card_fecharDados);
+        btnFecharCardDados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardViewDados.setVisibility(View.GONE);
+            }
+        });
         card_btnAlterar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +121,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                             if (response.code() == 200) {
                                 Toast.makeText(getContext(), "Senha alterada", Toast.LENGTH_SHORT).show();
                                 cardView.setVisibility(View.GONE);
+
                             }
                         }
 
@@ -130,8 +153,8 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                             if (response.code() == 200) {
                                 Toast.makeText(getContext(), "Dados Alterados", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getActivity(), Principal_Activity.class);
-                                startActivity(intent);
+                                cardViewDados.setVisibility(View.GONE);
+                                atribuirDadosUser();
                             }
                         }
 
@@ -168,9 +191,15 @@ public class Alterar_Usuario_Fragmento extends Fragment {
     }
 
     private void atribuirDadosUser() {
+        tvNome.setText(UsuarioApplication.getUsuario().getNome());
+        tvEmail.setText(UsuarioApplication.getUsuario().getEmail());
+        tvSexo.setText(UsuarioApplication.getUsuario().getSexo());
         edtNome.setText(UsuarioApplication.getUsuario().getNome());
-        edtEmail.setText(UsuarioApplication.getUsuario().getEmail());
-        edtSexo.setText(UsuarioApplication.getUsuario().getSexo());
+        if(UsuarioApplication.getUsuario().getSexo().equals("Masculino")){
+            rbMasculino.setChecked(true);
+        }else {
+            rbFeminino.setChecked(true);
+        }
     }
 
 

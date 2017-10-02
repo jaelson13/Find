@@ -204,9 +204,6 @@ public class Principal_Activity extends AppCompatActivity
             ft.addToBackStack(null);
             ft.commit();
 
-        }else if(id == R.id.nav_alterarsenha) {
-            CardView cardView = (CardView) findViewById(R.id.card_alterarsenha);
-            cardView.setVisibility(View.VISIBLE);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
