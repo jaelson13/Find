@@ -190,21 +190,31 @@ public class Principal_Activity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        FragmentManager fm;
+        FragmentTransaction ft;
 
-
-        if (id == R.id.nav_mapearlocal) {
-            ultimaLocalizacao();
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance(1));
-            ft.addToBackStack(null);
-            ft.commit();
-        }else if(id == R.id.nav_alterardados){
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Alterar_Usuario_Fragmento.newInstance());
-            ft.addToBackStack(null);
-            ft.commit();
-
+        switch (id){
+            case R.id.nav_mapearlocal:
+                ultimaLocalizacao();
+                fm = getSupportFragmentManager();
+                ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance(1));
+                ft.addToBackStack(null);
+                ft.commit();
+                break;
+            case R.id.nav_alterardados:
+                fm = getSupportFragmentManager();
+                ft = fm.beginTransaction().replace(R.id.container, Alterar_Usuario_Fragmento.newInstance());
+                ft.addToBackStack(null);
+                ft.commit();
+                break;
+            case R.id.nav_sair:
+                UsuarioApplication.setUsuario(null);
+                Intent intent = new Intent(this,Principal_Activity.class);
+                startActivity(intent);
+                finish();
+                break;
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -432,7 +442,7 @@ public class Principal_Activity extends AppCompatActivity
 
     //Desatiar conta do usuário
     public void desativarConta(){
-        FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
+        FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
         final Call<Boolean> call = servicos.desativarUsuario(UsuarioApplication.getUsuario().getIdUsuario());
         call.enqueue(new Callback<Boolean>() {
             @Override

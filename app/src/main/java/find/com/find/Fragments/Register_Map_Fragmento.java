@@ -89,7 +89,7 @@ public class Register_Map_Fragmento extends Fragment {
                     mapeamento.setLatitude((int) Principal_Activity.localizacao.getLatitude());
                     mapeamento.setLongitude((int) Principal_Activity.localizacao.getLongitude());
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
                     final Call<Mapeamento> call = servicos.salvarMapeamento(mapeamento);
                     call.enqueue(new Callback<Mapeamento>() {
                         @Override

@@ -37,7 +37,7 @@
         </item>
 
         <item
-            android:id="@+id/nav_item3"
+            android:id="@+id/nav_sair"
             android:title="Sair" />
     </group>
 

@@ -1,15 +1,15 @@
 package find.com.find.Fragments;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +19,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import com.theartofdev.edmodo.cropper.CropImage;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Usuario;
+import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
@@ -45,29 +42,22 @@ import retrofit2.Response;
  * Created by Jaelson on 13/09/2017.
  */
 
-public class Register_Fragmento extends Fragment{
+public class Register_Fragmento extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage;
 
-    private EditText edtNome;
-    private EditText edtEmail;
-    private EditText edtSenha;
-    private RadioGroup radioGenero;
-    private RadioButton rbFeminino;
-    private RadioButton rbMasculino;
+    private EditText edtNome, edtEmail, edtSenha;
+    private RadioButton rbFeminino, rbMasculino;
     private Button btnCadastrar;
-    private ImageButton btnVoltar;
-    private ImageButton btnOpImage;
-    private ImageButton btnCamera;
-    private ImageButton btnGalery;
+    private ImageButton btnVoltar, btnOpImage, btnCamera, btnGalery;
     private ImageView icImage;
     private Uri imagemSelecionada;
-    private boolean retorno;
-    private boolean open;
+    private Bitmap bitmap;
+    private boolean retorno, open;
 
-    public static Register_Fragmento newInstance(int page){
+    public static Register_Fragmento newInstance(int page) {
         Bundle args = new Bundle();
-        args.putInt(ARG_PAGE,page);
+        args.putInt(ARG_PAGE, page);
         Register_Fragmento fragmento = new Register_Fragmento();
         fragmento.setArguments(args);
         return fragmento;
@@ -82,7 +72,7 @@ public class Register_Fragmento extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmento_register,container,false);
+        View view = inflater.inflate(R.layout.fragmento_register, container, false);
 
         edtNome = (EditText) view.findViewById(R.id.register_edtNome);
         edtEmail = (EditText) view.findViewById(R.id.register_edtEmail);
@@ -90,7 +80,6 @@ public class Register_Fragmento extends Fragment{
         btnCadastrar = (Button) view.findViewById(R.id.register_btnCadastrar);
         rbFeminino = (RadioButton) view.findViewById(R.id.register_rbFeminino);
         rbMasculino = (RadioButton) view.findViewById(R.id.register_rbMasculino);
-        radioGenero = (RadioGroup) view.findViewById(R.id.radioGenero);
         btnVoltar = (ImageButton) view.findViewById(R.id.register_btnVoltar);
 
         //Pegar imagem
@@ -103,7 +92,7 @@ public class Register_Fragmento extends Fragment{
             @Override
             public void onClick(View v) {
 
-                if(open){
+                if (open) {
                     btnCamera.setVisibility(View.GONE);
                     btnCamera.setClickable(false);
 
@@ -128,15 +117,17 @@ public class Register_Fragmento extends Fragment{
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(Intent.createChooser(i,"Selecionar Foto"), 124);
+                startActivityForResult(Intent.createChooser(i, "Selecionar Foto"), 124);
             }
         });
 
         btnGalery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                startActivityForResult(Intent.createChooser(i, "Selecionar Foto"), 123);
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent, 123);
             }
         });
         //Fim Pegar Imagem
@@ -154,37 +145,32 @@ public class Register_Fragmento extends Fragment{
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validarCampos()){
+                if (validarCampos()) {
                     Usuario usuario = new Usuario();
                     usuario.setNome(edtNome.getText().toString());
                     usuario.setEmail(edtEmail.getText().toString());
                     usuario.setSenha(edtSenha.getText().toString());
+                    usuario.setUrlImgPerfil(null);
                     if (rbFeminino.isChecked()) {
                         usuario.setSexo(rbFeminino.getText().toString());
                     } else {
                         usuario.setSexo(rbMasculino.getText().toString());
                     }
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-                    final Call<Usuario> call = servicos.salvarUsuario(usuario);
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
+                    final Call<Usuario> call = servicos.salvarUsuario(UsuarioApplication.getToken().getToken(),usuario);
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            if(response.code() == 201){
-                                Toast.makeText(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getActivity(),Login_Activity.class);
-                                startActivity(intent);
-                            }
 
-
-                            /*
                             switch(response.code()){
-                                case 201:
-
-                                case 400:
+                                case 200:
+                                    Toast.makeText(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), Login_Activity.class);
+                                    startActivity(intent);
+                                case 209:
                                     Toast.makeText(getContext(), "Falha ao cadastrar", Toast.LENGTH_SHORT).show();
                             }
-*/
 
 
 
@@ -192,6 +178,7 @@ public class Register_Fragmento extends Fragment{
 
                         @Override
                         public void onFailure(Call<Usuario> call, Throwable t) {
+                            Log.e("Falha",t.getMessage());
                             Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -219,7 +206,7 @@ public class Register_Fragmento extends Fragment{
             return false;
         }
 
-        if(!Validacoes.validarEmail(edtEmail.getText().toString())){
+        if (!Validacoes.validarEmail(edtEmail.getText().toString())) {
             edtEmail.setError("E-mail inválido");
             return false;
         }
@@ -230,7 +217,7 @@ public class Register_Fragmento extends Fragment{
             return false;
         }
 
-        if(validarEmailBanco(edtEmail.getText().toString())){
+        if (validarEmailBanco(edtEmail.getText().toString())) {
             edtEmail.setError("Email já existe");
             return false;
         }
@@ -240,12 +227,18 @@ public class Register_Fragmento extends Fragment{
 
     //Verifica se o email já existe
     private boolean validarEmailBanco(String email) {
-        FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-        final Call<Boolean> call = servicos.verificarEmail(email);
+        FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
+        final Call<Boolean> call = servicos.verificarEmail(UsuarioApplication.getToken().getToken(),email);
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                retorno = response.body();
+                switch (response.code()){
+                    case 200:
+                        retorno = true;
+                    case 209:
+                        retorno = false;
+                }
+
             }
 
             @Override
@@ -262,19 +255,28 @@ public class Register_Fragmento extends Fragment{
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 123) {
                 imagemSelecionada = data.getData();
-                CropImage.activity(imagemSelecionada).setAspectRatio(1,1).start(getActivity());
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imagemSelecionada);
+                    icImage.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             if (requestCode == 124) {
                 Bundle bundle = data.getExtras();
-                Bitmap bitmap = (Bitmap) bundle.get("data");
+                bitmap = (Bitmap) bundle.get("data");
                 icImage.setImageBitmap(bitmap);
             }
-            if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-                CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                imagemSelecionada = result.getUri();
-                icImage.setImageURI(imagemSelecionada);
-            }
         }
+    }
+
+    private String imageParaString() {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] imgByte = byteArrayOutputStream.toByteArray();
+        Log.i("Image",Base64.encodeToString(imgByte, Base64.URL_SAFE));
+        return Base64.encodeToString(imgByte, Base64.URL_SAFE);
     }
 }

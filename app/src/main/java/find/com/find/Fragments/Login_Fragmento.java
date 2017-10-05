@@ -91,37 +91,36 @@ public class Login_Fragmento extends Fragment {
             public void onClick(View v) {
                 if (validarCampos()) {
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
                     final Call<Usuario> call = servicos.fazerLogin(edtEmail.getText().toString(), edtSenha.getText().toString());
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-
-                            if (response.isSuccessful()) {
-                                switch (response.code()) {
-                                    case 200:
-                                        Usuario usuario = response.body();
-                                        Toast.makeText(getContext(), "Login efetuado", Toast.LENGTH_SHORT).show();
-                                        UsuarioApplication.setUsuario(usuario);
-                                        Intent intent = new Intent(getActivity(), Principal_Activity.class);
-                                        startActivity(intent);
-                                        getActivity().finish();
-                                        break;
-                                    case 400:
-                                        Toast.makeText(getContext(), "Usuario desativado!", Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case 404:
-                                        Toast.makeText(getContext(), "Usuario ou senha invalidos", Toast.LENGTH_SHORT).show();
-                                        break;
-                                }
+                            switch (response.code()) {
+                                case 200:
+                                    Usuario usuario = response.body();
+                                    Toast.makeText(getContext(), "Login efetuado", Toast.LENGTH_SHORT).show();
+                                    UsuarioApplication.setUsuario(usuario);
+                                    Intent intent = new Intent(getActivity(), Principal_Activity.class);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                    break;
+                                case 204:
+                                    Toast.makeText(getContext(), "Usuario desativado!", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 404:
+                                    Toast.makeText(getContext(), "Usuario ou senha invalidos", Toast.LENGTH_SHORT).show();
+                                    break;
 
                             }
+
                         }
+
 
                         @Override
                         public void onFailure(Call<Usuario> call, Throwable t) {
-                            Log.e("erroF",t.getMessage());
-                            Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                            Log.e("erroF", t.getMessage());
+                           // Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

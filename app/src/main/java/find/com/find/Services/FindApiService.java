@@ -2,6 +2,7 @@ package find.com.find.Services;
 
 import find.com.find.Model.Feedback;
 import find.com.find.Model.Mapeamento;
+import find.com.find.Model.Token;
 import find.com.find.Model.Usuario;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -11,6 +12,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -22,6 +24,12 @@ import retrofit2.http.Query;
  */
 
 public interface FindApiService {
+
+
+    @Headers("Content-type:application/json")
+    @GET("auth")
+    Call<Token> pegarToken();
+
     //USUARIO
 
     //Pega dados do Usuario pelo id
@@ -33,12 +41,12 @@ public interface FindApiService {
     //FindWebService/webresources/com.find.usuario/create
     @Headers("Content-type:application/json")
     @POST("user/add")
-    Call<Usuario> salvarUsuario(@Body Usuario usuario);
+    Call<Usuario> salvarUsuario(@Header("X-Token") String token,@Body Usuario usuario);
 
     //Atualização de um Usuario
     @Headers("Content-type:application/json")
     @PUT("user/atualizar")
-    Call<Usuario> atualizarUsuario(@Body Usuario usuario);
+    Call<Usuario> atualizarUsuario(@Header("X-Token") String token,@Body Usuario usuario);
 
     //Desativar um Usuario
     @FormUrlEncoded
@@ -53,7 +61,7 @@ public interface FindApiService {
     //Verificar Email
     @Headers("Content-type:application/json")
     @POST("user/validar")
-    Call<Boolean> verificarEmail(@Query("email") String email);
+    Call<Boolean> verificarEmail(@Header("X-Token") String token,@Query("email") String email);
 
 
     //MAPEAMENTO

@@ -19,6 +19,7 @@
         android:icon="@drawable/ic_iconexhdpi"
         android:label="Find"
         android:roundIcon="@drawable/ic_iconemdpi"
+        android:name=".Model.UsuarioApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data

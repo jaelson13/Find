@@ -113,12 +113,12 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                 if (validarSenha()) {
                     UsuarioApplication.getUsuario().setSenha(novaSenha.getText().toString());
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getUsuario());
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
+                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getToken().getToken(),UsuarioApplication.getUsuario());
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            if (response.code() == 200) {
+                            if (response.code() == 800) {
                                 Toast.makeText(getContext(), "Senha alterada", Toast.LENGTH_SHORT).show();
                                 cardView.setVisibility(View.GONE);
 
@@ -146,12 +146,12 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                         UsuarioApplication.getUsuario().setSexo("Feminino");
                     }
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class);
-                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getUsuario());
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
+                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getToken().getToken(),UsuarioApplication.getUsuario());
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            if (response.code() == 200) {
+                            if (response.code() == 800) {
                                 Toast.makeText(getContext(), "Dados Alterados", Toast.LENGTH_SHORT).show();
                                 cardViewDados.setVisibility(View.GONE);
                                 atribuirDadosUser();
