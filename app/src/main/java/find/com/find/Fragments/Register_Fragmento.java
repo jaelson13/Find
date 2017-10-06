@@ -1,7 +1,6 @@
 package find.com.find.Fragments;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -20,8 +19,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
-
-import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,6 +43,7 @@ public class Register_Fragmento extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage;
 
+
     private EditText edtNome, edtEmail, edtSenha;
     private RadioButton rbFeminino, rbMasculino;
     private Button btnCadastrar;
@@ -53,7 +51,7 @@ public class Register_Fragmento extends Fragment {
     private ImageView icImage;
     private Uri imagemSelecionada;
     private Bitmap bitmap;
-    private boolean retorno, open;
+    private boolean open, retorno;
 
     public static Register_Fragmento newInstance(int page) {
         Bundle args = new Bundle();
@@ -157,28 +155,28 @@ public class Register_Fragmento extends Fragment {
                         usuario.setSexo(rbMasculino.getText().toString());
                     }
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
-                    final Call<Usuario> call = servicos.salvarUsuario(UsuarioApplication.getToken().getToken(),usuario);
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+                    final Call<Usuario> call = servicos.salvarUsuario(usuario);
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
 
-                            switch(response.code()){
-                                case 200:
-                                    Toast.makeText(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), Login_Activity.class);
-                                    startActivity(intent);
-                                case 209:
-                                    Toast.makeText(getContext(), "Falha ao cadastrar", Toast.LENGTH_SHORT).show();
-                            }
+                            if (response.code() == 201) {
+                                Toast.makeText(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getActivity(), Login_Activity.class);
+                                startActivity(intent);
+                            } else if (response.code() == 204) {
 
+                                edtEmail.setError("Email já existe");
+
+                            }
 
 
                         }
 
                         @Override
                         public void onFailure(Call<Usuario> call, Throwable t) {
-                            Log.e("Falha",t.getMessage());
+                            Log.e("Falha", t.getMessage());
                             Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -216,37 +214,7 @@ public class Register_Fragmento extends Fragment {
             rbMasculino.setError("Seleciona o sexo");
             return false;
         }
-
-        if (validarEmailBanco(edtEmail.getText().toString())) {
-            edtEmail.setError("Email já existe");
-            return false;
-        }
-
         return true;
-    }
-
-    //Verifica se o email já existe
-    private boolean validarEmailBanco(String email) {
-        FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
-        final Call<Boolean> call = servicos.verificarEmail(UsuarioApplication.getToken().getToken(),email);
-        call.enqueue(new Callback<Boolean>() {
-            @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                switch (response.code()){
-                    case 200:
-                        retorno = true;
-                    case 209:
-                        retorno = false;
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
-                Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-            }
-        });
-        return retorno;
     }
 
     @Override
@@ -276,7 +244,7 @@ public class Register_Fragmento extends Fragment {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();
-        Log.i("Image",Base64.encodeToString(imgByte, Base64.URL_SAFE));
+        Log.i("Image", Base64.encodeToString(imgByte, Base64.URL_SAFE));
         return Base64.encodeToString(imgByte, Base64.URL_SAFE);
     }
 }

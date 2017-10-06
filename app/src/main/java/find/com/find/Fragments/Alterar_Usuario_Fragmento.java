@@ -118,7 +118,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            if (response.code() == 800) {
+                            if (response.code() == 200) {
                                 Toast.makeText(getContext(), "Senha alterada", Toast.LENGTH_SHORT).show();
                                 cardView.setVisibility(View.GONE);
 
@@ -151,7 +151,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            if (response.code() == 800) {
+                            if (response.code() == 200) {
                                 Toast.makeText(getContext(), "Dados Alterados", Toast.LENGTH_SHORT).show();
                                 cardViewDados.setVisibility(View.GONE);
                                 atribuirDadosUser();

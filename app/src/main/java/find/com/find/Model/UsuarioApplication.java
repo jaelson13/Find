@@ -21,6 +21,7 @@ public class UsuarioApplication extends Application {
     private static Token token;
     private static UsuarioApplication instacia = null;
 
+
     public static Token getToken() {
         return token;
     }

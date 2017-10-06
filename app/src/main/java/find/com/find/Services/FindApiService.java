@@ -5,8 +5,6 @@ import find.com.find.Model.Mapeamento;
 import find.com.find.Model.Token;
 import find.com.find.Model.Usuario;
 import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
@@ -41,7 +39,7 @@ public interface FindApiService {
     //FindWebService/webresources/com.find.usuario/create
     @Headers("Content-type:application/json")
     @POST("user/add")
-    Call<Usuario> salvarUsuario(@Header("X-Token") String token,@Body Usuario usuario);
+    Call<Usuario> salvarUsuario(@Body Usuario usuario);
 
     //Atualização de um Usuario
     @Headers("Content-type:application/json")
@@ -61,7 +59,7 @@ public interface FindApiService {
     //Verificar Email
     @Headers("Content-type:application/json")
     @POST("user/validar")
-    Call<Boolean> verificarEmail(@Header("X-Token") String token,@Query("email") String email);
+    Call<Retorno> verificarEmail(@Query("email") String email);
 
 
     //MAPEAMENTO
