@@ -2,11 +2,14 @@ package find.com.find.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -21,7 +24,10 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
@@ -31,6 +37,10 @@ import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
 import find.com.find.Util.Validacoes;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,31 +50,33 @@ import retrofit2.Response;
  */
 
 public class Register_Fragmento extends Fragment {
-    public static final String ARG_PAGE = "ARG_PAGE";
-    private int mPage;
+    //Constantites
+    private static final int PICK_IMAGE = 123 ;
+    private static final int CAM_IMAGE = 124 ;
 
-
+    //Normais
     private EditText edtNome, edtEmail, edtSenha;
     private RadioButton rbFeminino, rbMasculino;
     private Button btnCadastrar;
     private ImageButton btnVoltar, btnOpImage, btnCamera, btnGalery;
     private ImageView icImage;
+    private boolean open;
+
+    //Imagem
+    private Cursor cursor;
     private Uri imagemSelecionada;
     private Bitmap bitmap;
-    private boolean open, retorno;
+    private String imagePath;
 
-    public static Register_Fragmento newInstance(int page) {
-        Bundle args = new Bundle();
-        args.putInt(ARG_PAGE, page);
+
+    public static Register_Fragmento newInstance() {
         Register_Fragmento fragmento = new Register_Fragmento();
-        fragmento.setArguments(args);
         return fragmento;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPage = getArguments().getInt(ARG_PAGE);
     }
 
 
@@ -114,8 +126,8 @@ public class Register_Fragmento extends Fragment {
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(Intent.createChooser(i, "Selecionar Foto"), 124);
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(Intent.createChooser(intent, "Camera imagem"), CAM_IMAGE);
             }
         });
 
@@ -124,8 +136,8 @@ public class Register_Fragmento extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, 123);
+                intent.setAction(Intent.ACTION_PICK);
+                startActivityForResult(Intent.createChooser(intent,"Selecionar imagem"), PICK_IMAGE);
             }
         });
         //Fim Pegar Imagem
@@ -170,10 +182,7 @@ public class Register_Fragmento extends Fragment {
                                 edtEmail.setError("Email já existe");
 
                             }
-
-
                         }
-
                         @Override
                         public void onFailure(Call<Usuario> call, Throwable t) {
                             Log.e("Falha", t.getMessage());
@@ -221,18 +230,38 @@ public class Register_Fragmento extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == 123) {
+            if (requestCode == PICK_IMAGE) {
                 imagemSelecionada = data.getData();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imagemSelecionada);
-                    icImage.setImageBitmap(bitmap);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+                File file = new File(getPath(imagemSelecionada));
+                RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("file",file.getName(),fbody);
+
+                FindApiService service = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
+                Call<ResponseBody> call = service.upImage(body);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            Log.i("upImage","Upload feito com sucesso");
+                        }else if(response.code() == 404){
+                                Log.i("upImage",response.body().toString());
+                            }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e("Erro Up",t.getMessage());
+                    }
+                });
+
+
+
 
             }
 
-            if (requestCode == 124) {
+            if (requestCode == CAM_IMAGE) {
                 Bundle bundle = data.getExtras();
                 bitmap = (Bitmap) bundle.get("data");
                 icImage.setImageBitmap(bitmap);
@@ -240,11 +269,12 @@ public class Register_Fragmento extends Fragment {
         }
     }
 
-    private String imageParaString() {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] imgByte = byteArrayOutputStream.toByteArray();
-        Log.i("Image", Base64.encodeToString(imgByte, Base64.URL_SAFE));
-        return Base64.encodeToString(imgByte, Base64.URL_SAFE);
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        CursorLoader loading = new CursorLoader(getContext(),uri, projection, null, null, null);
+        Cursor cursor = loading.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 }

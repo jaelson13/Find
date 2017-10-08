@@ -71,7 +71,7 @@ public class Login_Fragmento extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Register_Fragmento.newInstance(1));
+                FragmentTransaction ft = fm.beginTransaction().replace(R.id.container, Register_Fragmento.newInstance());
                 ft.addToBackStack(null);
                 ft.commit();
             }
