@@ -46,6 +46,11 @@ public interface FindApiService {
     @POST("user/add")
     Call<Usuario> salvarUsuario(@Body Usuario usuario);
 
+    @Multipart
+    @POST("user/add")
+    Call<Usuario> salvarUsuarioImagem(@Query("nome") String nome,@Query("email") String email,@Query("senha") String senha,@Query("sexo") String sexo,@Part MultipartBody.Part imagem);
+
+
     //Atualização de um Usuario
     @Headers("Content-type:application/json")
     @PUT("user/atualizar")
