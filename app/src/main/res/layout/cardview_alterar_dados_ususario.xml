@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="15dp"
     android:background="@android:color/white">
-
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layoutTab"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -161,6 +163,29 @@
                 android:textColor="#1dc2c6"
                 android:textSize="7pt" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
+                android:text="Conta"
+                android:textSize="6pt" />
+
+            <TextView
+                android:id="@+id/alterar_tvDesativar"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="7dp"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:text="Desativar Conta"
+                android:textColor="#da0d10"
+                android:textSize="7pt" />
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/card_btnAlterarDados"
                 android:layout_width="40dp"
@@ -271,12 +296,12 @@
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:layout_centerHorizontal="true"
-        android:visibility="gone"
         android:layout_gravity="center"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="60dp"
-        android:background="@drawable/borda">
+        android:background="@drawable/borda"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/card_fecharDados"
@@ -371,7 +396,81 @@
                 android:textSize="7pt" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
-</FrameLayout><!--
+    <!-- CardView Alterar Desativar Conta -->
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_Desativar"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/borda"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/card_fecharCardDesativar"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="5dp"
+            android:background="@android:color/transparent"
+            android:text="X"
+            android:textColor="#7f8484"
+            android:textSize="8pt" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="30dp"
+                android:text="Deseja realmente desativar sua conta?"
+                android:textSize="9pt" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/card_btnDesativarNao"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="15dp"
+                    android:background="#da0d10"
+                    android:text="Não"
+                    android:textColor="@android:color/white"
+                    android:textSize="7pt" />
+
+                <Button
+                    android:id="@+id/card_btnDesativarSim"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="15dp"
+                    android:background="#1dc2c6"
+                    android:text="Sim"
+                    android:textColor="@android:color/white"
+                    android:textSize="7pt" />
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</FrameLayout>
+</ScrollView><!--
 <LinearLayout
 android:id="@+id/linear"
 android:layout_width="match_parent"

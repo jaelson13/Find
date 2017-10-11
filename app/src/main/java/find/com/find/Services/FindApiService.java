@@ -48,7 +48,8 @@ public interface FindApiService {
 
     @Multipart
     @POST("user/add")
-    Call<Usuario> salvarUsuarioImagem(@Query("nome") String nome,@Query("email") String email,@Query("senha") String senha,@Query("sexo") String sexo,@Part MultipartBody.Part imagem);
+    Call<Usuario> salvarUsuarioImagem(@Query("nome") String nome
+            ,@Query("email") String email,@Query("senha") String senha,@Query("sexo") String sexo,@Part MultipartBody.Part imagem);
 
 
     //Atualização de um Usuario
@@ -62,9 +63,9 @@ public interface FindApiService {
 
 
     //Desativar um Usuario
-    @FormUrlEncoded
-    @PUT
-    Call<Boolean> desativarUsuario(@Path("idUsuario") int idUsuario);
+    @Headers("Content-type:application/json")
+    @PUT("user/desativar")
+    Call<Void> desativarUsuario(@Query("idUsuario") int idUsuario);
 
     //Fazer login
     @Headers("Content-type:application/json")

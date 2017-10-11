@@ -449,27 +449,7 @@ public class Principal_Activity extends AppCompatActivity
         return verificaConexao();
     }
 
-    //Desatiar conta do usuário
-    public void desativarConta(){
-        FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
-        final Call<Boolean> call = servicos.desativarUsuario(UsuarioApplication.getUsuario().getIdUsuario());
-        call.enqueue(new Callback<Boolean>() {
-            @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                //String retorno = response.body();
 
-                Toast.makeText(getBaseContext(), "Conta Desativada", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getBaseContext(), Principal_Activity.class);
-                startActivity(intent);
-            }
-
-            @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
-                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
 }
 
 

@@ -23,6 +23,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.wallet.GiftCardWalletObject;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.squareup.picasso.MemoryPolicy;
@@ -59,16 +60,15 @@ public class Alterar_Usuario_Fragmento extends Fragment {
     //Constantites
     private static final int PICK_IMAGE = 123;
     private static final int CAM_IMAGE = 124;
-    private Button btnFecharCard;
-    private Button btnFecharCardDados;
+    private Button btnFecharCard, btnFecharCardDados, btnFecharCardDesativar;
 
-    private TextView tvNome, tvEmail, tvSenha, tvSexo;
-    private CardView cardView, cardViewDados;
+    private TextView tvNome, tvEmail, tvSenha, tvSexo, tvDesativar;
+    private CardView cardView, cardViewDados, cardViewDesativar;
     private EditText senhaAtual, novaSenha, edtNome;
     private RadioButton rbFeminino;
     private RadioButton rbMasculino;
     private FloatingActionButton card_btnAlterarDados;
-    private Button card_btnAlterar, btnAlterar;
+    private Button card_btnAlterar, btnAlterar, btnDesativarSim, btnDesativarNao;
 
     private ImageButton btnOpImage, btnCamera, btnGalery;
     private CircleImageView icPerfil;
@@ -96,6 +96,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         tvNome = (TextView) view.findViewById(R.id.alterar_tvNome);
         tvEmail = (TextView) view.findViewById(R.id.alterar_tvEmail);
         tvSenha = (TextView) view.findViewById(R.id.alterar_tvSenha);
+        tvDesativar = (TextView) view.findViewById(R.id.alterar_tvDesativar);
         tvSexo = (TextView) view.findViewById(R.id.alterar_tvSexo);
         //Card Senha
         cardView = (CardView) view.findViewById(R.id.card_alterarsenha);
@@ -113,14 +114,20 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         rbFeminino = (RadioButton) view.findViewById(R.id.alterar_rbFeminino);
         rbMasculino = (RadioButton) view.findViewById(R.id.alterar_rbMasculino);
         icPerfil = (CircleImageView) view.findViewById(R.id.alterar_icPerfil);
-        atribuirDadosUser();
-        cardsView();
+
+        //CardDesativar
+        cardViewDesativar = (CardView) view.findViewById(R.id.card_Desativar);
+        btnFecharCardDesativar = (Button) view.findViewById(R.id.card_fecharCardDesativar);
+        btnDesativarNao = (Button) view.findViewById(R.id.card_btnDesativarNao);
+        btnDesativarSim = (Button) view.findViewById(R.id.card_btnDesativarSim);
 
         //Pegar imagem
         btnOpImage = (ImageButton) view.findViewById(R.id.register_btnOpImage);
         btnCamera = (ImageButton) view.findViewById(R.id.register_btnCamera);
         btnGalery = (ImageButton) view.findViewById(R.id.register_btnGalery);
         pegarImagem();
+        atribuirDadosUser();
+        cardsView();
         //Fim Pegar Imagem
 
         card_btnAlterar.setOnClickListener(new View.OnClickListener() {
@@ -183,6 +190,35 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             }
         });
 
+        btnDesativarSim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Desatiar conta do usuário
+                FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+                final Call<Void> call = servicos.desativarUsuario(UsuarioApplication.getUsuario().getIdUsuario());
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        //String retorno = response.body();
+                        if (response.code() == 200) {
+                            Toast.makeText(getContext(), "Conta Desativada", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getContext(), Principal_Activity.class);
+                            UsuarioApplication.setUsuario(null);
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+
+        });
+
         return view;
     }
 
@@ -217,7 +253,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         File file = new File(Validacoes.getPath(getContext(), imagemSelecionada));
         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), fbody);
-        Call<ResponseBody> call = servicos.atualizarUsuarioImagem(UsuarioApplication.getUsuario().getIdUsuario(),UsuarioApplication.getUsuario().getEmail(), body);
+        Call<ResponseBody> call = servicos.atualizarUsuarioImagem(UsuarioApplication.getUsuario().getIdUsuario(), UsuarioApplication.getUsuario().getEmail(), body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -231,7 +267,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                         e.printStackTrace();
                     }
                     UsuarioApplication.getUsuario().setUrlImgPerfil(url);
-                    Log.i("url",UsuarioApplication.getUsuario().getUrlImgPerfil());
+                    Log.i("url", UsuarioApplication.getUsuario().getUrlImgPerfil());
                 }
             }
 
@@ -301,6 +337,13 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             }
         });
 
+        tvDesativar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardViewDesativar.setVisibility(View.VISIBLE);
+            }
+        });
+
         card_btnAlterarDados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -316,6 +359,19 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             }
         });
 
+        btnFecharCardDesativar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardViewDesativar.setVisibility(View.GONE);
+            }
+        });
+
+        btnDesativarNao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardViewDesativar.setVisibility(View.GONE);
+            }
+        });
 
         btnFecharCardDados.setOnClickListener(new View.OnClickListener() {
             @Override
