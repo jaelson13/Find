@@ -56,6 +56,11 @@ public interface FindApiService {
     @PUT("user/atualizar")
     Call<Usuario> atualizarUsuario(@Header("X-Token") String token,@Body Usuario usuario);
 
+    @Multipart
+    @POST("user/atualizarImg")
+    Call<ResponseBody> atualizarUsuarioImagem(@Query("idUsuario") int idUsuario,@Query("email") String email,@Part MultipartBody.Part imagem);
+
+
     //Desativar um Usuario
     @FormUrlEncoded
     @PUT

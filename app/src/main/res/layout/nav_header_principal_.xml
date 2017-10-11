@@ -13,12 +13,13 @@
     android:id="@+id/nav_header"
     >
 
-    <ImageButton
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/icPerfil"
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:src="@drawable/ic_imagelog"
         android:layout_gravity="center"
-        android:background="@drawable/radioperfil"/>
+        />
 
     <TextView
         android:id="@+id/nome_user"

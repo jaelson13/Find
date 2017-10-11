@@ -104,7 +104,6 @@ public class Register_Fragmento extends Fragment {
 
             @Override
             public void onClick(View v) {
-
                 if (open) {
                     btnCamera.setVisibility(View.GONE);
                     btnCamera.setClickable(false);
@@ -174,7 +173,7 @@ public class Register_Fragmento extends Fragment {
 
                     FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
                     if (imagemSelecionada != null) {
-                        File file = new File(getPath(imagemSelecionada));
+                        File file = new File(Validacoes.getPath(getContext(),imagemSelecionada));
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), fbody);
                         call = servicos.salvarUsuarioImagem(usuario.getNome(), usuario.getEmail(), usuario.getSenha(), usuario.getSexo(), body);
@@ -258,25 +257,11 @@ public class Register_Fragmento extends Fragment {
                 Bundle extras = data.getExtras();
                 bitmap = (Bitmap) extras.get("data");
                 icImage.setImageBitmap(bitmap);
-                imagemSelecionada = getImageUri(getContext(),bitmap);
+                imagemSelecionada = Validacoes.getImageUri(getContext(), bitmap);
 
             }
         }
     }
 
-    public Uri getImageUri(Context inContext, Bitmap imagem) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        imagem.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), imagem, "Imagem", null);
-        return Uri.parse(path);
-    }
 
-    public String getPath(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        CursorLoader loading = new CursorLoader(getContext(), uri, projection, null, null, null);
-        Cursor cursor = loading.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
 }

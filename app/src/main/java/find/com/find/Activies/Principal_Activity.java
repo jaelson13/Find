@@ -50,7 +50,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import find.com.find.Fragments.Alterar_Usuario_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
 import find.com.find.Model.UsuarioApplication;
@@ -163,16 +165,23 @@ public class Principal_Activity extends AppCompatActivity
             navigationView.getMenu().clear();
             navigationView.inflateHeaderView(R.layout.nav_header_principal_);
             navigationView.inflateMenu(R.menu.activity_home2_drawer);
-            View header = navigationView.getHeaderView(0);
-            TextView tvNome = (TextView) header.findViewById(R.id.nome_user);
-            TextView tvEmail = (TextView) header.findViewById(R.id.email_user);
-            tvNome.setText(UsuarioApplication.getInstacia().getUsuario().getNome());
-            tvEmail.setText(UsuarioApplication.getInstacia().getUsuario().getEmail());
+            atualizarDadosNavegationView();
 
         }
 
     }
-
+    private void atualizarDadosNavegationView(){
+        View header = navigationView.getHeaderView(0);
+        TextView tvNome = (TextView) header.findViewById(R.id.nome_user);
+        TextView tvEmail = (TextView) header.findViewById(R.id.email_user);
+        CircleImageView icPerfil = (CircleImageView) header.findViewById(R.id.icPerfil);
+        tvNome.setText(UsuarioApplication.getInstacia().getUsuario().getNome());
+        tvEmail.setText(UsuarioApplication.getInstacia().getUsuario().getEmail());
+        if(UsuarioApplication.getUsuario().getUrlImgPerfil() != null){
+            Picasso.with(getBaseContext()).invalidate(UsuarioApplication.getUsuario().getUrlImgPerfil());
+            Picasso.with(getBaseContext()).load(UsuarioApplication.getUsuario().getUrlImgPerfil()).into(icPerfil);
+        }
+    }
     //Ao pressionar o botão voltar do proprio aparelho
     @Override
     public void onBackPressed() {
