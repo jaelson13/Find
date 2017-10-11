@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +41,9 @@ public class Login_Fragmento extends Fragment {
     private Button btnCadastrar;
     private Button btnLogar;
     private ImageButton btnVoltar;
+    private CardView card_enviarEmail;
+    private EditText card_edtEmail;
+    private Button card_fechar,card_btnRecuperarSenha,login_btnRecupSenha;
     private boolean flag;
 
 
@@ -66,6 +70,49 @@ public class Login_Fragmento extends Fragment {
         btnLogar = (Button) view.findViewById(R.id.login_btnLogar);
         btnCadastrar = (Button) view.findViewById(R.id.btnCriarConta);
         btnVoltar = (ImageButton) view.findViewById(R.id.login_btnVoltar);
+        card_enviarEmail = (CardView) view.findViewById(R.id.card_enviarEmail);
+        card_btnRecuperarSenha = (Button) view.findViewById(R.id.card_btnRecuperarSenha);
+        card_fechar = (Button) view.findViewById(R.id.card_fechar);
+        card_edtEmail = (EditText) view.findViewById(R.id.card_edtEmail);
+        login_btnRecupSenha = (Button) view.findViewById(R.id.login_btnRecupSenha);
+        cardsView();
+
+        card_btnRecuperarSenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(card_edtEmail.getText().toString())) {
+                    edtEmail.setError("Preecha o email");
+                }else{
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
+                    final Call<Void> call = servicos.recuperarSenha(card_edtEmail.getText().toString());
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            switch (response.code()) {
+                                case 200:
+                                    Toast.makeText(getContext(), "Senha enviada, Acesse seu email", Toast.LENGTH_SHORT).show();
+                                    card_enviarEmail.setVisibility(View.GONE);
+                                    break;
+                                case 204:
+                                    Toast.makeText(getContext(), "Email inválido", Toast.LENGTH_SHORT).show();
+                                    card_edtEmail.setError("Email inválido");
+                                    break;
+                                case 404:
+                                    Toast.makeText(getContext(), "Erro inesperado", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                        }
+
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Log.e("erroF", t.getMessage());
+                            // Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
 
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,6 +194,23 @@ public class Login_Fragmento extends Fragment {
         }
 
         return true;
+    }
+
+    private void cardsView() {
+        login_btnRecupSenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                card_enviarEmail.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        card_fechar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                card_enviarEmail.setVisibility(View.GONE);
+            }
+        });
     }
 
 }

@@ -77,6 +77,10 @@ public interface FindApiService {
     @POST("img/add")
     Call<ResponseBody> upImage(@Part MultipartBody.Part file);
 
+    //Recuperar Senha
+    @Headers("Content-type:application/json")
+    @POST("mail/enviar")
+    Call<Void> recuperarSenha(@Query("email") String email);
 
     //MAPEAMENTO
 

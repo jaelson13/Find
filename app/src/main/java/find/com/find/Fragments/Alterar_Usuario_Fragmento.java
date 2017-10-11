@@ -104,6 +104,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         novaSenha = (EditText) view.findViewById(R.id.nova_senha);
         btnFecharCard = (Button) view.findViewById(R.id.card_fechar);
         btnFecharCardDados = (Button) view.findViewById(R.id.card_fecharDados);
+
         //Card Dados
         cardViewDados = (CardView) view.findViewById(R.id.card_alterarDados);
         card_btnAlterarDados = (FloatingActionButton) view.findViewById(R.id.card_btnAlterarDados);
