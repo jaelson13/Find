@@ -100,53 +100,10 @@ public class Register_Fragmento extends Fragment {
         btnCamera = (ImageButton) view.findViewById(R.id.register_btnCamera);
         btnGalery = (ImageButton) view.findViewById(R.id.register_btnGalery);
         icImage = (ImageView) view.findViewById(R.id.register_icImage);
-        btnOpImage.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (open) {
-                    btnCamera.setVisibility(View.GONE);
-                    btnCamera.setClickable(false);
-
-                    btnGalery.setVisibility(View.GONE);
-                    btnGalery.setClickable(false);
-
-                    open = false;
-
-                } else {
-                    btnCamera.setVisibility(View.VISIBLE);
-                    btnCamera.setClickable(true);
-
-                    btnGalery.setVisibility(View.VISIBLE);
-                    btnGalery.setClickable(true);
-
-                    open = true;
-                }
-            }
-        });
-
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                    startActivityForResult(Intent.createChooser(intent, "Camera imagem"), CAM_IMAGE);
-                }
-
-            }
-        });
-
-        btnGalery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_PICK);
-                startActivityForResult(Intent.createChooser(intent, "Selecionar imagem"), PICK_IMAGE);
-            }
-        });
+        pegarImagem();
         //Fim Pegar Imagem
 
+        //VOLTAR PARA A TELA PRINCIPAL
         btnVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,6 +114,7 @@ public class Register_Fragmento extends Fragment {
             }
         });
 
+        //CHAMADA PARA CADASTRAR O USUÁRIO
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,7 +166,55 @@ public class Register_Fragmento extends Fragment {
         return view;
     }
 
+    //METODO RESPONSÁVEL PELO LAYOUT REFERENTE A PEGAR A IMAGEM
+    private void pegarImagem() {
+        btnOpImage.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+                if (open) {
+                    btnCamera.setVisibility(View.GONE);
+                    btnCamera.setClickable(false);
+
+                    btnGalery.setVisibility(View.GONE);
+                    btnGalery.setClickable(false);
+
+                    open = false;
+
+                } else {
+                    btnCamera.setVisibility(View.VISIBLE);
+                    btnCamera.setClickable(true);
+
+                    btnGalery.setVisibility(View.VISIBLE);
+                    btnGalery.setClickable(true);
+
+                    open = true;
+                }
+            }
+        });
+
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                    startActivityForResult(Intent.createChooser(intent, "Camera imagem"), CAM_IMAGE);
+                }
+
+            }
+        });
+
+        btnGalery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_PICK);
+                startActivityForResult(Intent.createChooser(intent, "Selecionar imagem"), PICK_IMAGE);
+            }
+        });
+    }
+    //VALIDAR OS CAMPOS PARA O CADASTRO
     private boolean validarCampos() {
         if (TextUtils.isEmpty(edtNome.getText().toString())) {
             edtNome.setError("Preecha o nome");
@@ -238,6 +244,7 @@ public class Register_Fragmento extends Fragment {
         return true;
     }
 
+    //METODO RESPONSAVEL POR CAPTURAR A IMAGEM SELECIONADA E CHAMAR O METODO PARA MUDAR NO SERVIDOR
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

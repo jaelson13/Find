@@ -64,12 +64,16 @@ public class Login_Fragmento extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        //DADOS PRINCIPAIS
         View view = inflater.inflate(R.layout.fragmento_login, container, false);
         edtEmail = (EditText) view.findViewById(R.id.login_edtEmail);
         edtSenha = (EditText) view.findViewById(R.id.login_edtSenha);
         btnLogar = (Button) view.findViewById(R.id.login_btnLogar);
         btnCadastrar = (Button) view.findViewById(R.id.btnCriarConta);
         btnVoltar = (ImageButton) view.findViewById(R.id.login_btnVoltar);
+
+        //CARDVIEW
         card_enviarEmail = (CardView) view.findViewById(R.id.card_enviarEmail);
         card_btnRecuperarSenha = (Button) view.findViewById(R.id.card_btnRecuperarSenha);
         card_fechar = (Button) view.findViewById(R.id.card_fechar);
@@ -77,6 +81,7 @@ public class Login_Fragmento extends Fragment {
         login_btnRecupSenha = (Button) view.findViewById(R.id.login_btnRecupSenha);
         cardsView();
 
+        //CHAMADA PARA RECUPERAR SENHA
         card_btnRecuperarSenha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,6 +119,7 @@ public class Login_Fragmento extends Fragment {
             }
         });
 
+        //CHAMAR FRAGMENTO CADASTRO
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +130,7 @@ public class Login_Fragmento extends Fragment {
             }
         });
 
+        //VOLTAR A TELA PRINCIPAL
         btnVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +140,7 @@ public class Login_Fragmento extends Fragment {
             }
         });
 
+        //CHAMADA RESPONSÁVEL POR FAZER LOGIN
         btnLogar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,6 +184,7 @@ public class Login_Fragmento extends Fragment {
         return view;
     }
 
+    //VALIDAR CAMPOS DO CADASTRO
     private boolean validarCampos() {
 
         if (TextUtils.isEmpty(edtEmail.getText().toString())) {
@@ -196,6 +205,7 @@ public class Login_Fragmento extends Fragment {
         return true;
     }
 
+    //METODO RESPONSAVEL POR CARREGAR OS CARDS VIEW QUE SÃO UTILIZADOS
     private void cardsView() {
         login_btnRecupSenha.setOnClickListener(new View.OnClickListener() {
             @Override

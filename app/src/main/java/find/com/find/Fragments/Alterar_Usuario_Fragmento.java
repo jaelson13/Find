@@ -130,6 +130,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         cardsView();
         //Fim Pegar Imagem
 
+        //CHAMADA PARA ALTERAR A SENHA DO USUÁRIO
         card_btnAlterar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,7 +158,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             }
         });
 
-
+        //CHAMADA PARA ALTERAR OS DADOS PESSOAIS DO USUÁRIO
         btnAlterar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,6 +191,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             }
         });
 
+        //CHAMADA PARA DESATIVAR CONTA DO USUÁRIO
         btnDesativarSim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -222,6 +224,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         return view;
     }
 
+    //METODO RESPONSAVEL POR CAPTURAR A IMAGEM SELECIONADA E CHAMAR O METODO PARA MUDAR NO SERVIDOR
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -248,6 +251,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         }
     }
 
+    //METODO RESPONSÁVEL POR ALTERAR A IMAGEM DO USUÁRIO NO SERVIDOR
     private void alterarUsuarioImagem() {
         FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
         File file = new File(Validacoes.getPath(getContext(), imagemSelecionada));
@@ -267,6 +271,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                         e.printStackTrace();
                     }
                     UsuarioApplication.getUsuario().setUrlImgPerfil(url);
+                    Validacoes.carregarImagemUser(getContext(),icPerfil);
                     Log.i("url", UsuarioApplication.getUsuario().getUrlImgPerfil());
                 }
             }
@@ -279,6 +284,8 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         });
     }
 
+
+    //METODO PARA VALIDAR O PROCESSO DE ALTERAR SENHA
     private boolean validarSenha() {
         if (TextUtils.isEmpty(senhaAtual.getText().toString())) {
             senhaAtual.setError("Campo não pode ser vazio");
@@ -299,6 +306,8 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         return true;
     }
 
+
+    //METODO PARA POPULAR OS DADOS DO USUARIO
     private void atribuirDadosUser() {
         tvNome.setText(UsuarioApplication.getUsuario().getNome());
         tvEmail.setText(UsuarioApplication.getUsuario().getEmail());
@@ -311,13 +320,12 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             rbFeminino.setChecked(true);
         }
         if (UsuarioApplication.getUsuario().getUrlImgPerfil() != null) {
-            Picasso.with(getContext()).invalidate(UsuarioApplication.getUsuario().getUrlImgPerfil());
-            Picasso.with(getActivity()).load(UsuarioApplication.getUsuario().getUrlImgPerfil()).memoryPolicy(MemoryPolicy.NO_CACHE)
-                    .networkPolicy(NetworkPolicy.NO_CACHE).into(icPerfil);
+           Validacoes.carregarImagemUser(getContext(),icPerfil);
         }
     }
 
 
+    //METODO PARA VALIDAR OS CAMPOS DE ALTERAÇÃO
     private boolean validarCampos() {
         if (TextUtils.isEmpty(edtNome.getText().toString())) {
             edtNome.setError("Campo não pode ser vazio");
@@ -328,6 +336,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
     }
 
 
+    //METODO RESPONSAVEL POR CARREGAR OS CARDS VIEW QUE SÃO UTILIZADOS
     private void cardsView() {
         tvSenha.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -381,6 +390,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         });
     }
 
+    //METODO RESPONSAVEL POR CAPTURAR OU PEGAR A IMAGEM PARA UTILIZAR NO PERFIL DO USUÁRIO
     private void pegarImagem() {
         btnOpImage.setOnClickListener(new View.OnClickListener() {
 

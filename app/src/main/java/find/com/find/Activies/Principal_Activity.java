@@ -152,7 +152,7 @@ public class Principal_Activity extends AppCompatActivity
 
 
     private void navigationMenu() {
-       // navigationView.getMenu().clear();
+        //navigationView.getMenu().clear();
         //navigationView.inflateHeaderView(R.layout.nav_header_principal_);
         //navigationView.inflateMenu(R.menu.activity_home2_drawer);
 
@@ -293,11 +293,11 @@ public class Principal_Activity extends AppCompatActivity
     private boolean enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
+            // Permissão para acessar a localização do usuário
             PermissionUtils.requestPermission(Principal_Activity.this, LOCATION_PERMISSION_REQUEST_CODE,
                     Manifest.permission.ACCESS_FINE_LOCATION, true);
         } else if (mMap != null) {
-            // Access to the location has been granted to the app.
+            // Conseguiu acessar a localização do android
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -422,7 +422,6 @@ public class Principal_Activity extends AppCompatActivity
         }
 
     }
-
 
     //Verifica se há conexao com a internet
     public boolean verificaConexao() {
