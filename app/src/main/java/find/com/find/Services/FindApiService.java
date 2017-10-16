@@ -49,17 +49,17 @@ public interface FindApiService {
     @Multipart
     @POST("user/add")
     Call<Usuario> salvarUsuarioImagem(@Query("nome") String nome
-            ,@Query("email") String email,@Query("senha") String senha,@Query("sexo") String sexo,@Part MultipartBody.Part imagem);
+            , @Query("email") String email, @Query("senha") String senha, @Query("sexo") String sexo, @Part MultipartBody.Part imagem);
 
 
     //Atualização de um Usuario
     @Headers("Content-type:application/json")
     @PUT("user/atualizar")
-    Call<Usuario> atualizarUsuario(@Header("X-Token") String token,@Body Usuario usuario);
+    Call<Usuario> atualizarUsuario(@Header("X-Token") String token, @Body Usuario usuario);
 
     @Multipart
     @POST("user/atualizarImg")
-    Call<ResponseBody> atualizarUsuarioImagem(@Query("idUsuario") int idUsuario,@Query("email") String email,@Part MultipartBody.Part imagem);
+    Call<ResponseBody> atualizarUsuarioImagem(@Query("idUsuario") int idUsuario, @Query("email") String email, @Part MultipartBody.Part imagem);
 
 
     //Desativar um Usuario
@@ -84,6 +84,14 @@ public interface FindApiService {
     Call<Void> recuperarSenha(@Query("email") String email);
 
     //MAPEAMENTO
+    //Inserção de um mapeamento
+    @Multipart
+    @POST("map/add")
+    Call<Mapeamento> salvarMapeamento(@Query("nomeLocal") String nomeLocal, @Query("endereco") String endereco,
+                                      @Query("descricao") String descricao, @Query("numeroLocal") String numeroLocal,
+                                      @Query("categoria") String categoria,
+                                      @Query("data") String data, @Query("latitude") double latitude,
+                                      @Query("longitude") double longetude, @Query("idUsuario") int idUsuario, @Part MultipartBody.Part imagem);
 
     //Listar todos os mapeamentos
     @FormUrlEncoded
@@ -95,10 +103,6 @@ public interface FindApiService {
     @GET("")
     Call<Integer> getMapeamentoPorId(@Field("idMapeamento") int idMapeamento);
 
-    //Inserção de um mapeamento
-    @FormUrlEncoded
-    @POST("")
-    Call<Mapeamento> salvarMapeamento(@Body Mapeamento mapeamento);
 
     //Atualização de um mapeamento
     @FormUrlEncoded
@@ -109,7 +113,6 @@ public interface FindApiService {
     @FormUrlEncoded
     @DELETE
     Call<Integer> deletarMapeamento(@Field("idMapeamento") int idMapeamento);
-
 
 
     //FEEDBACK

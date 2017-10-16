@@ -13,10 +13,10 @@ public class Mapeamento {
     private String numeroLocal;
     private String descricao;
     private String categoria;
-    private Date data;
+    private String data;
     private String urlImagem;
-    private int latitude;
-    private int longitude;
+    private double latitude;
+    private double longitude;
     private int idUsuario;
 
 
@@ -68,11 +68,12 @@ public class Mapeamento {
         this.categoria = categoria;
     }
 
-    public Date getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(String data) {
+
         this.data = data;
     }
 
@@ -84,19 +85,19 @@ public class Mapeamento {
         this.urlImagem = urlImagem;
     }
 
-    public int getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(int latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public int getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(int longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 

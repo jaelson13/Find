@@ -8,11 +8,12 @@ import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.widget.ImageView;
 
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.DrawableImageViewTarget;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,8 +51,19 @@ public class Validacoes {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
+
     //CARREGAR A IMAGEM DO SERVIDOR
-    public static void carregarImagemUser(Context context, ImageView imageView){
-        Picasso.with(context).load(UsuarioApplication.getUsuario().getUrlImgPerfil()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(imageView);
+    public static void carregarImagemUser(Context context, ImageView imageView) {
+        Glide.with(context).load(UsuarioApplication.getUsuario().getUrlImgPerfil()).into(imageView);
+    }
+
+    //PEGAR A DATA ATUAL
+    public static String getDataAtual(){
+        Calendar calander = Calendar.getInstance();
+        int dia = calander.get(Calendar.DAY_OF_MONTH);
+        int mes = calander.get(Calendar.MONTH) + 1;
+        int ano = calander.get(Calendar.YEAR);
+
+        return dia+"/"+mes+"/"+ano;
     }
 }

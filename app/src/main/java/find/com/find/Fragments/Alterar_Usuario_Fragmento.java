@@ -18,24 +18,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.wallet.GiftCardWalletObject;
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Usuario;
 import find.com.find.Model.UsuarioApplication;
@@ -271,7 +264,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                         e.printStackTrace();
                     }
                     UsuarioApplication.getUsuario().setUrlImgPerfil(url);
-                    Validacoes.carregarImagemUser(getContext(),icPerfil);
+                    Validacoes.carregarImagemUser(getActivity(),icPerfil);
                     Log.i("url", UsuarioApplication.getUsuario().getUrlImgPerfil());
                 }
             }
@@ -320,7 +313,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             rbFeminino.setChecked(true);
         }
         if (UsuarioApplication.getUsuario().getUrlImgPerfil() != null) {
-           Validacoes.carregarImagemUser(getContext(),icPerfil);
+            Validacoes.carregarImagemUser(getActivity(),icPerfil);
         }
     }
 

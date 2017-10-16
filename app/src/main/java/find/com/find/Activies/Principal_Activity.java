@@ -50,19 +50,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import find.com.find.Fragments.Alterar_Usuario_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
 import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
-import find.com.find.Services.FindApiAdapter;
-import find.com.find.Services.FindApiService;
 import find.com.find.Util.PermissionUtils;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import find.com.find.Util.Validacoes;
 
 public class Principal_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -74,7 +69,7 @@ public class Principal_Activity extends AppCompatActivity
     private Button btnEntrar;
     private static final String TAG = Principal_Activity.class.getSimpleName();
     private GoogleApiClient googleApiClient;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1,REQUEST_CHECAR_GPS = 2,REQUEST_ERRO_PLAY_SERVICES = 1;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1, REQUEST_CHECAR_GPS = 2, REQUEST_ERRO_PLAY_SERVICES = 1;
     private static final String EXTRA_DIALOG = "dialog";
     private boolean mDeveExibirDialog, flagEnableMap = false;
     int mTentativas;
@@ -109,7 +104,7 @@ public class Principal_Activity extends AppCompatActivity
         imv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               enableMyLocation();
+                enableMyLocation();
             }
         });
 
@@ -134,7 +129,7 @@ public class Principal_Activity extends AppCompatActivity
         }
     }
 
-    private void ajusteToolbarNav(){
+    private void ajusteToolbarNav() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -170,18 +165,19 @@ public class Principal_Activity extends AppCompatActivity
         }
 
     }
-    private void atualizarDadosNavegationView(){
+
+    private void atualizarDadosNavegationView() {
         View header = navigationView.getHeaderView(0);
         TextView tvNome = (TextView) header.findViewById(R.id.nome_user);
         TextView tvEmail = (TextView) header.findViewById(R.id.email_user);
         CircleImageView icPerfil = (CircleImageView) header.findViewById(R.id.icPerfil);
         tvNome.setText(UsuarioApplication.getInstacia().getUsuario().getNome());
         tvEmail.setText(UsuarioApplication.getInstacia().getUsuario().getEmail());
-        if(UsuarioApplication.getUsuario().getUrlImgPerfil() != null){
-            Picasso.with(getBaseContext()).invalidate(UsuarioApplication.getUsuario().getUrlImgPerfil());
-            Picasso.with(getBaseContext()).load(UsuarioApplication.getUsuario().getUrlImgPerfil()).into(icPerfil);
+        if (UsuarioApplication.getUsuario().getUrlImgPerfil() != null) {
+            Validacoes.carregarImagemUser(getBaseContext(), icPerfil);
         }
     }
+
     //Ao pressionar o botão voltar do proprio aparelho
     @Override
     public void onBackPressed() {
@@ -202,11 +198,11 @@ public class Principal_Activity extends AppCompatActivity
         FragmentManager fm;
         FragmentTransaction ft;
 
-        switch (id){
+        switch (id) {
             case R.id.nav_mapearlocal:
                 ultimaLocalizacao();
                 fm = getSupportFragmentManager();
-                ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance(1));
+                ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance());
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
@@ -218,7 +214,7 @@ public class Principal_Activity extends AppCompatActivity
                 break;
             case R.id.nav_sair:
                 UsuarioApplication.setUsuario(null);
-                Intent intent = new Intent(this,Principal_Activity.class);
+                Intent intent = new Intent(this, Principal_Activity.class);
                 startActivity(intent);
                 finish();
                 break;
@@ -275,6 +271,7 @@ public class Principal_Activity extends AppCompatActivity
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
             Log.e(TAG, String.valueOf(location.getLatitude()));
             Log.e(TAG, String.valueOf(location.getLongitude()));
+            localizacao = location;
         } else if (mTentativas < 10) {
             mTentativas++;
             mHandler.postDelayed(new Runnable() {
@@ -284,8 +281,6 @@ public class Principal_Activity extends AppCompatActivity
                 }
             }, 2000);
         }
-        localizacao = location;
-
 
     }
 
@@ -435,7 +430,7 @@ public class Principal_Activity extends AppCompatActivity
 
             } else {
                 conectado = false;
-                if(!snackbar.isShown()) {
+                if (!snackbar.isShown()) {
                     snackbar = Snackbar.make(mCoordinatorLayout, "Sem Conexao a internet", Snackbar.LENGTH_INDEFINITE);
                     snackbar.setActionTextColor(Color.WHITE);
                     View view = snackbar.getView();
@@ -444,7 +439,7 @@ public class Principal_Activity extends AppCompatActivity
                 }
 
             }
-        }while (!conectado);
+        } while (!conectado);
         return verificaConexao();
     }
 
