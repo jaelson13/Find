@@ -12,7 +12,7 @@ import java.util.Date;
 public class Mapeamento {
     @SerializedName("idMapeamento")
     private int idMapeamento;
-    @SerializedName(("nomeLocal"))
+    @SerializedName("nomeLocal")
     private String nomeLocal;
     @SerializedName("endereco")
     private String endereco;

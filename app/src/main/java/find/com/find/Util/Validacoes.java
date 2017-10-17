@@ -57,13 +57,18 @@ public class Validacoes {
         Glide.with(context).load(UsuarioApplication.getUsuario().getUrlImgPerfil()).into(imageView);
     }
 
+    //CARREGAR A IMAGEM DO SERVIDOR
+    public static void carregarImagemMap(Context context,String urlMap, ImageView imageView) {
+        Glide.with(context).load(urlMap).into(imageView);
+    }
+
     //PEGAR A DATA ATUAL
-    public static String getDataAtual(){
+    public static String getDataAtual() {
         Calendar calander = Calendar.getInstance();
         int dia = calander.get(Calendar.DAY_OF_MONTH);
         int mes = calander.get(Calendar.MONTH) + 1;
         int ano = calander.get(Calendar.YEAR);
 
-        return dia+"/"+mes+"/"+ano;
+        return dia + "/" + mes + "/" + ano;
     }
 }

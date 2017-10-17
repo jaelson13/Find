@@ -7,12 +7,15 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -34,6 +37,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -53,6 +62,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -64,6 +74,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import find.com.find.Fragments.Alterar_Usuario_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
 import find.com.find.Model.Mapeamento;
+import find.com.find.Model.Usuario;
 import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
@@ -447,7 +458,7 @@ public class Principal_Activity extends AppCompatActivity
 
                     } else {
                         conexao = false;
-                        Toast.makeText(getBaseContext(),"Sem internet",Toast.LENGTH_LONG);
+                        Toast.makeText(getBaseContext(), "Sem internet", Toast.LENGTH_LONG);
                     }
                 } while (!conexao);
             }
@@ -457,27 +468,35 @@ public class Principal_Activity extends AppCompatActivity
 
     //Inicio Exibir Marcadores
     private void exibirMarcadores() {
+        do {
+            if (UsuarioApplication.getToken().getToken() != null) {
+                FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+                Call<List<Mapeamento>> call = service.getMapeamentos();
+                call.enqueue(new Callback<List<Mapeamento>>() {
+                    @Override
+                    public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
+                        if (response.code() == 200) {
+                            lista = response.body();
+                        }
+                    }
 
-        FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
-        Call<List<Mapeamento>> call = service.getMapeamentos();
-        call.enqueue(new Callback<List<Mapeamento>>() {
-            @Override
-            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
-                if (response.code() == 200) {
-                    lista = response.body();
-                }
+                    @Override
+                    public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
+
+                    }
+                });
             }
 
-            @Override
-            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
+        }
+        while (UsuarioApplication.getToken().getToken() == null);
 
-            }
-        });
     }
 
     private void mostrarMarcadores() {
+        int cont = 0;
         do {
-            for (Mapeamento mapeamento : lista) {
+            for (final Mapeamento mapeamento : lista) {
+
                 MarkerOptions marcador = new MarkerOptions();
                 LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
                 marcador.position(local);
@@ -487,6 +506,31 @@ public class Principal_Activity extends AppCompatActivity
                     marcador.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 }
                 marcador.title(mapeamento.getCategoria());
+                marcador.zIndex(cont);
+                cont++;
+                mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                    @Override
+                    public View getInfoWindow(Marker marker) {
+
+                        return null;
+                    }
+
+                    @Override
+                    public View getInfoContents(final Marker marker) {
+                        int index = Math.round(marker.getZIndex());
+                        View v = getLayoutInflater().inflate(R.layout.cardview_inforomacao_marcador, null);
+
+                        CircleImageView imagem = (CircleImageView) v.findViewById(R.id.card_imgMarcador);
+                        TextView estabelecimento = (TextView) v.findViewById(R.id.card_txtEstabelecimento);
+                        TextView endereco = (TextView) v.findViewById(R.id.card_txtEndereco);
+//                        Validacoes.carregarImagemMap(getBaseContext(), lista.get(index).getUrlImagem(), imagem);
+                        estabelecimento.setText(lista.get(index).getNomeLocal());
+                        endereco.setText(lista.get(index).getEndereco() + ", " + mapeamento.getNumeroLocal());
+                        Glide.with(getBaseContext()).load(lista.get(index).getUrlImagem()).into(imagem);
+
+                        return v;
+                    }
+                });
 
                 mMap.addMarker(marcador);
                 Log.i("dados", mapeamento.getCategoria());
