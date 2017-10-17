@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -48,16 +49,30 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import find.com.find.Fragments.Alterar_Usuario_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
+import find.com.find.Model.Mapeamento;
 import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
+import find.com.find.Services.FindApiAdapter;
+import find.com.find.Services.FindApiService;
 import find.com.find.Util.PermissionUtils;
 import find.com.find.Util.Validacoes;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Principal_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -71,13 +86,14 @@ public class Principal_Activity extends AppCompatActivity
     private GoogleApiClient googleApiClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1, REQUEST_CHECAR_GPS = 2, REQUEST_ERRO_PLAY_SERVICES = 1;
     private static final String EXTRA_DIALOG = "dialog";
-    private boolean mDeveExibirDialog, flagEnableMap = false;
+    private boolean mDeveExibirDialog, flagEnableMap = false, conexao;
     int mTentativas;
     Handler mHandler;
     GoogleMap mMap;
     LatLng mOrigem;
     Snackbar snackbar;
     public static Location localizacao;
+    List<Mapeamento> lista = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +102,6 @@ public class Principal_Activity extends AppCompatActivity
 
         testarBotaoEntrar();
         ajusteToolbarNav();
-
 
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +122,6 @@ public class Principal_Activity extends AppCompatActivity
                 enableMyLocation();
             }
         });
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
                 .addConnectionCallbacks(this).addApi(LocationServices.API)
@@ -147,9 +161,6 @@ public class Principal_Activity extends AppCompatActivity
 
 
     private void navigationMenu() {
-        //navigationView.getMenu().clear();
-        //navigationView.inflateHeaderView(R.layout.nav_header_principal_);
-        //navigationView.inflateMenu(R.menu.activity_home2_drawer);
 
         if (UsuarioApplication.getUsuario() == null) {
             navigationView.getMenu().clear();
@@ -189,7 +200,7 @@ public class Principal_Activity extends AppCompatActivity
         }
     }
 
-    //Evento para saver qual item menu foi clicado
+    //Evento para saber qual item menu foi clicado
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -230,13 +241,16 @@ public class Principal_Activity extends AppCompatActivity
     //Carregar o mapa no fragmento
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        exibirMarcadores();
         mMap = googleMap;
         estilizarMap();
         mMap.setMinZoomPreference(10);
         enableMyLocation();
+
     }
 
     //Estilo do mapa
+
     private void estilizarMap() {
         try {
             boolean success = mMap.setMapStyle(
@@ -279,7 +293,7 @@ public class Principal_Activity extends AppCompatActivity
                 public void run() {
                     ultimaLocalizacao();
                 }
-            }, 2000);
+            }, 1000);
         }
 
     }
@@ -298,6 +312,7 @@ public class Principal_Activity extends AppCompatActivity
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setRotateGesturesEnabled(false);
             ultimaLocalizacao();
+            mostrarMarcadores();
             flagEnableMap = true;
 
         } else {
@@ -305,7 +320,6 @@ public class Principal_Activity extends AppCompatActivity
         }
         return flagEnableMap;
     }
-
 
     //Connecção Google play services
     @Override
@@ -419,30 +433,68 @@ public class Principal_Activity extends AppCompatActivity
     }
 
     //Verifica se há conexao com a internet
-    public boolean verificaConexao() {
-        boolean conectado;
-        do {
-            ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (conectivtyManager.getActiveNetworkInfo() != null
-                    && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                    && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-                conectado = true;
+    public void verificaConexao() {
 
-            } else {
-                conectado = false;
-                if (!snackbar.isShown()) {
-                    snackbar = Snackbar.make(mCoordinatorLayout, "Sem Conexao a internet", Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setActionTextColor(Color.WHITE);
-                    View view = snackbar.getView();
-                    view.setBackgroundColor(Color.RED);
-                    snackbar.show();
-                }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                do {
+                    ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    if (conectivtyManager.getActiveNetworkInfo() != null
+                            && conectivtyManager.getActiveNetworkInfo().isAvailable()
+                            && conectivtyManager.getActiveNetworkInfo().isConnected()) {
+                        conexao = true;
 
+                    } else {
+                        conexao = false;
+                        Toast.makeText(getBaseContext(),"Sem internet",Toast.LENGTH_LONG);
+                    }
+                } while (!conexao);
             }
-        } while (!conectado);
-        return verificaConexao();
+        }, 10000);
+
     }
 
+    //Inicio Exibir Marcadores
+    private void exibirMarcadores() {
+
+        FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+        Call<List<Mapeamento>> call = service.getMapeamentos();
+        call.enqueue(new Callback<List<Mapeamento>>() {
+            @Override
+            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
+                if (response.code() == 200) {
+                    lista = response.body();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void mostrarMarcadores() {
+        do {
+            for (Mapeamento mapeamento : lista) {
+                MarkerOptions marcador = new MarkerOptions();
+                LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
+                marcador.position(local);
+                if (mapeamento.getCategoria().equals("Lazer")) {
+                    marcador.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                } else {
+                    marcador.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                }
+                marcador.title(mapeamento.getCategoria());
+
+                mMap.addMarker(marcador);
+                Log.i("dados", mapeamento.getCategoria());
+
+            }
+        } while (lista == null);
+    }
+    //Fim Marcadores
 
 }
 

@@ -1,5 +1,7 @@
 package find.com.find.Services;
 
+import java.util.List;
+
 import find.com.find.Model.Feedback;
 import find.com.find.Model.Mapeamento;
 import find.com.find.Model.Token;
@@ -94,9 +96,9 @@ public interface FindApiService {
                                       @Query("longitude") double longetude, @Query("idUsuario") int idUsuario, @Part MultipartBody.Part imagem);
 
     //Listar todos os mapeamentos
-    @FormUrlEncoded
-    @GET("")
-    Call<Mapeamento> getMapeamentos(@Body Mapeamento mapeamento);
+    @Headers("Content-type:application/json")
+    @GET("map/localizar")
+    Call<List<Mapeamento>> getMapeamentos();
 
     //Pega dados do mapeamento pelo id
     @FormUrlEncoded

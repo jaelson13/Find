@@ -1,5 +1,8 @@
 package find.com.find.Model;
 
+import com.google.firebase.storage.StorageException;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 /**
@@ -7,16 +10,27 @@ import java.util.Date;
  */
 
 public class Mapeamento {
+    @SerializedName("idMapeamento")
     private int idMapeamento;
+    @SerializedName(("nomeLocal"))
     private String nomeLocal;
+    @SerializedName("endereco")
     private String endereco;
+    @SerializedName("numeroLocal")
     private String numeroLocal;
+    @SerializedName("descricao")
     private String descricao;
+    @SerializedName("categoria")
     private String categoria;
+    @SerializedName("data")
     private String data;
+    @SerializedName("urlImagem")
     private String urlImagem;
+    @SerializedName("latitude")
     private double latitude;
+    @SerializedName("longitude")
     private double longitude;
+    @SerializedName("idUsuario")
     private int idUsuario;
 
 
