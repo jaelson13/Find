@@ -31,6 +31,7 @@ import retrofit2.http.Query;
 public interface FindApiService {
 
 
+
     @Headers("Content-type:application/json")
     @GET("auth")
     Call<Token> pegarToken();

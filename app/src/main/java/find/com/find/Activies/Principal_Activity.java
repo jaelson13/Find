@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -32,8 +33,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,21 +94,21 @@ public class Principal_Activity extends AppCompatActivity
         ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    private String[] categorias = {"Todas Categorias", "Bares / Alimentação", "Educação", "Mercado", "Shopping Center", "Banco", "Lazer", "Saúde", "Religião", "Pontos Turísticos"};
+    private Spinner spnCategorias;
     private NavigationView navigationView;
     private CoordinatorLayout mCoordinatorLayout;
     private Button btnEntrar;
-    private static final String TAG = Principal_Activity.class.getSimpleName();
+    private static final String TAG = Principal_Activity.class.getSimpleName(), EXTRA_DIALOG = "dialog";
     private GoogleApiClient googleApiClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1, REQUEST_CHECAR_GPS = 2, REQUEST_ERRO_PLAY_SERVICES = 1;
-    private static final String EXTRA_DIALOG = "dialog";
-    private boolean mDeveExibirDialog, flagEnableMap = false, conexao;
-    int mTentativas;
-    Handler mHandler;
-    GoogleMap mMap;
-    LatLng mOrigem;
-    Snackbar snackbar;
+    private boolean mDeveExibirDialog, flagEnableMap = false, conexao, flag;
+    private int mTentativas;
+    private Handler mHandler;
+    private GoogleMap mMap;
+    private LatLng mOrigem;
     public static Location localizacao;
-    List<Mapeamento> lista = new ArrayList<>();
+    private List<Mapeamento> lista = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +144,55 @@ public class Principal_Activity extends AppCompatActivity
         googleApiClient.connect();
         mapFragment.getMapAsync(this);
 
+    }
+
+    private void mostrarSpinner() {
+        spnCategorias = (Spinner) findViewById(R.id.spnCategorias);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getBaseContext(), R.layout.layout_spinner, categorias);
+        spnCategorias.setAdapter(arrayAdapter);
+
+        spnCategorias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (spnCategorias.getSelectedItem().toString()) {
+                    case "Todas Categorias":
+                        mostrarMarcadores();
+                        break;
+                    case "Bares / Alimentação":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Educação":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Mercado":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Shopping Center":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Banco":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Lazer":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Saúde":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Religião":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Pontos Turísticos":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     //CONFIGURAÇÃO LAYOUT
@@ -252,11 +305,13 @@ public class Principal_Activity extends AppCompatActivity
     //Carregar o mapa no fragmento
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        exibirMarcadores();
         mMap = googleMap;
         estilizarMap();
         mMap.setMinZoomPreference(10);
+        exibirMarcadores();
+        mostrarSpinner();
         enableMyLocation();
+
 
     }
 
@@ -266,7 +321,7 @@ public class Principal_Activity extends AppCompatActivity
         try {
             boolean success = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.style_json));
+                            this, R.raw.style_json2));
 
             if (!success) {
                 Log.e(TAG, "Erro ao estilizar");
@@ -323,7 +378,7 @@ public class Principal_Activity extends AppCompatActivity
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setRotateGesturesEnabled(false);
             ultimaLocalizacao();
-            mostrarMarcadores();
+           // mostrarMarcadores();
             flagEnableMap = true;
 
         } else {
@@ -468,43 +523,58 @@ public class Principal_Activity extends AppCompatActivity
 
     //Inicio Exibir Marcadores
     private void exibirMarcadores() {
-        do {
-            if (UsuarioApplication.getToken().getToken() != null) {
-                FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
-                Call<List<Mapeamento>> call = service.getMapeamentos();
-                call.enqueue(new Callback<List<Mapeamento>>() {
-                    @Override
-                    public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
-                        if (response.code() == 200) {
-                            lista = response.body();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
-
-                    }
-                });
+        FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+        Call<List<Mapeamento>> call = service.getMapeamentos();
+        call.enqueue(new Callback<List<Mapeamento>>() {
+            @Override
+            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
+                if (response.code() == 200) {
+                    lista = response.body();
+                }
             }
 
-        }
-        while (UsuarioApplication.getToken().getToken() == null);
+            @Override
+            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
 
+            }
+
+
+        });
     }
+
 
     private void mostrarMarcadores() {
         int cont = 0;
+        mMap.clear();
         do {
             for (final Mapeamento mapeamento : lista) {
 
                 MarkerOptions marcador = new MarkerOptions();
                 LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
                 marcador.position(local);
-                if (mapeamento.getCategoria().equals("Lazer")) {
-                    marcador.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                } else {
-                    marcador.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                Log.i("categoria", mapeamento.getCategoria());
+                switch (mapeamento.getCategoria()) {
+                    case "Bares / Alimentação":
+                        break;
+                    case "Educação":
+                        break;
+                    case "Mercado":
+                        break;
+                    case "Shopping Center":
+                        break;
+                    case "Banco":
+                        break;
+                    case "Lazer":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.teste));
+                        break;
+                    case "Saúde":
+                        break;
+                    case "Religião":
+                        break;
+                    case "Pontos Turísticos":
+                        break;
                 }
+
                 marcador.title(mapeamento.getCategoria());
                 marcador.zIndex(cont);
                 cont++;
@@ -538,8 +608,75 @@ public class Principal_Activity extends AppCompatActivity
             }
         } while (lista == null);
     }
-    //Fim Marcadores
 
+    //Fim Marcadores
+    private void mostrarMarcadoresPorCategoria(String categoria) {
+        int cont = 0;
+        mMap.clear();
+        do {
+            for (final Mapeamento mapeamento : lista) {
+                if (mapeamento.getCategoria().equals(categoria)) {
+                    MarkerOptions marcador = new MarkerOptions();
+                    LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
+                    marcador.position(local);
+                    switch (mapeamento.getCategoria()) {
+                        case "Bares / Alimentação":
+                            break;
+                        case "Educação":
+                            break;
+                        case "Mercado":
+                            break;
+                        case "Shopping Center":
+                            break;
+                        case "Banco":
+                            break;
+                        case "Lazer":
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.teste));
+                            break;
+                        case "Saúde":
+                            break;
+                        case "Religião":
+                            break;
+                        case "Pontos Turísticos":
+                            break;
+                    }
+
+                    marcador.title(mapeamento.getCategoria());
+                    marcador.zIndex(cont);
+                    cont++;
+                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                        @Override
+                        public View getInfoWindow(Marker marker) {
+
+                            return null;
+                        }
+
+                        @Override
+                        public View getInfoContents(final Marker marker) {
+                            int index = Math.round(marker.getZIndex());
+                            View v = getLayoutInflater().inflate(R.layout.cardview_inforomacao_marcador, null);
+
+                            CircleImageView imagem = (CircleImageView) v.findViewById(R.id.card_imgMarcador);
+                            TextView estabelecimento = (TextView) v.findViewById(R.id.card_txtEstabelecimento);
+                            TextView endereco = (TextView) v.findViewById(R.id.card_txtEndereco);
+//                        Validacoes.carregarImagemMap(getBaseContext(), lista.get(index).getUrlImagem(), imagem);
+                            estabelecimento.setText(lista.get(index).getNomeLocal());
+                            endereco.setText(lista.get(index).getEndereco() + ", " + mapeamento.getNumeroLocal());
+                            Glide.with(getBaseContext()).load(lista.get(index).getUrlImagem()).into(imagem);
+
+                            return v;
+                        }
+                    });
+
+                    mMap.addMarker(marcador);
+                    Log.i("dados", mapeamento.getCategoria());
+                }
+            }
+        }
+        while (lista == null);
+
+    }
+    //Fim Marcadores
 }
 
 

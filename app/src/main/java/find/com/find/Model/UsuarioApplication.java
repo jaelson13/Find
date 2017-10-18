@@ -1,10 +1,13 @@
 package find.com.find.Model;
 
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.io.IOException;
 
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
