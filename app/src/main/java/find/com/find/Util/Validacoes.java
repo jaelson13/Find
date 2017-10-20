@@ -24,6 +24,7 @@ import find.com.find.Model.UsuarioApplication;
  */
 
 public class Validacoes {
+
     //VALIDAR EMAIL
     public static boolean validarEmail(String email) {
         Pattern pattern;

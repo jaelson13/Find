@@ -76,6 +76,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import find.com.find.Fragments.Alterar_Usuario_Fragmento;
+import find.com.find.Fragments.Locais_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
 import find.com.find.Model.Mapeamento;
 import find.com.find.Model.Usuario;
@@ -108,6 +109,7 @@ public class Principal_Activity extends AppCompatActivity
     private GoogleMap mMap;
     private LatLng mOrigem;
     public static Location localizacao;
+    public static List<Mapeamento> mapeamentos = new ArrayList<>();
     private List<Mapeamento> lista = new ArrayList<>();
 
     @Override
@@ -287,6 +289,12 @@ public class Principal_Activity extends AppCompatActivity
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
+            case R.id.nav_locais:
+                fm = getSupportFragmentManager();
+                ft = fm.beginTransaction().replace(R.id.container, Locais_Fragmento.newInstance());
+                ft.addToBackStack(null);
+                ft.commit();
+                break;
             case R.id.nav_sair:
                 UsuarioApplication.setUsuario(null);
                 Intent intent = new Intent(this, Principal_Activity.class);
@@ -311,8 +319,7 @@ public class Principal_Activity extends AppCompatActivity
         exibirMarcadores();
         mostrarSpinner();
         enableMyLocation();
-
-
+        todosMapeamentos();
     }
 
     //Estilo do mapa
@@ -378,7 +385,7 @@ public class Principal_Activity extends AppCompatActivity
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setRotateGesturesEnabled(false);
             ultimaLocalizacao();
-           // mostrarMarcadores();
+            mostrarMarcadores();
             flagEnableMap = true;
 
         } else {
@@ -677,6 +684,24 @@ public class Principal_Activity extends AppCompatActivity
 
     }
     //Fim Marcadores
+    private void todosMapeamentos(){
+        FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+        Call<List<Mapeamento>> call = service.getAllMapeamentos();
+        call.enqueue(new Callback<List<Mapeamento>>() {
+            @Override
+            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
+                if (response.code() == 200) {
+                    mapeamentos = response.body();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
+
+            }
+        });
+
+    }
 }
 
 

@@ -101,6 +101,11 @@ public interface FindApiService {
     @GET("map/localizar")
     Call<List<Mapeamento>> getMapeamentos();
 
+    //Listar todos os mapeamentos
+    @Headers("Content-type:application/json")
+    @GET("map/todos")
+    Call<List<Mapeamento>> getAllMapeamentos();
+
     //Pega dados do mapeamento pelo id
     @FormUrlEncoded
     @GET("")
