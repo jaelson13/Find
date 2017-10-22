@@ -3,6 +3,7 @@ package find.com.find.Model;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.annotations.SerializedName;
@@ -53,6 +54,7 @@ public class UsuarioApplication extends Application {
         super.onCreate();
 
         getInstacia();
+
 
         FindApiService service = FindApiAdapter.createService(FindApiService.class,"root","toor");
         Call<Token> call = service.pegarToken();

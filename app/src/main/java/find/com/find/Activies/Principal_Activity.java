@@ -95,7 +95,7 @@ public class Principal_Activity extends AppCompatActivity
         ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private String[] categorias = {"Todas Categorias", "Bares / Alimentação", "Educação", "Mercado", "Shopping Center", "Banco", "Lazer", "Saúde", "Religião", "Pontos Turísticos"};
+    private String[] categorias = {"Todas Categorias", "Alimentaçao / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private Spinner spnCategorias;
     private NavigationView navigationView;
     private CoordinatorLayout mCoordinatorLayout;
@@ -136,7 +136,7 @@ public class Principal_Activity extends AppCompatActivity
         imv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enableMyLocation();
+                ativarMinhaLocalizacao();
             }
         });
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -160,31 +160,28 @@ public class Principal_Activity extends AppCompatActivity
                     case "Todas Categorias":
                         mostrarMarcadores();
                         break;
-                    case "Bares / Alimentação":
-                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
-                        break;
-                    case "Educação":
-                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
-                        break;
-                    case "Mercado":
-                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
-                        break;
-                    case "Shopping Center":
+                    case "Alimentação / Bebidas":
                         mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
                         break;
                     case "Banco":
                         mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
                         break;
-                    case "Lazer":
+                    case "Compras":
                         mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
                         break;
-                    case "Saúde":
+                    case "Hospedagem":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Lazer":
                         mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
                         break;
                     case "Religião":
                         mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
                         break;
-                    case "Pontos Turísticos":
+                    case "Saúde":
+                        mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
+                        break;
+                    case "Turismo":
                         mostrarMarcadoresPorCategoria(spnCategorias.getSelectedItem().toString());
                         break;
                 }
@@ -318,7 +315,7 @@ public class Principal_Activity extends AppCompatActivity
         mMap.setMinZoomPreference(10);
         exibirMarcadores();
         mostrarSpinner();
-        enableMyLocation();
+        ativarMinhaLocalizacao();
         todosMapeamentos();
     }
 
@@ -328,7 +325,7 @@ public class Principal_Activity extends AppCompatActivity
         try {
             boolean success = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.style_json2));
+                            this, R.raw.style_json));
 
             if (!success) {
                 Log.e(TAG, "Erro ao estilizar");
@@ -356,8 +353,6 @@ public class Principal_Activity extends AppCompatActivity
             mOrigem = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-            Log.e(TAG, String.valueOf(location.getLatitude()));
-            Log.e(TAG, String.valueOf(location.getLongitude()));
             localizacao = location;
         } else if (mTentativas < 10) {
             mTentativas++;
@@ -372,7 +367,7 @@ public class Principal_Activity extends AppCompatActivity
     }
 
     //Ativa a localição atual do usuário
-    private boolean enableMyLocation() {
+    private boolean ativarMinhaLocalizacao() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permissão para acessar a localização do usuário
@@ -427,14 +422,14 @@ public class Principal_Activity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        enableMyLocation();
+        ativarMinhaLocalizacao();
         testarBotaoEntrar();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        enableMyLocation();
+        ativarMinhaLocalizacao();
     }
 
     //Método verificar se gps está aticvo
@@ -453,8 +448,7 @@ public class Principal_Activity extends AppCompatActivity
                 final Status status = locationSettingsResult.getStatus();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        enableMyLocation();
-                        ultimaLocalizacao();
+                        ativarMinhaLocalizacao();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         if (mDeveExibirDialog) {
@@ -561,24 +555,29 @@ public class Principal_Activity extends AppCompatActivity
                 marcador.position(local);
                 Log.i("categoria", mapeamento.getCategoria());
                 switch (mapeamento.getCategoria()) {
-                    case "Bares / Alimentação":
-                        break;
-                    case "Educação":
-                        break;
-                    case "Mercado":
-                        break;
-                    case "Shopping Center":
+                    case "Alimentaçao / Bebidas":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_alimentacao_bebidas));
                         break;
                     case "Banco":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_banco));
+                        break;
+                    case "Compras":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_compras));
+                        break;
+                    case "Hospedagem":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_hospedagem));
                         break;
                     case "Lazer":
-                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.teste));
-                        break;
-                    case "Saúde":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_lazer));
                         break;
                     case "Religião":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_religiao));
                         break;
-                    case "Pontos Turísticos":
+                    case "Saúde":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_saude));
+                        break;
+                    case "Turismo":
+                        marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_turismo));
                         break;
                 }
 
@@ -627,24 +626,22 @@ public class Principal_Activity extends AppCompatActivity
                     LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
                     marcador.position(local);
                     switch (mapeamento.getCategoria()) {
-                        case "Bares / Alimentação":
-                            break;
-                        case "Educação":
-                            break;
-                        case "Mercado":
-                            break;
-                        case "Shopping Center":
+                        case "Alimentaçao / Bebidas":
                             break;
                         case "Banco":
+                            break;
+                        case "Compras":
+                            break;
+                        case "Hospedagem":
                             break;
                         case "Lazer":
                             marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.teste));
                             break;
-                        case "Saúde":
-                            break;
                         case "Religião":
                             break;
-                        case "Pontos Turísticos":
+                        case "Saúde":
+                            break;
+                        case "Turismo":
                             break;
                     }
 
@@ -702,6 +699,8 @@ public class Principal_Activity extends AppCompatActivity
         });
 
     }
+
+
 }
 
 

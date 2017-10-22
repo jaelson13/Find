@@ -30,7 +30,7 @@ import find.com.find.Util.ListAdapter;
 
 public class Locais_Fragmento extends Fragment {
 
-    private String[] categorias = {"Todas Categorias", "Bares / Alimentação", "Educação", "Mercado", "Shopping Center", "Banco", "Lazer", "Saúde", "Religião", "Pontos Turísticos"};
+    private String[] categorias = {"Todas Categorias", "Alimentaçao / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private List<Mapeamento> listaMapeamentoCategoria = new ArrayList<>();
     private RecyclerView recyclerView;
     private Spinner spnCategorias;
@@ -74,37 +74,7 @@ public class Locais_Fragmento extends Fragment {
                         LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                         recyclerView.setLayoutManager(layout);
                         break;
-                    case "Bares / Alimentação":
-                        listaMapeamentoCategoria.clear();
-                        for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
-                            if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
-                                listaMapeamentoCategoria.add(mapeamento);
-                            }
-                        }
-                        recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
-                        break;
-                    case "Educação":
-                        listaMapeamentoCategoria.clear();
-                        for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
-                            if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
-                                listaMapeamentoCategoria.add(mapeamento);
-                            }
-                        }
-                        recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
-                        break;
-                    case "Mercado":
-                        listaMapeamentoCategoria.clear();
-                        for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
-                            if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
-                                listaMapeamentoCategoria.add(mapeamento);
-                            }
-                        }
-                        recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
-                        break;
-                    case "Shopping Center":
+                    case "Alimentação / Bebidas":
                         listaMapeamentoCategoria.clear();
                         for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
                             if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
@@ -124,7 +94,7 @@ public class Locais_Fragmento extends Fragment {
                         recyclerView.setAdapter(null);
                         recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
-                    case "Lazer":
+                    case "Compras":
                         listaMapeamentoCategoria.clear();
                         for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
                             if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
@@ -134,7 +104,17 @@ public class Locais_Fragmento extends Fragment {
                         recyclerView.setAdapter(null);
                         recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
-                    case "Saúde":
+                    case "Hospedagem":
+                        listaMapeamentoCategoria.clear();
+                        for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
+                            if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
+                                listaMapeamentoCategoria.add(mapeamento);
+                            }
+                        }
+                        recyclerView.setAdapter(null);
+                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        break;
+                    case "Lazer":
                         listaMapeamentoCategoria.clear();
                         for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
                             if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
@@ -154,7 +134,17 @@ public class Locais_Fragmento extends Fragment {
                         recyclerView.setAdapter(null);
                         recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
-                    case "Pontos Turísticos":
+                    case "Saúde":
+                        listaMapeamentoCategoria.clear();
+                        for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
+                            if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
+                                listaMapeamentoCategoria.add(mapeamento);
+                            }
+                        }
+                        recyclerView.setAdapter(null);
+                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        break;
+                    case "Turismo":
                         listaMapeamentoCategoria.clear();
                         for(Mapeamento mapeamento : Principal_Activity.mapeamentos){
                             if(spnCategorias.getSelectedItem().toString().equals(mapeamento.getCategoria())){
