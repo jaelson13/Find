@@ -51,7 +51,7 @@ public class Register_Map_Fragmento extends Fragment {
     private static final int PICK_IMAGE = 123;
     private static final int CAM_IMAGE = 124;
 
-    private String[] categorias = {"Escolha uma categoria", "Bares / Alimentação", "Educação", "Mercado", "Shopping Center", "Banco", "Lazer", "Saúde", "Religião", "Pontos Turísticos"};
+    private String[] categorias = {"Escolha uma categoria", "Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private EditText edtEstabelecimento, edtEndereco, edtNumero, edtDescricao;
     private Button btnSolicitar;
     private ImageButton btnOpImage, btnCamera, btnGalery;
@@ -123,9 +123,9 @@ public class Register_Map_Fragmento extends Fragment {
                         public void onResponse(Call<Mapeamento> call, Response<Mapeamento> response) {
                             if (response.code() == 200) {
                                 Toast.makeText(getContext(), "Solicitação feita com sucesso!", Toast.LENGTH_SHORT).show();
-                              //  FragmentManager fm = getFragmentManager();
-                               // FragmentTransaction ft = fm.beginTransaction();
-                               // ft.addToBackStack(null);
+                                Intent intent = new Intent(getActivity(), Principal_Activity.class);
+                                startActivity(intent);
+                                getActivity().finish();
                             }
                         }
 

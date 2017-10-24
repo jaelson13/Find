@@ -32,6 +32,8 @@ public class Mapeamento {
     private double longitude;
     @SerializedName("idUsuario")
     private int idUsuario;
+    @SerializedName("status")
+    private boolean status;
 
 
     public int getIdMapeamento() {
@@ -121,5 +123,13 @@ public class Mapeamento {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

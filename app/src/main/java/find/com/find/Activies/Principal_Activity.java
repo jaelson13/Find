@@ -52,6 +52,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -77,6 +78,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import find.com.find.Fragments.Alterar_Usuario_Fragmento;
 import find.com.find.Fragments.Locais_Fragmento;
+import find.com.find.Fragments.Map_User_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
 import find.com.find.Model.Mapeamento;
 import find.com.find.Model.Usuario;
@@ -92,13 +94,17 @@ import retrofit2.Response;
 
 public class Principal_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
-        ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private String[] categorias = {"Todas Categorias", "Alimentaçao / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
+    private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private LocationRequest locatioRequest;
+    public static Location localizacao;
+    private LatLng mOrigem;
+
+    private String[] categorias = {"Todas Categorias", "Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private Spinner spnCategorias;
     private NavigationView navigationView;
-    private CoordinatorLayout mCoordinatorLayout;
     private Button btnEntrar;
     private static final String TAG = Principal_Activity.class.getSimpleName(), EXTRA_DIALOG = "dialog";
     private GoogleApiClient googleApiClient;
@@ -107,9 +113,8 @@ public class Principal_Activity extends AppCompatActivity
     private int mTentativas;
     private Handler mHandler;
     private GoogleMap mMap;
-    private LatLng mOrigem;
-    public static Location localizacao;
     public static List<Mapeamento> mapeamentos = new ArrayList<>();
+    public static List<Mapeamento> mapeamentosUser = new ArrayList<>();
     private List<Mapeamento> lista = new ArrayList<>();
 
     @Override
@@ -144,6 +149,10 @@ public class Principal_Activity extends AppCompatActivity
                 .addConnectionCallbacks(this).addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API).addApi(Places.PLACE_DETECTION_API).build();
         googleApiClient.connect();
+        locatioRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)
+                .setFastestInterval(1 * 1000);
         mapFragment.getMapAsync(this);
 
     }
@@ -235,7 +244,6 @@ public class Principal_Activity extends AppCompatActivity
             navigationView.inflateHeaderView(R.layout.nav_header_principal_);
             navigationView.inflateMenu(R.menu.activity_home2_drawer);
             atualizarDadosNavegationView();
-
         }
 
     }
@@ -274,9 +282,23 @@ public class Principal_Activity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_mapearlocal:
-                ultimaLocalizacao();
+                onResume();
                 fm = getSupportFragmentManager();
                 ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance());
+                ft.addToBackStack(null);
+                ft.commit();
+                break;
+            case R.id.nav_ativos:
+                onResume();
+                fm = getSupportFragmentManager();
+                ft = fm.beginTransaction().replace(R.id.container, Map_User_Fragmento.newInstance(1));
+                ft.addToBackStack(null);
+                ft.commit();
+                break;
+            case R.id.nav_pendentes:
+                onResume();
+                fm = getSupportFragmentManager();
+                ft = fm.beginTransaction().replace(R.id.container, Map_User_Fragmento.newInstance(2));
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
@@ -315,8 +337,9 @@ public class Principal_Activity extends AppCompatActivity
         mMap.setMinZoomPreference(10);
         exibirMarcadores();
         mostrarSpinner();
-        ativarMinhaLocalizacao();
         todosMapeamentos();
+
+
     }
 
     //Estilo do mapa
@@ -335,39 +358,8 @@ public class Principal_Activity extends AppCompatActivity
         }
     }
 
-    //Pega a ultima localização do usuário/Requer permissão caso Android se >= 6
-    private void ultimaLocalizacao() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        if (location != null) {
-            mTentativas = 0;
-            mOrigem = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-            localizacao = location;
-        } else if (mTentativas < 10) {
-            mTentativas++;
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ultimaLocalizacao();
-                }
-            }, 1000);
-        }
-
-    }
-
     //Ativa a localição atual do usuário
-    private boolean ativarMinhaLocalizacao() {
+    private void ativarMinhaLocalizacao() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permissão para acessar a localização do usuário
@@ -375,24 +367,39 @@ public class Principal_Activity extends AppCompatActivity
                     Manifest.permission.ACCESS_FINE_LOCATION, true);
         } else if (mMap != null) {
             // Conseguiu acessar a localização do android
+            mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+            
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setRotateGesturesEnabled(false);
-            ultimaLocalizacao();
             mostrarMarcadores();
-            flagEnableMap = true;
-
-        } else {
-            flagEnableMap = false;
         }
-        return flagEnableMap;
     }
 
-    //Connecção Google play services
+    //Connexão Google play services
+
+    @Override
+    public void onLocationChanged(Location location) {
+        localizacao = location;
+        ativarMinhaLocalizacao();
+    }
+
     @Override
     public void onConnected(Bundle bundle) {
-        verificarGPS();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        localizacao = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if (localizacao == null) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locatioRequest, this);
+        } else {
+            ativarMinhaLocalizacao();
+        }
+
     }
 
     //Caso a conexão seja suspensa, connecta de novo
@@ -404,9 +411,37 @@ public class Principal_Activity extends AppCompatActivity
     //Caso a conexão seja falha
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        googleApiClient.disconnect();
+        if (connectionResult.hasResolution()) {
+            try {
+                // Inicie uma atividade que tente resolver o erro
+                connectionResult.startResolutionForResult(this,
+                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.i(TAG, "Conexão de serviços de localização falhou com o código" +
+                    connectionResult.getErrorCode());
+        }
     }
 
+    //Ao retornar o app mostra localização do usuário
+    @Override
+    protected void onResume() {
+        super.onResume();
+        googleApiClient.connect();
+        ativarMinhaLocalizacao();
+        testarBotaoEntrar();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (googleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+            googleApiClient.disconnect();
+        }
+    }
 
     @Override
     public void onStop() {
@@ -416,20 +451,6 @@ public class Principal_Activity extends AppCompatActivity
         mHandler.removeCallbacksAndMessages(null);
         super.onStop();
 
-    }
-
-    //Ao retornar o app mostra localização do usuário
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ativarMinhaLocalizacao();
-        testarBotaoEntrar();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        ativarMinhaLocalizacao();
     }
 
     //Método verificar se gps está aticvo
@@ -491,13 +512,15 @@ public class Principal_Activity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 mTentativas = 0;
                 mHandler.removeCallbacks(null);
-                ultimaLocalizacao();
+                onResume();
             } else {
                 Toast.makeText(this, "É necessário habilitar a configuração de localização para utilizar o aplicativo", Toast.LENGTH_LONG).show();
             }
         }
 
     }
+
+
 
     //Verifica se há conexao com a internet
     public void verificaConexao() {
@@ -522,25 +545,30 @@ public class Principal_Activity extends AppCompatActivity
 
     }
 
+
+
     //Inicio Exibir Marcadores
     private void exibirMarcadores() {
-        FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
-        Call<List<Mapeamento>> call = service.getMapeamentos();
-        call.enqueue(new Callback<List<Mapeamento>>() {
-            @Override
-            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
-                if (response.code() == 200) {
-                    lista = response.body();
+        if(UsuarioApplication.getToken() != null) {
+            FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+            Call<List<Mapeamento>> call = service.getMapeamentos();
+            call.enqueue(new Callback<List<Mapeamento>>() {
+                @Override
+                public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
+                    if (response.code() == 200) {
+                        lista = response.body();
+                        mostrarMarcadores();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
+                @Override
+                public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
 
-            }
+                }
 
 
-        });
+            });
+        }
     }
 
 
@@ -555,7 +583,7 @@ public class Principal_Activity extends AppCompatActivity
                 marcador.position(local);
                 Log.i("categoria", mapeamento.getCategoria());
                 switch (mapeamento.getCategoria()) {
-                    case "Alimentaçao / Bebidas":
+                    case "Alimentação / Bebidas":
                         marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_alimentacao_bebidas));
                         break;
                     case "Banco":
@@ -626,22 +654,32 @@ public class Principal_Activity extends AppCompatActivity
                     LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
                     marcador.position(local);
                     switch (mapeamento.getCategoria()) {
-                        case "Alimentaçao / Bebidas":
+                        case "Todas Categorias":
+                            mostrarMarcadores();
+                            break;
+                        case "Alimentação / Bebidas":
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_alimentacao_bebidas));
                             break;
                         case "Banco":
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_banco));
                             break;
                         case "Compras":
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_compras));
                             break;
                         case "Hospedagem":
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_hospedagem));
                             break;
                         case "Lazer":
-                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.teste));
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_lazer));
                             break;
                         case "Religião":
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_religiao));
                             break;
                         case "Saúde":
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_saude));
                             break;
                         case "Turismo":
+                            marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_turismo));
                             break;
                     }
 
@@ -680,26 +718,28 @@ public class Principal_Activity extends AppCompatActivity
         while (lista == null);
 
     }
+
     //Fim Marcadores
-    private void todosMapeamentos(){
-        FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
-        Call<List<Mapeamento>> call = service.getAllMapeamentos();
-        call.enqueue(new Callback<List<Mapeamento>>() {
-            @Override
-            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
-                if (response.code() == 200) {
-                    mapeamentos = response.body();
+    private void todosMapeamentos() {
+        if (UsuarioApplication.getToken() != null) {
+            FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+            Call<List<Mapeamento>> call = service.getAllMapeamentos();
+            call.enqueue(new Callback<List<Mapeamento>>() {
+                @Override
+                public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
+                    if (response.code() == 200) {
+                        mapeamentos = response.body();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
+                @Override
+                public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
 
-            }
-        });
+                }
+            });
 
+        }
     }
-
 
 }
 
