@@ -54,7 +54,7 @@ public class UsuarioApplication extends Application {
         super.onCreate();
 
         getInstacia();
-
+/*
         FindApiService service = FindApiAdapter.createService(FindApiService.class,"root","toor");
         Call<Token> call = service.pegarToken();
         call.enqueue(new Callback<Token>() {
@@ -71,7 +71,7 @@ public class UsuarioApplication extends Application {
                 Log.e("Erro", t.getMessage());
             }
         });
-
+*/
 
     }
 

@@ -16,6 +16,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Usuario;
 import find.com.find.Model.UsuarioApplication;
@@ -88,7 +92,7 @@ public class Login_Fragmento extends Fragment {
                 if (TextUtils.isEmpty(card_edtEmail.getText().toString())) {
                     edtEmail.setError("Preecha o email");
                 }else{
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
                     final Call<Void> call = servicos.recuperarSenha(card_edtEmail.getText().toString());
                     call.enqueue(new Callback<Void>() {
                         @Override
@@ -146,8 +150,12 @@ public class Login_Fragmento extends Fragment {
             public void onClick(View v) {
                 if (validarCampos()) {
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,UsuarioApplication.getToken().getToken());
-                    final Call<Usuario> call = servicos.fazerLogin(edtEmail.getText().toString(), edtSenha.getText().toString());
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
+                    String email = edtEmail.getText().toString();
+                    String senha = edtSenha.getText().toString();
+                    String senhaSha = Validacoes.convertSha1(senha);
+                    Log.i("senha",senhaSha);
+                    final Call<Usuario> call = servicos.fazerLogin(email,senha);
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {

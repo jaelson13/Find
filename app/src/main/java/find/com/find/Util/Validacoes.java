@@ -13,9 +13,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.DrawableImageViewTarget;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import find.com.find.Model.UsuarioApplication;
 
@@ -24,6 +31,8 @@ import find.com.find.Model.UsuarioApplication;
  */
 
 public class Validacoes {
+
+    public static final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiRmluZDEyMzQ1NiJ9.SJA_e7w0fqkKVASobxYsaWdF8xHWUgM7qR-XmHYkgTw";
 
     //VALIDAR EMAIL
     public static boolean validarEmail(String email) {
@@ -71,5 +80,24 @@ public class Validacoes {
         int ano = calander.get(Calendar.YEAR);
 
         return dia + "/" + mes + "/" + ano;
+    }
+
+    public static String convertSha1(String s) {
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest.getInstance("SHA-1");
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < messageDigest.length; i++)
+                hexString.append(String.format("%02X",0xFF & messageDigest[i]));
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

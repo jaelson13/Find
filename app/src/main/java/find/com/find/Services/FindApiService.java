@@ -58,7 +58,7 @@ public interface FindApiService {
     //Atualização de um Usuario
     @Headers("Content-type:application/json")
     @PUT("user/atualizar")
-    Call<Usuario> atualizarUsuario(@Header("X-Token") String token, @Body Usuario usuario);
+    Call<Usuario> atualizarUsuario(@Body Usuario usuario);
 
     @Multipart
     @POST("user/atualizarImg")
@@ -118,8 +118,8 @@ public interface FindApiService {
 
 
     //Atualização de um mapeamento
-    @FormUrlEncoded
-    @POST("")
+    @Headers("Content-type:application/json")
+    @POST("map/atualizar")
     Call<Mapeamento> atualizarMapeamento(@Body Mapeamento mapeamento);
 
     //Deletar um mapeamento

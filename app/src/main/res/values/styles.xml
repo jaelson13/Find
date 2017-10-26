@@ -35,7 +35,6 @@
         <item name="android:textSize">6pt</item>
     </style>
 
-
     <style name="ToolbarColoredBackArrow" parent="AppTheme">
         <item name="android:textColorSecondary">@android:color/white</item>
     </style>

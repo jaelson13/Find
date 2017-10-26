@@ -129,7 +129,7 @@ public class Register_Fragmento extends Fragment {
                         usuario.setSexo(rbMasculino.getText().toString());
                     }
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
                     if (imagemSelecionada != null) {
                         File file = new File(Validacoes.getPath(getContext(),imagemSelecionada));
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);

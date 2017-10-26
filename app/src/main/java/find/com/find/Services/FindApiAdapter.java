@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FindApiAdapter {
     //URL Base do endpoint. Deve terminar com /
-    public static final String API_BASE_URL = "http://nossocariri.com/teste/webservice/index.php/";
+    public static final String API_BASE_URL = "http://nossocariri.com/webservice/index.php/";
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     private static Retrofit.Builder builder =

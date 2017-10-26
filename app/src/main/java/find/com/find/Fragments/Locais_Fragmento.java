@@ -21,7 +21,7 @@ import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Mapeamento;
 
 import find.com.find.R;
-import find.com.find.Util.ListAdapter;
+import find.com.find.Recycles.Locais_ListAdapter;
 
 
 /**
@@ -52,7 +52,7 @@ public class Locais_Fragmento extends Fragment {
         View view = inflater.inflate(R.layout.fragmento_locais, container, false);
         Log.i("lista",String.valueOf(Principal_Activity.mapeamentos.size()));
         recyclerView = (RecyclerView) view.findViewById(R.id.recycle_list);
-        recyclerView.setAdapter(new ListAdapter(Principal_Activity.mapeamentos, getContext()));
+        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext()));
         LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layout);
 
@@ -70,7 +70,7 @@ public class Locais_Fragmento extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (spnCategorias.getSelectedItem().toString()) {
                     case "Todas Categorias":
-                        recyclerView.setAdapter(new ListAdapter(Principal_Activity.mapeamentos, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext()));
                         LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                         recyclerView.setLayoutManager(layout);
                         break;
@@ -82,7 +82,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
                     case "Banco":
                         listaMapeamentoCategoria.clear();
@@ -92,7 +92,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
                     case "Compras":
                         listaMapeamentoCategoria.clear();
@@ -102,7 +102,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
                     case "Hospedagem":
                         listaMapeamentoCategoria.clear();
@@ -112,7 +112,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
                     case "Lazer":
                         listaMapeamentoCategoria.clear();
@@ -122,7 +122,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
                     case "Religião":
                         listaMapeamentoCategoria.clear();
@@ -132,7 +132,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
                     case "Saúde":
                         listaMapeamentoCategoria.clear();
@@ -142,7 +142,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
                     case "Turismo":
                         listaMapeamentoCategoria.clear();
@@ -152,7 +152,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new ListAdapter(listaMapeamentoCategoria, getContext()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext()));
                         break;
                 }
             }

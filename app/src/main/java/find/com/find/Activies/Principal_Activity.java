@@ -370,7 +370,7 @@ public class Principal_Activity extends AppCompatActivity
             mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-            
+
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -384,6 +384,7 @@ public class Principal_Activity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         localizacao = location;
+        Toast.makeText(getBaseContext(), "Localização: " + String.valueOf(localizacao.getLongitude()) + "|" + String.valueOf(localizacao.getLongitude()), Toast.LENGTH_SHORT);
         ativarMinhaLocalizacao();
     }
 
@@ -521,7 +522,6 @@ public class Principal_Activity extends AppCompatActivity
     }
 
 
-
     //Verifica se há conexao com a internet
     public void verificaConexao() {
 
@@ -546,29 +546,28 @@ public class Principal_Activity extends AppCompatActivity
     }
 
 
-
     //Inicio Exibir Marcadores
     private void exibirMarcadores() {
-        if(UsuarioApplication.getToken() != null) {
-            FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
-            Call<List<Mapeamento>> call = service.getMapeamentos();
-            call.enqueue(new Callback<List<Mapeamento>>() {
-                @Override
-                public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
-                    if (response.code() == 200) {
-                        lista = response.body();
-                        mostrarMarcadores();
-                    }
+
+        FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
+        Call<List<Mapeamento>> call = service.getMapeamentos();
+        call.enqueue(new Callback<List<Mapeamento>>() {
+            @Override
+            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
+                if (response.code() == 200) {
+                    lista = response.body();
+                    mostrarMarcadores();
                 }
+            }
 
-                @Override
-                public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
+            @Override
+            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
 
-                }
+            }
 
 
-            });
-        }
+        });
+
     }
 
 
@@ -721,25 +720,25 @@ public class Principal_Activity extends AppCompatActivity
 
     //Fim Marcadores
     private void todosMapeamentos() {
-        if (UsuarioApplication.getToken() != null) {
-            FindApiService service = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
-            Call<List<Mapeamento>> call = service.getAllMapeamentos();
-            call.enqueue(new Callback<List<Mapeamento>>() {
-                @Override
-                public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
-                    if (response.code() == 200) {
-                        mapeamentos = response.body();
-                    }
+
+        FindApiService service = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
+        Call<List<Mapeamento>> call = service.getAllMapeamentos();
+        call.enqueue(new Callback<List<Mapeamento>>() {
+            @Override
+            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
+                if (response.code() == 200) {
+                    mapeamentos = response.body();
                 }
+            }
 
-                @Override
-                public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
+            @Override
+            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
 
-                }
-            });
+            }
+        });
 
-        }
     }
+
 
 }
 

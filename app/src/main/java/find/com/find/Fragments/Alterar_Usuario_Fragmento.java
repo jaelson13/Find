@@ -130,13 +130,16 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                 if (validarSenha()) {
                     UsuarioApplication.getUsuario().setSenha(novaSenha.getText().toString());
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
-                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getToken().getToken(), UsuarioApplication.getUsuario());
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
+                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getUsuario());
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                             if (response.code() == 200) {
                                 Toast.makeText(getContext(), "Senha alterada", Toast.LENGTH_SHORT).show();
+                                UsuarioApplication.getUsuario().setSenha(Validacoes.convertSha1(novaSenha.getText().toString()));
+                                senhaAtual.setText(null);
+                                novaSenha.setText(null);
                                 cardView.setVisibility(View.GONE);
 
                             }
@@ -163,8 +166,8 @@ public class Alterar_Usuario_Fragmento extends Fragment {
                         UsuarioApplication.getUsuario().setSexo("Feminino");
                     }
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
-                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getToken().getToken(), UsuarioApplication.getUsuario());
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
+                    final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getUsuario());
                     call.enqueue(new Callback<Usuario>() {
                         @Override
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
@@ -189,7 +192,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             @Override
             public void onClick(View v) {
                 //Desatiar conta do usuário
-                FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+                FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
                 final Call<Void> call = servicos.desativarUsuario(UsuarioApplication.getUsuario().getIdUsuario());
                 call.enqueue(new Callback<Void>() {
                     @Override
@@ -246,7 +249,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
 
     //METODO RESPONSÁVEL POR ALTERAR A IMAGEM DO USUÁRIO NO SERVIDOR
     private void alterarUsuarioImagem() {
-        FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+        FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
         File file = new File(Validacoes.getPath(getContext(), imagemSelecionada));
         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), fbody);
@@ -290,7 +293,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             return false;
         }
 
-        if (!UsuarioApplication.getUsuario().getSenha().equals(senhaAtual.getText().toString())) {
+        if (!UsuarioApplication.getUsuario().getSenha().equalsIgnoreCase(Validacoes.convertSha1(senhaAtual.getText().toString()))) {
             senhaAtual.setError("Senha incorreta");
             return false;
         }

@@ -114,7 +114,7 @@ public class Register_Map_Fragmento extends Fragment {
                     File file = new File(Validacoes.getPath(getContext(),imagemSelecionada));
                     RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                     MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), fbody);
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, UsuarioApplication.getToken().getToken());
+                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
                     final Call<Mapeamento> call = servicos.salvarMapeamento(mapeamento.getNomeLocal(),mapeamento.getEndereco(),
                             mapeamento.getDescricao(),mapeamento.getNumeroLocal(),mapeamento.getCategoria()
                             ,mapeamento.getData(),mapeamento.getLatitude(),mapeamento.getLongitude(),mapeamento.getIdUsuario(),body);

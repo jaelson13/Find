@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/radiocardsm"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
+
+                <ImageView
+                    android:id="@+id/local_imagem"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:background="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/local_txtestabelecimento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Prazeres"
+                    android:textColor="#1dc2c6"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/local_txtendereco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Rua Juazeiro do norte, 125" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_margin="10dp"
+                    android:background="#FFC9CCCC" />
+
+                <RatingBar
+                    android:id="@+id/local_rtnota"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:isIndicator="true"
+                    android:numStars="5" />
+
+                <TextView
+                    android:id="@+id/local_avaliacoes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="100 avaliações" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_margin="10dp"
+                    android:background="#FFC9CCCC" />
+
+                <TextView
+                    android:id="@+id/local_txtdescricao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ullamcorper eros sed risus ullamcorper gravida. Integer a nisi neque. Proin id tincidunt lacus. Vestibulum posuere, justo ut massa nunc."
+                    android:textSize="15sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_margin="10dp"
+                    android:background="#FFC9CCCC" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/local_btnAlterarImagem"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#ff0000"
+                        android:text="Alterar Imagem"
+                        android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/local_btnAlterarDados"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#ff0000"
+                        android:text="Alterar Dados"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_alterarDados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/borda"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:paddingTop="10dp">
+
+                <Button
+                    android:id="@+id/card_fechar"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="15dp"
+                    android:background="@android:color/transparent"
+                    android:text="X"
+                    android:textColor="#7f8484"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Estabelecimento"
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/card_edtEstabelecimento"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#eaecec"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="5dp"
+                    android:hint="Informe o estabelecimento"
+                    android:textSize="6pt" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="7dp"
+                    android:text="Endereço"
+                    android:textSize="7pt" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/card_edtEndereco"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="90dp"
+                        android:layout_marginTop="7dp"
+                        android:background="#eaecec"
+                        android:drawableLeft="@android:color/transparent"
+                        android:drawablePadding="5dp"
+                        android:hint="Informe o endereço"
+                        android:textSize="6pt" />
+
+                    <EditText
+                        android:id="@+id/card_edtNumero"
+                        android:layout_width="50dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="7dp"
+                        android:background="#eaecec"
+                        android:drawableLeft="@android:color/transparent"
+                        android:drawablePadding="5dp"
+                        android:hint="Nº"
+                        android:textSize="6pt" />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="7dp"
+                    android:text="Categoria"
+                    android:textSize="7pt" />
+
+                <Spinner
+                    android:id="@+id/card_spnCategorias"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#eaecec"
+                    android:textColor="@android:color/white"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="7dp"
+                    android:text="Descrição"
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/card_edtDescricao"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#eaecec"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="5dp"
+                    android:gravity="top"
+                    android:inputType="text|textMultiLine"
+                    android:maxLength="200"
+                    android:textSize="6pt" />
+
+                <Button
+                    android:id="@+id/card_btnAlterar"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="20dp"
+                    android:background="#1dc2c6"
+                    android:text="Alterar Dados"
+                    android:textColor="@android:color/white"
+                    android:textSize="7pt" />
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+    </FrameLayout>
+</ScrollView>
