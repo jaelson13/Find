@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/layoutTab"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="45dp"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -99,7 +99,8 @@
                     android:background="#eaecec"
                     android:drawableLeft="@android:color/transparent"
                     android:drawablePadding="5dp"
-                    android:hint="Informe o endereço"
+                    android:hint="Endereço"
+                    android:clickable="false"
                     android:textSize="6pt" />
 
                 <EditText

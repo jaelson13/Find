@@ -3,6 +3,8 @@ package find.com.find.Fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import find.com.find.Activies.Principal_Activity;
@@ -88,6 +91,13 @@ public class Register_Map_Fragmento extends Fragment {
 
         edtEstabelecimento = (EditText) view.findViewById(R.id.map_edtEstabelecimento);
         edtEndereco = (EditText) view.findViewById(R.id.map_edtEndereco);
+        Geocoder geocoder = new Geocoder(getContext());
+        try {
+            List<Address> local = geocoder.getFromLocation(Principal_Activity.localizacao.getLatitude(),Principal_Activity.localizacao.getLongitude(),1);
+            edtEndereco.setText(local.get(0).getThoroughfare());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         edtNumero = (EditText) view.findViewById(R.id.map_edtNumero);
         edtDescricao = (EditText) view.findViewById(R.id.map_edtDescricao);
         btnSolicitar = (Button) view.findViewById(R.id.map_btnSolicitar);
