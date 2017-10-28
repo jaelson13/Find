@@ -16,11 +16,11 @@
         android:required="true" />
 
     <application
+        android:name=".Model.UsuarioApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_iconexhdpi"
         android:label="Find"
         android:roundIcon="@drawable/ic_iconemdpi"
-        android:name=".Model.UsuarioApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
@@ -28,6 +28,9 @@
             android:value="@string/API_KEY" />
 
         <activity android:name=".Activies.Login_Activity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".Activies.Principal_Activity"
             android:theme="@style/AppTheme">

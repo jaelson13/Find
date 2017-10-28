@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.theartofdev.edmodo.cropper.CropImage;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -54,13 +59,12 @@ public class Register_Map_Fragmento extends Fragment {
     private String[] categorias = {"Escolha uma categoria", "Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private EditText edtEstabelecimento, edtEndereco, edtNumero, edtDescricao;
     private Button btnSolicitar;
-    private ImageButton btnOpImage, btnCamera, btnGalery;
+    private ImageButton btnOpImage;
     private Spinner spnCategoria;
     private CircleImageView imgMapeamento;
 
     private Uri imagemSelecionada;
-    private Bitmap bitmap;
-    private boolean open;
+    private File file;
 
     public static Register_Map_Fragmento newInstance() {
         Register_Map_Fragmento fragmento = new Register_Map_Fragmento();
@@ -79,8 +83,6 @@ public class Register_Map_Fragmento extends Fragment {
 
         //Pegar imagem
         btnOpImage = (ImageButton) view.findViewById(R.id.register_btnOpImage);
-        btnCamera = (ImageButton) view.findViewById(R.id.register_btnCamera);
-        btnGalery = (ImageButton) view.findViewById(R.id.register_btnGalery);
         imgMapeamento = (CircleImageView) view.findViewById(R.id.map_imgMapeamento);
         pegarImagem();
 
@@ -111,7 +113,13 @@ public class Register_Map_Fragmento extends Fragment {
                     mapeamento.setLatitude(Principal_Activity.localizacao.getLatitude());
                     mapeamento.setLongitude(Principal_Activity.localizacao.getLongitude());
 
-                    File file = new File(Validacoes.getPath(getContext(),imagemSelecionada));
+                    try {
+                        String path = imagemSelecionada.toString();
+                        Log.i("uri",imagemSelecionada.toString());
+                        file = new File(new URI(path));
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
                     RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                     MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), fbody);
                     FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
@@ -180,45 +188,7 @@ public class Register_Map_Fragmento extends Fragment {
 
             @Override
             public void onClick(View v) {
-                if (open) {
-                    btnCamera.setVisibility(View.GONE);
-                    btnCamera.setClickable(false);
-
-                    btnGalery.setVisibility(View.GONE);
-                    btnGalery.setClickable(false);
-
-                    open = false;
-
-                } else {
-                    btnCamera.setVisibility(View.VISIBLE);
-                    btnCamera.setClickable(true);
-
-                    btnGalery.setVisibility(View.VISIBLE);
-                    btnGalery.setClickable(true);
-
-                    open = true;
-                }
-            }
-        });
-
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                    startActivityForResult(Intent.createChooser(intent, "Camera imagem"), CAM_IMAGE);
-                }
-
-            }
-        });
-
-        btnGalery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_PICK);
-                startActivityForResult(Intent.createChooser(intent, "Selecionar imagem"), PICK_IMAGE);
+                CropImage.startPickImageActivity(getContext(), Register_Map_Fragmento.this);
             }
         });
     }
@@ -229,22 +199,24 @@ public class Register_Map_Fragmento extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == PICK_IMAGE) {
-                imagemSelecionada = data.getData();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imagemSelecionada);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                imgMapeamento.setImageBitmap(bitmap);
+            if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE) {
+                Uri imageUri = CropImage.getPickImageResultUri(getContext(), data);
+                CropImage.activity(imageUri)
+                        .setAspectRatio(1, 1)
+                        .setRequestedSize(1024, 1024)
+                        .setOutputCompressQuality(70)
+                        .setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
+                        .start(getContext(), this);
             }
-
-            if (requestCode == CAM_IMAGE) {
-                Bundle extras = data.getExtras();
-                bitmap = (Bitmap) extras.get("data");
-                imgMapeamento.setImageBitmap(bitmap);
-                imagemSelecionada = Validacoes.getImageUri(getContext(), bitmap);
-
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                imagemSelecionada = result.getUri();
+                imgMapeamento.setImageURI(imagemSelecionada);
+            }
+            if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                Exception error = result.getError();
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }

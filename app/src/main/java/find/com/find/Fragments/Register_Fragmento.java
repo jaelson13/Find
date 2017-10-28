@@ -32,6 +32,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
@@ -54,21 +56,17 @@ import retrofit2.Response;
  */
 
 public class Register_Fragmento extends Fragment {
-    //Constantites
-    private static final int PICK_IMAGE = 123;
-    private static final int CAM_IMAGE = 124;
-
     //Normais
     private EditText edtNome, edtEmail, edtSenha;
     private RadioButton rbFeminino, rbMasculino;
     private Button btnCadastrar;
-    private ImageButton btnVoltar, btnOpImage, btnCamera, btnGalery;
+    private ImageButton btnVoltar, btnOpImage;
     private ImageView icImage;
-    private boolean open;
+
 
     //Imagem
+    private File file;
     private Uri imagemSelecionada;
-    private Bitmap bitmap;
     private Call<Usuario> call;
 
 
@@ -97,8 +95,6 @@ public class Register_Fragmento extends Fragment {
 
         //Pegar imagem
         btnOpImage = (ImageButton) view.findViewById(R.id.register_btnOpImage);
-        btnCamera = (ImageButton) view.findViewById(R.id.register_btnCamera);
-        btnGalery = (ImageButton) view.findViewById(R.id.register_btnGalery);
         icImage = (ImageView) view.findViewById(R.id.register_icImage);
         pegarImagem();
         //Fim Pegar Imagem
@@ -118,6 +114,7 @@ public class Register_Fragmento extends Fragment {
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (validarCampos()) {
                     Usuario usuario = new Usuario();
                     usuario.setNome(edtNome.getText().toString());
@@ -131,7 +128,13 @@ public class Register_Fragmento extends Fragment {
 
                     FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
                     if (imagemSelecionada != null) {
-                        File file = new File(Validacoes.getPath(getContext(),imagemSelecionada));
+                        try {
+                        String path = imagemSelecionada.toString();
+                        Log.i("uri",imagemSelecionada.toString());
+                        file = new File(new URI(path));
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), fbody);
                         call = servicos.salvarUsuarioImagem(usuario.getNome(), usuario.getEmail(), usuario.getSenha(), usuario.getSexo(), body);
@@ -172,45 +175,7 @@ public class Register_Fragmento extends Fragment {
 
             @Override
             public void onClick(View v) {
-                if (open) {
-                    btnCamera.setVisibility(View.GONE);
-                    btnCamera.setClickable(false);
-
-                    btnGalery.setVisibility(View.GONE);
-                    btnGalery.setClickable(false);
-
-                    open = false;
-
-                } else {
-                    btnCamera.setVisibility(View.VISIBLE);
-                    btnCamera.setClickable(true);
-
-                    btnGalery.setVisibility(View.VISIBLE);
-                    btnGalery.setClickable(true);
-
-                    open = true;
-                }
-            }
-        });
-
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                    startActivityForResult(Intent.createChooser(intent, "Camera imagem"), CAM_IMAGE);
-                }
-
-            }
-        });
-
-        btnGalery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_PICK);
-                startActivityForResult(Intent.createChooser(intent, "Selecionar imagem"), PICK_IMAGE);
+                CropImage.startPickImageActivity(getContext(), Register_Fragmento.this);
             }
         });
     }
@@ -248,24 +213,25 @@ public class Register_Fragmento extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == PICK_IMAGE) {
-                imagemSelecionada = data.getData();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imagemSelecionada);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                icImage.setImageBitmap(bitmap);
+            if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE) {
+                Uri imageUri = CropImage.getPickImageResultUri(getContext(), data);
+                CropImage.activity(imageUri)
+                        .setAspectRatio(1, 1)
+                        .setRequestedSize(1024, 1024)
+                        .setOutputCompressQuality(70)
+                        .setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
+                        .start(getContext(), this);
             }
-
-            if (requestCode == CAM_IMAGE) {
-                Bundle extras = data.getExtras();
-                bitmap = (Bitmap) extras.get("data");
-                icImage.setImageBitmap(bitmap);
-                imagemSelecionada = Validacoes.getImageUri(getContext(), bitmap);
-
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                imagemSelecionada = result.getUri();
+                icImage.setImageURI(imagemSelecionada);
+            }
+            if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                Exception error = result.getError();
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }

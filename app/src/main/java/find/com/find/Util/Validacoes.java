@@ -44,24 +44,6 @@ public class Validacoes {
         return matcher.matches();
     }
 
-    //RETORNAR O PATH DA URI
-    public static Uri getImageUri(Context contexto, Bitmap imagem) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        imagem.compress(Bitmap.CompressFormat.JPEG, 70, bytes);
-        String path = MediaStore.Images.Media.insertImage(contexto.getContentResolver(), imagem, "Imagem", null);
-        return Uri.parse(path);
-    }
-
-    //PEGAR O CAMINHO REAL DA IMAGEM
-    public static String getPath(Context contexo, Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        CursorLoader loading = new CursorLoader(contexo, uri, projection, null, null, null);
-        Cursor cursor = loading.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
-
     //CARREGAR A IMAGEM DO SERVIDOR
     public static void carregarImagemUser(Context context, ImageView imageView) {
         Glide.with(context).load(UsuarioApplication.getUsuario().getUrlImgPerfil()).into(imageView);

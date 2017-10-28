@@ -23,9 +23,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,9 +53,6 @@ import retrofit2.Response;
 
 public class Alterar_Usuario_Fragmento extends Fragment {
 
-    //Constantites
-    private static final int PICK_IMAGE = 123;
-    private static final int CAM_IMAGE = 124;
     private Button btnFecharCard, btnFecharCardDados, btnFecharCardDesativar;
 
     private TextView tvNome, tvEmail, tvSenha, tvSexo, tvDesativar;
@@ -63,13 +63,13 @@ public class Alterar_Usuario_Fragmento extends Fragment {
     private FloatingActionButton card_btnAlterarDados;
     private Button card_btnAlterar, btnAlterar, btnDesativarSim, btnDesativarNao;
 
-    private ImageButton btnOpImage, btnCamera, btnGalery;
+    private ImageButton btnOpImage;
     private CircleImageView icPerfil;
-    private boolean open;
 
     //Imagem
     private Uri imagemSelecionada;
-    private Bitmap bitmap;
+    private File file;
+
 
     public static Alterar_Usuario_Fragmento newInstance() {
         Alterar_Usuario_Fragmento fragmento = new Alterar_Usuario_Fragmento();
@@ -116,8 +116,6 @@ public class Alterar_Usuario_Fragmento extends Fragment {
 
         //Pegar imagem
         btnOpImage = (ImageButton) view.findViewById(R.id.register_btnOpImage);
-        btnCamera = (ImageButton) view.findViewById(R.id.register_btnCamera);
-        btnGalery = (ImageButton) view.findViewById(R.id.register_btnGalery);
         pegarImagem();
         atribuirDadosUser();
         cardsView();
@@ -226,33 +224,42 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == PICK_IMAGE) {
-                imagemSelecionada = data.getData();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imagemSelecionada);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                icPerfil.setImageBitmap(bitmap);
-                alterarUsuarioImagem();
+            if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE) {
+                Uri imageUri = CropImage.getPickImageResultUri(getContext(), data);
+                CropImage.activity(imageUri)
+                        .setAspectRatio(1, 1)
+                        .setRequestedSize(1024, 1024)
+                        .setOutputCompressQuality(70)
+                        .setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
+                        .start(getContext(), this);
             }
-
-            if (requestCode == CAM_IMAGE) {
-                Bundle extras = data.getExtras();
-                bitmap = (Bitmap) extras.get("data");
-                icPerfil.setImageBitmap(bitmap);
-                imagemSelecionada = Validacoes.getImageUri(getContext(), bitmap);
-                alterarUsuarioImagem();
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                imagemSelecionada = result.getUri();
+                icPerfil.setImageURI(imagemSelecionada);
+            }
+            if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                Exception error = result.getError();
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
 
     //METODO RESPONSÁVEL POR ALTERAR A IMAGEM DO USUÁRIO NO SERVIDOR
     private void alterarUsuarioImagem() {
-        FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
-        File file = new File(Validacoes.getPath(getContext(), imagemSelecionada));
+
+        try {
+            String path = imagemSelecionada.toString();
+            Log.i("uri",imagemSelecionada.toString());
+            file = new File(new URI(path));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), fbody);
+        FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
         Call<ResponseBody> call = servicos.atualizarUsuarioImagem(UsuarioApplication.getUsuario().getIdUsuario(), UsuarioApplication.getUsuario().getEmail(), body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -337,7 +344,6 @@ public class Alterar_Usuario_Fragmento extends Fragment {
         tvSenha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 cardView.setVisibility(View.VISIBLE);
             }
         });
@@ -392,45 +398,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
 
             @Override
             public void onClick(View v) {
-                if (open) {
-                    btnCamera.setVisibility(View.GONE);
-                    btnCamera.setClickable(false);
-
-                    btnGalery.setVisibility(View.GONE);
-                    btnGalery.setClickable(false);
-
-                    open = false;
-
-                } else {
-                    btnCamera.setVisibility(View.VISIBLE);
-                    btnCamera.setClickable(true);
-
-                    btnGalery.setVisibility(View.VISIBLE);
-                    btnGalery.setClickable(true);
-
-                    open = true;
-                }
-            }
-        });
-
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                    startActivityForResult(Intent.createChooser(intent, "Camera imagem"), CAM_IMAGE);
-                }
-
-            }
-        });
-
-        btnGalery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_PICK);
-                startActivityForResult(Intent.createChooser(intent, "Selecionar imagem"), PICK_IMAGE);
+                CropImage.startPickImageActivity(getContext(), Alterar_Usuario_Fragmento.this);
             }
         });
     }

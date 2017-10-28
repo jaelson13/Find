@@ -30,8 +30,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="15dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_seta"
-                android:textColor="#ce6b01" />
+                android:src="@drawable/ic_voltar"
+                />
         </RelativeLayout>
 
         <LinearLayout
@@ -63,33 +63,6 @@
                     android:layout_marginTop="80dp"
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_cam" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="50dp"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageButton
-                        android:id="@+id/register_btnCamera"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="70dp"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/ic_cam2"
-                        android:visibility="gone" />
-
-                    <ImageButton
-                        android:id="@+id/register_btnGalery"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="70dp"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/ic_galery"
-                        android:visibility="gone" />
-                </LinearLayout>
             </RelativeLayout>
 
             <LinearLayout
