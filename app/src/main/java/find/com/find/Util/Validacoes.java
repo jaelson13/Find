@@ -47,7 +47,7 @@ public class Validacoes {
     //RETORNAR O PATH DA URI
     public static Uri getImageUri(Context contexto, Bitmap imagem) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        imagem.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        imagem.compress(Bitmap.CompressFormat.JPEG, 70, bytes);
         String path = MediaStore.Images.Media.insertImage(contexto.getContentResolver(), imagem, "Imagem", null);
         return Uri.parse(path);
     }

@@ -68,12 +68,12 @@ public class Map_User_Fragmento extends Fragment {
                     switch (arg) {
                         case 1:
                             recyclerView.setAdapter(new Mapeamentos_ListAdapter(montarLista(), getContext()));
-                            LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                            LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
                             recyclerView.setLayoutManager(layout);
                             break;
                         case 2:
                             recyclerView.setAdapter(new Mapeamentos_ListAdapter(montarLista(), getContext()));
-                            layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                            layout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
                             recyclerView.setLayoutManager(layout);
                             break;
                     }
@@ -108,11 +108,5 @@ public class Map_User_Fragmento extends Fragment {
             }
         }
         return lista;
-    }
-
-    //Mapeamentos USER
-    private void mapeamentosUsuario() {
-
-
     }
 }

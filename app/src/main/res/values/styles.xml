@@ -17,26 +17,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="StyledTilEditTextTheme">
-        <item name="colorControlNormal">#d0e8fc</item>
-        // Cor padrão da linha
-        <item name="colorControlActivated">#d0e8fc</item>
-        // Cor linha e texto quando recebe foco
-    </style>
-
-    <style name="StyledTilEditText">
-        <item name="android:theme">@style/StyledTilEditTextTheme</item>
-
-        <item name="android:textColorHint">#d0e8fc</item>
-        // Cor texto(hint) sem foco
-    </style>
-
-    <style name="MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
-        <item name="android:textSize">6pt</item>
-    </style>
-
     <style name="ToolbarColoredBackArrow" parent="AppTheme">
         <item name="android:textColorSecondary">@android:color/white</item>
+    </style>
+
+    <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColor">#b60713</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
     </style>
 
 </resources>

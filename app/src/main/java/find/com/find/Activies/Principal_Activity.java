@@ -2,6 +2,7 @@ package find.com.find.Activies;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -23,6 +24,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -105,6 +107,7 @@ public class Principal_Activity extends AppCompatActivity
     private String[] categorias = {"Todas Categorias", "Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private Spinner spnCategorias;
     private NavigationView navigationView;
+    private AlertDialog.Builder builder;
     private Button btnEntrar;
     private static final String TAG = Principal_Activity.class.getSimpleName(), EXTRA_DIALOG = "dialog";
     private GoogleApiClient googleApiClient;
@@ -121,6 +124,9 @@ public class Principal_Activity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
+
+        builder = new AlertDialog.Builder(this, R.style.AlertDialog);
+
 
         testarBotaoEntrar();
         ajusteToolbarNav();
@@ -253,8 +259,8 @@ public class Principal_Activity extends AppCompatActivity
         TextView tvNome = (TextView) header.findViewById(R.id.nome_user);
         TextView tvEmail = (TextView) header.findViewById(R.id.email_user);
         CircleImageView icPerfil = (CircleImageView) header.findViewById(R.id.icPerfil);
-        tvNome.setText(UsuarioApplication.getInstacia().getUsuario().getNome());
-        tvEmail.setText(UsuarioApplication.getInstacia().getUsuario().getEmail());
+        tvNome.setText(UsuarioApplication.getUsuario().getNome());
+        tvEmail.setText(UsuarioApplication.getUsuario().getEmail());
         if (UsuarioApplication.getUsuario().getUrlImgPerfil() != null) {
             Validacoes.carregarImagemUser(getBaseContext(), icPerfil);
         }
@@ -320,6 +326,27 @@ public class Principal_Activity extends AppCompatActivity
                 startActivity(intent);
                 finish();
                 break;
+            case R.id.nav_loginmapear:
+                builder.setMessage("Para mapear um local você deve está logado.")
+                        .setTitle("Alerta!")
+                        .setPositiveButton("Acessar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent i = new Intent(Principal_Activity.this, Login_Activity.class);
+                                startActivity(i);
+                            }
+                        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
+                break;
+            case R.id.nav_mapa:
+                Intent intent2 = new Intent(this, Principal_Activity.class);
+                startActivity(intent2);
+                finish();
+                break;
         }
 
 
@@ -375,7 +402,7 @@ public class Principal_Activity extends AppCompatActivity
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setRotateGesturesEnabled(false);
-            mostrarMarcadores();
+            //mostrarMarcadores();
         }
     }
 
@@ -390,7 +417,7 @@ public class Principal_Activity extends AppCompatActivity
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        verificarGPS();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -620,22 +647,25 @@ public class Principal_Activity extends AppCompatActivity
 
                     @Override
                     public View getInfoContents(final Marker marker) {
-                        int index = Math.round(marker.getZIndex());
-                        View v = getLayoutInflater().inflate(R.layout.cardview_inforomacao_marcador, null);
+                        final int index = Math.round(marker.getZIndex());
+                        View v = getLayoutInflater().inflate(R.layout.cardview_marcador, null);
 
-                        CircleImageView imagem = (CircleImageView) v.findViewById(R.id.card_imgMarcador);
                         TextView estabelecimento = (TextView) v.findViewById(R.id.card_txtEstabelecimento);
-                        TextView endereco = (TextView) v.findViewById(R.id.card_txtEndereco);
-//                        Validacoes.carregarImagemMap(getBaseContext(), lista.get(index).getUrlImagem(), imagem);
+                        TextView info = (TextView) v.findViewById(R.id.card_txtInfo);
                         estabelecimento.setText(lista.get(index).getNomeLocal());
-                        endereco.setText(lista.get(index).getEndereco() + ", " + mapeamento.getNumeroLocal());
-                        Glide.with(getBaseContext()).load(lista.get(index).getUrlImagem()).into(imagem);
+                        //endereco.setText(lista.get(index).getEndereco() + ", " + mapeamento.getNumeroLocal());
 
                         return v;
                     }
                 });
-
                 mMap.addMarker(marcador);
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        Log.i("clickmarker", lista.get(Math.round(marker.getZIndex())).getNomeLocal());
+                        return false;
+                    }
+                });
                 Log.i("dados", mapeamento.getCategoria());
 
             }
@@ -695,15 +725,13 @@ public class Principal_Activity extends AppCompatActivity
                         @Override
                         public View getInfoContents(final Marker marker) {
                             int index = Math.round(marker.getZIndex());
-                            View v = getLayoutInflater().inflate(R.layout.cardview_inforomacao_marcador, null);
+                            View v = getLayoutInflater().inflate(R.layout.cardview_marcador, null);
 
-                            CircleImageView imagem = (CircleImageView) v.findViewById(R.id.card_imgMarcador);
                             TextView estabelecimento = (TextView) v.findViewById(R.id.card_txtEstabelecimento);
-                            TextView endereco = (TextView) v.findViewById(R.id.card_txtEndereco);
-//                        Validacoes.carregarImagemMap(getBaseContext(), lista.get(index).getUrlImagem(), imagem);
+                            TextView info = (TextView) v.findViewById(R.id.card_txtInfo);
                             estabelecimento.setText(lista.get(index).getNomeLocal());
-                            endereco.setText(lista.get(index).getEndereco() + ", " + mapeamento.getNumeroLocal());
-                            Glide.with(getBaseContext()).load(lista.get(index).getUrlImagem()).into(imagem);
+                            //.setText(lista.get(index).getEndereco() + ", " + mapeamento.getNumeroLocal());
+
 
                             return v;
                         }
@@ -721,7 +749,7 @@ public class Principal_Activity extends AppCompatActivity
     //Fim Marcadores
     private void todosMapeamentos() {
 
-        FindApiService service = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
+        FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
         Call<List<Mapeamento>> call = service.getAllMapeamentos();
         call.enqueue(new Callback<List<Mapeamento>>() {
             @Override
@@ -741,6 +769,4 @@ public class Principal_Activity extends AppCompatActivity
 
 
 }
-
-
 
