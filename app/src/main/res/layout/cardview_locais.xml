@@ -38,6 +38,7 @@
                     android:layout_height="wrap_content"
                     android:text="Rua Juazeiro do norte, 125"
                     android:textColor="@android:color/white"
+                    android:textSize="@dimen/texto_size"
                     />
 
                 <RelativeLayout
@@ -53,6 +54,7 @@
                     android:layout_height="wrap_content"
                     android:text="7.8 km"
                     android:textColor="@android:color/white"
+                    android:textSize="@dimen/texto_size"
                     />
                 <TextView
                     android:id="@+id/local_txtnota"
@@ -62,6 +64,7 @@
                     android:layout_marginRight="10dp"
                     android:text="Nota 5"
                     android:textColor="@android:color/white"
+                    android:textSize="@dimen/texto_size"
                     />
                 </RelativeLayout>
             </LinearLayout>

@@ -7,21 +7,14 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -47,11 +40,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -64,12 +52,10 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -77,17 +63,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import find.com.find.Fragments.Alterar_Usuario_Fragmento;
+import find.com.find.Fragments.CaixaDialog_Fragmento;
 import find.com.find.Fragments.Locais_Fragmento;
 import find.com.find.Fragments.Map_User_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
 import find.com.find.Model.Mapeamento;
-import find.com.find.Model.Usuario;
 import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
@@ -111,7 +95,6 @@ public class Principal_Activity extends AppCompatActivity
 
     private Spinner spnCategorias;
     private NavigationView navigationView;
-    private AlertDialog.Builder builder;
     private Button btnEntrar;
     private static final String TAG = Principal_Activity.class.getSimpleName(), EXTRA_DIALOG = "dialog";
     private GoogleApiClient googleApiClient;
@@ -125,23 +108,35 @@ public class Principal_Activity extends AppCompatActivity
     private TextView estabelecimento;
     private TextView descricao;
     private TextView endereco;
+    private RatingBar nota;
     private ImageView imagem;
     private CardView cardView;
+    private TextView avaliar;
     private Button btnFechar;
+
+    private AlertDialog.Builder alerta_acesso;
+    private AlertDialog.Builder alerta_feedback;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
-        builder = new AlertDialog.Builder(this, R.style.AlertDialog);
+        alerta_acesso = new AlertDialog.Builder(this, R.style.AlertDialog);
+        alerta_feedback = new AlertDialog.Builder(this, R.style.AlertDialog);
+
+
         estabelecimento = (TextView) findViewById(R.id.local_txtestabelecimento);
         endereco = (TextView) findViewById(R.id.local_txtendereco);
         descricao = (TextView) findViewById(R.id.local_txtdescricao);
         imagem = (ImageView) findViewById(R.id.local_imagem);
-       // nota = (RatingBar) findViewById(R.id.local_rtnota);
+        nota = (RatingBar) findViewById(R.id.local_rtnota);
         cardView = (CardView) findViewById(R.id.card_Dados);
         btnFechar = (Button) findViewById(R.id.local_btnFechar);
+        avaliar = (TextView) findViewById(R.id.local_avaliar);
+
 
         testarBotaoEntrar();
         ajusteToolbarNav();
@@ -342,7 +337,7 @@ public class Principal_Activity extends AppCompatActivity
                 finish();
                 break;
             case R.id.nav_loginmapear:
-                builder.setMessage("Para mapear um local você deve está logado.")
+                alerta_acesso.setMessage("Para mapear um local você deve está logado.")
                         .setTitle("Alerta!")
                         .setPositiveButton("Acessar", new DialogInterface.OnClickListener() {
                             @Override
@@ -594,7 +589,6 @@ public class Principal_Activity extends AppCompatActivity
     //Inicio Exibir Marcadores
 
 
-
     private void mostrarMarcadores() {
         int cont = 0;
         mMap.clear();
@@ -644,11 +638,45 @@ public class Principal_Activity extends AppCompatActivity
                         endereco.setText(mapeamentos.get(index).getEndereco() + ", " + mapeamentos.get(index).getNumeroLocal());
                         descricao.setText(mapeamentos.get(index).getDescricao());
                         Glide.with(getBaseContext()).load(mapeamentos.get(index).getUrlImagem()).into(imagem);
+                        nota.setRating(mapeamentos.get(index).getNota());
+                        LayerDrawable stars = (LayerDrawable) nota.getProgressDrawable();
+                        if (nota.getRating() < 2) {
+                            stars.getDrawable(2).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                        } else if (nota.getRating() > 1 && nota.getRating() < 4) {
+                            stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+                        } else {
+                            stars.getDrawable(2).setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+                        }
+
                         cardView.setVisibility(View.VISIBLE);
                         btnFechar.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 cardView.setVisibility(View.GONE);
+                            }
+                        });
+                        avaliar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (UsuarioApplication.getUsuario() == null) {
+                                    alerta_acesso.setMessage("Para avaliar um local você deve está logado.")
+                                            .setTitle("Alerta!")
+                                            .setPositiveButton("Acessar", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Intent i = new Intent(Principal_Activity.this, Login_Activity.class);
+                                                    startActivity(i);
+                                                }
+                                            }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    }).show();
+                                } else {
+                                    CaixaDialog_Fragmento caixaDialog_fragmento = CaixaDialog_Fragmento.newInstance(mapeamentos.get(index).getIdMapeamento());
+                                    caixaDialog_fragmento.show(getFragmentManager(),"dialog");
+                                }
                             }
                         });
                         return false;
@@ -751,6 +779,7 @@ public class Principal_Activity extends AppCompatActivity
         });
 
     }
+
 
 
 }

@@ -45,7 +45,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Rua Juazeiro do norte, 125" />
+                    android:text="Rua Juazeiro do norte, 125"
+                    android:textSize="@dimen/texto_size"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -67,7 +68,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="100 avaliações" />
+                    android:text="100 avaliações"
+                    android:textSize="@dimen/texto_size"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -84,7 +86,7 @@
                     android:layout_marginTop="5dp"
                     android:gravity="center"
                     android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ullamcorper eros sed risus ullamcorper gravida. Integer a nisi neque. Proin id tincidunt lacus. Vestibulum posuere, justo ut massa nunc."
-                    android:textSize="15sp" />
+                    android:textSize="@dimen/texto_size" />
 
                 <View
                     android:layout_width="match_parent"
@@ -158,7 +160,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="20dp"
                     android:text="Estabelecimento"
-                    android:textSize="7pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <EditText
                     android:id="@+id/card_edtEstabelecimento"
@@ -181,7 +183,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="7dp"
                     android:text="Endereço"
-                    android:textSize="7pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -224,7 +226,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="7dp"
                     android:text="Categoria"
-                    android:textSize="7pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <Spinner
                     android:id="@+id/card_spnCategorias"
@@ -246,7 +248,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="7dp"
                     android:text="Descrição"
-                    android:textSize="7pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <EditText
                     android:id="@+id/card_edtDescricao"

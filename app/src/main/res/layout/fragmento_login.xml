@@ -59,7 +59,7 @@
                 android:layout_gravity="center"
                 android:text="Usuário ou Senha invalidos!"
                 android:textColor="@android:color/holo_red_light"
-                android:textSize="5pt"
+                android:textSize="@dimen/texto_size"
                 android:visibility="gone" />
 
             <TextView
@@ -68,7 +68,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="30dp"
                 android:text="Email"
-                android:textSize="7pt" />
+                android:textSize="@dimen/texto_size" />
 
             <EditText
                 android:id="@+id/login_edtEmail"
@@ -91,7 +91,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="10dp"
                 android:text="Senha"
-                android:textSize="7pt" />
+                android:textSize="@dimen/texto_size" />
 
             <EditText
                 android:id="@+id/login_edtSenha"
@@ -156,7 +156,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:text="Login via rede social"
-                        android:textSize="4.5pt" />
+                        android:textSize="@dimen/texto_size" />
 
                     <View
                         android:layout_width="125dp"
@@ -220,7 +220,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Não possui conta?"
-                android:textSize="7pt" />
+                android:textSize="@dimen/texto_size" />
 
             <Button
                 android:id="@+id/btnCriarConta"
@@ -270,7 +270,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="30dp"
                 android:text="Insira seu e-mail para enviarmos uma nova senha"
-                android:textSize="8pt" />
+                android:textSize="@dimen/texto_size" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -279,7 +279,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="10dp"
                 android:text="Email"
-                android:textSize="6pt" />
+                android:textSize="@dimen/texto_size" />
 
             <EditText
                 android:id="@+id/card_edtEmail"

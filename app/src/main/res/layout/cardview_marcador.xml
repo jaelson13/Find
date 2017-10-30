@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Estabelecimento"
-            android:textSize="16sp" />
+            android:textSize="@dimen/texto_size" />
 
         <TextView
             android:id="@+id/card_txtInfo"
@@ -30,7 +30,7 @@
             android:layout_marginTop="8dp"
             android:text="Info"
             android:textColor="#ed0410"
-            android:textSize="15sp" />
+            android:textSize="@dimen/texto_size" />
 
     </LinearLayout>
 

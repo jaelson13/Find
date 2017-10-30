@@ -85,7 +85,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="10dp"
                     android:text="Nome"
-                    android:textSize="6pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <EditText
                     android:id="@+id/register_edtNome"
@@ -107,7 +107,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="7dp"
                     android:text="Sexo"
-                    android:textSize="6pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -146,7 +146,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="7dp"
                     android:text="Email"
-                    android:textSize="6pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <EditText
                     android:id="@+id/register_edtEmail"
@@ -168,7 +168,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="10dp"
                     android:text="Senha"
-                    android:textSize="6pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <EditText
                     android:id="@+id/register_edtSenha"
@@ -211,7 +211,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Já possui conta?"
-                    android:textSize="5pt" />
+                    android:textSize="@dimen/texto_size" />
 
                 <Button
                     android:id="@+id/btnCriarConta"

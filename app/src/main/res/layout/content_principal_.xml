@@ -33,7 +33,7 @@
                 android:layout_gravity="left"
                 android:layout_marginTop="7dp"
                 android:text="Filtrar"
-                android:textSize="8pt" />
+                android:textSize="16sp" />
 
             <Spinner
                 android:id="@+id/spnCategorias"
@@ -65,10 +65,12 @@
         android:id="@+id/card_Dados"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="50dp"
-        android:visibility="visible">
+        android:background="@drawable/radiocardsm"
+        android:visibility="gone">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -77,7 +79,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/radiocardsm"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
@@ -104,15 +105,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="Prazeres"
-                    android:textColor="#1dc2c6"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/local_txtendereco"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Rua Juazeiro do norte, 125" />
+                    android:text="Rua Juazeiro do norte, 125"
+                    android:textSize="@dimen/texto_size"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -129,7 +131,7 @@
                     android:layout_marginTop="5dp"
                     android:gravity="center"
                     android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ullamcorper eros sed risus ullamcorper gravida. Integer a nisi neque. Proin id tincidunt lacus. Vestibulum posuere, justo ut massa nunc."
-                    android:textSize="15sp" />
+                    android:textSize="@dimen/texto_size" />
 
                 <View
                     android:layout_width="match_parent"
@@ -142,12 +144,17 @@
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="false"
+                    android:padding="0dp"
                     android:isIndicator="true"
-                    android:numStars="5" />
+                    android:layout_gravity="center"
+                    android:clickable="false"
+                    android:numStars="5"
+                    android:max="5"
+                    android:stepSize=".5"
+                    />
 
                 <TextView
-                    android:id="@+id/local_avaliacoes"
+                    android:id="@+id/local_avaliar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"

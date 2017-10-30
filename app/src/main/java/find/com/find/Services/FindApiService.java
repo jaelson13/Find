@@ -141,7 +141,8 @@ public interface FindApiService {
     Call<Integer> getFeedBackPorId(@Field("idFeedBack") int idFeedBack);
 
     //Inserção de um FeedBack
-    @POST("")
+    @Headers("content-type:application/json")
+    @POST("feedback/add")
     Call<Feedback> salvarFeedBack(@Body Feedback feedback);
 
     //Atualização de um FeedBack

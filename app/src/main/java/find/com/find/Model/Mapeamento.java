@@ -26,6 +26,8 @@ public class Mapeamento {
     private String data;
     @SerializedName("urlImagem")
     private String urlImagem;
+    @SerializedName("nota")
+    private float nota;
     @SerializedName("latitude")
     private double latitude;
     @SerializedName("longitude")
@@ -91,6 +93,14 @@ public class Mapeamento {
     public void setData(String data) {
 
         this.data = data;
+    }
+
+    public float getNota() {
+        return nota;
+    }
+
+    public void setNota(float nota) {
+        this.nota = nota;
     }
 
     public String getUrlImagem() {
