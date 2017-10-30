@@ -58,8 +58,8 @@ public class Register_Map_Fragmento extends Fragment {
     //Constantites
     private static final int PICK_IMAGE = 123;
     private static final int CAM_IMAGE = 124;
-
     private String[] categorias = {"Escolha uma categoria", "Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
+
     private EditText edtEstabelecimento, edtEndereco, edtNumero, edtDescricao;
     private Button btnSolicitar;
     private ImageButton btnOpImage;

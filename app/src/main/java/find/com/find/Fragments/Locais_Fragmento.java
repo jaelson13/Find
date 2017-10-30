@@ -22,6 +22,7 @@ import find.com.find.Model.Mapeamento;
 
 import find.com.find.R;
 import find.com.find.Recycles.Locais_ListAdapter;
+import find.com.find.Util.Validacoes;
 
 
 /**
@@ -30,7 +31,6 @@ import find.com.find.Recycles.Locais_ListAdapter;
 
 public class Locais_Fragmento extends Fragment {
 
-    private String[] categorias = {"Todas Categorias", "Alimentaçao / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private List<Mapeamento> listaMapeamentoCategoria = new ArrayList<>();
     private RecyclerView recyclerView;
     private Spinner spnCategorias;
@@ -57,7 +57,7 @@ public class Locais_Fragmento extends Fragment {
         recyclerView.setLayoutManager(layout);
 
         spnCategorias = (Spinner) view.findViewById(R.id.spnCategorias);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), R.layout.layout_spinner, categorias);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), R.layout.layout_spinner, Validacoes.categorias);
         spnCategorias.setAdapter(arrayAdapter);
         mostrarSpinner();
 

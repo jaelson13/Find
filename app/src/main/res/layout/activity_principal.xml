@@ -20,4 +20,5 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
        />
-</android.support.v4.widget.DrawerLayout>
+
+   </android.support.v4.widget.DrawerLayout>

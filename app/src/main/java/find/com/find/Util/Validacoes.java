@@ -33,6 +33,7 @@ import find.com.find.Model.UsuarioApplication;
 public class Validacoes {
 
     public static final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiRmluZDEyMzQ1NiJ9.SJA_e7w0fqkKVASobxYsaWdF8xHWUgM7qR-XmHYkgTw";
+    public static String[] categorias = {"Todas Categorias", "Alimentaçao / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Saúde","Turismo"};
 
     //VALIDAR EMAIL
     public static boolean validarEmail(String email) {

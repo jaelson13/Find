@@ -44,7 +44,6 @@ import static java.security.AccessController.getContext;
 public class Mapeamentos_ListAdapter extends RecyclerView.Adapter {
     private List<Mapeamento> mapeamentos;
     private Context context;
-    private String[] categorias = {"Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private Mapeamentos_RecycleViewHolder holder;
     private Mapeamentos_RecycleViewHolder lista;
 
@@ -81,11 +80,11 @@ public class Mapeamentos_ListAdapter extends RecyclerView.Adapter {
         lista.card_estabelecimento.setText(mapeamento.getNomeLocal());
         lista.card_endereco.setText(mapeamento.getEndereco());
         lista.card_numero.setText(mapeamento.getNumeroLocal());
-        ArrayAdapter arrayAdapter = new ArrayAdapter(context, R.layout.layout_spinner, categorias);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(context, R.layout.layout_spinner, Validacoes.categorias);
         lista.card_spnCategorias.setAdapter(arrayAdapter);
 
-        for(int i = 0;i<categorias.length;i++){
-            if(mapeamento.getCategoria().equals(categorias[i])){
+        for(int i = 0;i<Validacoes.categorias.length;i++){
+            if(mapeamento.getCategoria().equals(Validacoes.categorias[i])){
                 lista.card_spnCategorias.setSelection(i);
             }
         }
@@ -126,8 +125,8 @@ public class Mapeamentos_ListAdapter extends RecyclerView.Adapter {
                                 lista.estabelecimento.setText(mapeamento.getNomeLocal());
                                 lista.endereco.setText(mapeamento.getEndereco());
                                 lista.card_numero.setText(mapeamento.getNumeroLocal());
-                                for(int i = 0;i<categorias.length;i++){
-                                    if(mapeamento.getCategoria().equals(categorias[i])){
+                                for(int i = 0;i<Validacoes.categorias.length;i++){
+                                    if(mapeamento.getCategoria().equals(Validacoes.categorias[i])){
                                         lista.card_spnCategorias.setSelection(i);
                                     }
                                 }

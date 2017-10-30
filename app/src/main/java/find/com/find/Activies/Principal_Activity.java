@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -39,6 +41,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +64,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -99,12 +103,12 @@ public class Principal_Activity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest locatioRequest;
     public static Location localizacao;
     private LatLng mOrigem;
 
-    private String[] categorias = {"Todas Categorias", "Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
     private Spinner spnCategorias;
     private NavigationView navigationView;
     private AlertDialog.Builder builder;
@@ -117,8 +121,13 @@ public class Principal_Activity extends AppCompatActivity
     private Handler mHandler;
     private GoogleMap mMap;
     public static List<Mapeamento> mapeamentos = new ArrayList<>();
-    public static List<Mapeamento> mapeamentosUser = new ArrayList<>();
-    private List<Mapeamento> lista = new ArrayList<>();
+
+    private TextView estabelecimento;
+    private TextView descricao;
+    private TextView endereco;
+    private ImageView imagem;
+    private CardView cardView;
+    private Button btnFechar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +135,13 @@ public class Principal_Activity extends AppCompatActivity
         setContentView(R.layout.activity_principal);
 
         builder = new AlertDialog.Builder(this, R.style.AlertDialog);
-
+        estabelecimento = (TextView) findViewById(R.id.local_txtestabelecimento);
+        endereco = (TextView) findViewById(R.id.local_txtendereco);
+        descricao = (TextView) findViewById(R.id.local_txtdescricao);
+        imagem = (ImageView) findViewById(R.id.local_imagem);
+       // nota = (RatingBar) findViewById(R.id.local_rtnota);
+        cardView = (CardView) findViewById(R.id.card_Dados);
+        btnFechar = (Button) findViewById(R.id.local_btnFechar);
 
         testarBotaoEntrar();
         ajusteToolbarNav();
@@ -165,7 +180,7 @@ public class Principal_Activity extends AppCompatActivity
 
     private void mostrarSpinner() {
         spnCategorias = (Spinner) findViewById(R.id.spnCategorias);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getBaseContext(), R.layout.layout_spinner, categorias);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getBaseContext(), R.layout.layout_spinner, Validacoes.categorias);
         spnCategorias.setAdapter(arrayAdapter);
 
         spnCategorias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -362,7 +377,7 @@ public class Principal_Activity extends AppCompatActivity
         mMap = googleMap;
         estilizarMap();
         mMap.setMinZoomPreference(10);
-        exibirMarcadores();
+        todosMapeamentos();
         mostrarSpinner();
         todosMapeamentos();
 
@@ -396,6 +411,9 @@ public class Principal_Activity extends AppCompatActivity
             // Conseguiu acessar a localização do android
             mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+
+            mOrigem = new LatLng(-7.2450288, -39.3363806);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
 
             mMap.setMyLocationEnabled(true);
@@ -574,35 +592,14 @@ public class Principal_Activity extends AppCompatActivity
 
 
     //Inicio Exibir Marcadores
-    private void exibirMarcadores() {
 
-        FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
-        Call<List<Mapeamento>> call = service.getMapeamentos();
-        call.enqueue(new Callback<List<Mapeamento>>() {
-            @Override
-            public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
-                if (response.code() == 200) {
-                    lista = response.body();
-                    mostrarMarcadores();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Mapeamento>> call, Throwable t) {
-
-            }
-
-
-        });
-
-    }
 
 
     private void mostrarMarcadores() {
         int cont = 0;
         mMap.clear();
         do {
-            for (final Mapeamento mapeamento : lista) {
+            for (final Mapeamento mapeamento : mapeamentos) {
 
                 MarkerOptions marcador = new MarkerOptions();
                 LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
@@ -635,41 +632,32 @@ public class Principal_Activity extends AppCompatActivity
                         break;
                 }
 
-                marcador.title(mapeamento.getCategoria());
                 marcador.zIndex(cont);
                 cont++;
-                mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                    @Override
-                    public View getInfoWindow(Marker marker) {
 
-                        return null;
-                    }
-
-                    @Override
-                    public View getInfoContents(final Marker marker) {
-                        final int index = Math.round(marker.getZIndex());
-                        View v = getLayoutInflater().inflate(R.layout.cardview_marcador, null);
-
-                        TextView estabelecimento = (TextView) v.findViewById(R.id.card_txtEstabelecimento);
-                        TextView info = (TextView) v.findViewById(R.id.card_txtInfo);
-                        estabelecimento.setText(lista.get(index).getNomeLocal());
-                        //endereco.setText(lista.get(index).getEndereco() + ", " + mapeamento.getNumeroLocal());
-
-                        return v;
-                    }
-                });
                 mMap.addMarker(marcador);
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        Log.i("clickmarker", lista.get(Math.round(marker.getZIndex())).getNomeLocal());
+                        final int index = Math.round(marker.getZIndex());
+                        estabelecimento.setText(mapeamentos.get(index).getNomeLocal());
+                        endereco.setText(mapeamentos.get(index).getEndereco() + ", " + mapeamentos.get(index).getNumeroLocal());
+                        descricao.setText(mapeamentos.get(index).getDescricao());
+                        Glide.with(getBaseContext()).load(mapeamentos.get(index).getUrlImagem()).into(imagem);
+                        cardView.setVisibility(View.VISIBLE);
+                        btnFechar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                cardView.setVisibility(View.GONE);
+                            }
+                        });
                         return false;
                     }
                 });
-                Log.i("dados", mapeamento.getCategoria());
+                //Log.i("dados", mapeamento.getCategoria());
 
             }
-        } while (lista == null);
+        } while (mapeamentos == null);
     }
 
     //Fim Marcadores
@@ -677,7 +665,7 @@ public class Principal_Activity extends AppCompatActivity
         int cont = 0;
         mMap.clear();
         do {
-            for (final Mapeamento mapeamento : lista) {
+            for (final Mapeamento mapeamento : mapeamentos) {
                 if (mapeamento.getCategoria().equals(categoria)) {
                     MarkerOptions marcador = new MarkerOptions();
                     LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
@@ -712,37 +700,33 @@ public class Principal_Activity extends AppCompatActivity
                             break;
                     }
 
-                    marcador.title(mapeamento.getCategoria());
                     marcador.zIndex(cont);
-                    cont++;
-                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                        @Override
-                        public View getInfoWindow(Marker marker) {
-
-                            return null;
-                        }
-
-                        @Override
-                        public View getInfoContents(final Marker marker) {
-                            int index = Math.round(marker.getZIndex());
-                            View v = getLayoutInflater().inflate(R.layout.cardview_marcador, null);
-
-                            TextView estabelecimento = (TextView) v.findViewById(R.id.card_txtEstabelecimento);
-                            TextView info = (TextView) v.findViewById(R.id.card_txtInfo);
-                            estabelecimento.setText(lista.get(index).getNomeLocal());
-                            //.setText(lista.get(index).getEndereco() + ", " + mapeamento.getNumeroLocal());
-
-
-                            return v;
-                        }
-                    });
 
                     mMap.addMarker(marcador);
-                    Log.i("dados", mapeamento.getCategoria());
+                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker) {
+                            final int index = Math.round(marker.getZIndex());
+                            estabelecimento.setText(mapeamentos.get(index).getNomeLocal());
+                            endereco.setText(mapeamentos.get(index).getEndereco() + ", " + mapeamentos.get(index).getNumeroLocal());
+                            descricao.setText(mapeamentos.get(index).getDescricao());
+                            Glide.with(getBaseContext()).load(mapeamentos.get(index).getUrlImagem()).into(imagem);
+                            cardView.setVisibility(View.VISIBLE);
+                            btnFechar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cardView.setVisibility(View.GONE);
+                                }
+                            });
+                            return false;
+                        }
+                    });
+                    //Log.i("dados", mapeamento.getCategoria());
                 }
+                cont++;
             }
         }
-        while (lista == null);
+        while (mapeamentos == null);
 
     }
 
@@ -756,6 +740,7 @@ public class Principal_Activity extends AppCompatActivity
             public void onResponse(Call<List<Mapeamento>> call, Response<List<Mapeamento>> response) {
                 if (response.code() == 200) {
                     mapeamentos = response.body();
+                    mostrarMarcadores();
                 }
             }
 

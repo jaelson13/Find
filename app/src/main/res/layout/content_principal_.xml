@@ -9,6 +9,7 @@
     tools:context="find.com.find.Activies.Principal_Activity"
     tools:showIn="@layout/app_bar_principal_">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -22,9 +23,9 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="60dp"
-            android:layout_centerHorizontal="true">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -44,6 +45,7 @@
 
                 />
         </LinearLayout>
+
         <ImageButton
             android:id="@+id/imgLocal"
             android:layout_width="wrap_content"
@@ -56,20 +58,136 @@
             android:src="@drawable/ic_gps"
 
             />
-
-        <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/coordinatorLayout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            tools:context="com.sample.foo.usingcoordinatorlayout.FabAndSnackbarActivity">
-
-        </android.support.design.widget.CoordinatorLayout>
     </RelativeLayout>
+
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_Dados"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="50dp"
+        android:visibility="visible">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/radiocardsm"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/local_btnFechar"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="5dp"
+                    android:background="@android:color/transparent"
+                    android:text="X"
+                    android:textColor="#7f8484"
+                    android:textSize="8pt" />
+
+                <ImageView
+                    android:id="@+id/local_imagem"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/local_txtestabelecimento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Prazeres"
+                    android:textColor="#1dc2c6"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/local_txtendereco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Rua Juazeiro do norte, 125" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_margin="10dp"
+                    android:background="#FFC9CCCC" />
+
+                <TextView
+                    android:id="@+id/local_txtdescricao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ullamcorper eros sed risus ullamcorper gravida. Integer a nisi neque. Proin id tincidunt lacus. Vestibulum posuere, justo ut massa nunc."
+                    android:textSize="15sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_margin="10dp"
+                    android:background="#FFC9CCCC" />
+
+                <RatingBar
+                    android:id="@+id/local_rtnota"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:isIndicator="true"
+                    android:numStars="5" />
+
+                <TextView
+                    android:id="@+id/local_avaliacoes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Avaliar"
+                    android:textColor="#ff0000"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_margin="10dp"
+                    android:background="#FFC9CCCC" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/local_btnAlterarImagem"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="Ver Avaliações"
+                        android:textColor="#ff0000"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/local_btnAlterarDados"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:text="Traçar Rota"
+                        android:textColor="#ff0000"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v7.widget.CardView>
 
 </FrameLayout>
