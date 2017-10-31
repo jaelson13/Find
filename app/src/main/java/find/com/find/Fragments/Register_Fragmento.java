@@ -1,6 +1,7 @@
 package find.com.find.Fragments;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -103,10 +104,7 @@ public class Register_Fragmento extends Fragment {
         btnVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Principal_Activity.class);
-                startActivity(intent);
-                getActivity().finish();
-
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 

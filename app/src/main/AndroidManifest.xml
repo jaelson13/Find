@@ -27,7 +27,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/API_KEY" />
 
-        <activity android:name=".Activies.Login_Activity" />
+        <activity android:name=".Activies.Login_Activity"
+                  android:theme="@style/AppTheme"/>
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />

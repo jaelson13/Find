@@ -8,6 +8,7 @@ public class Feedback {
 
     private int idFeedback;
     private String comentario;
+    private String usuario;
     private float nota;
     private int idUsuario;
     private int idMapeamento;
@@ -34,6 +35,14 @@ public class Feedback {
 
     public void setNota(float nota) {
         this.nota = nota;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public int getIdUsuario() {

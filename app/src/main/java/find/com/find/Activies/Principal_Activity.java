@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -21,6 +22,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -71,9 +74,12 @@ import find.com.find.Fragments.CaixaDialog_Fragmento;
 import find.com.find.Fragments.Locais_Fragmento;
 import find.com.find.Fragments.Map_User_Fragmento;
 import find.com.find.Fragments.Register_Map_Fragmento;
+import find.com.find.Model.Feedback;
 import find.com.find.Model.Mapeamento;
 import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
+import find.com.find.Recycles.Feedback_ListAdapter;
+import find.com.find.Recycles.Locais_ListAdapter;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
 import find.com.find.Util.PermissionUtils;
@@ -87,7 +93,7 @@ public class Principal_Activity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest locatioRequest;
     public static Location localizacao;
@@ -99,9 +105,7 @@ public class Principal_Activity extends AppCompatActivity
     private static final String TAG = Principal_Activity.class.getSimpleName(), EXTRA_DIALOG = "dialog";
     private GoogleApiClient googleApiClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1, REQUEST_CHECAR_GPS = 2, REQUEST_ERRO_PLAY_SERVICES = 1;
-    private boolean mDeveExibirDialog, flagEnableMap = false, conexao, flag;
-    private int mTentativas;
-    private Handler mHandler;
+    private boolean mDeveExibirDialog, conexao;
     private GoogleMap mMap;
     public static List<Mapeamento> mapeamentos = new ArrayList<>();
 
@@ -110,13 +114,15 @@ public class Principal_Activity extends AppCompatActivity
     private TextView endereco;
     private RatingBar nota;
     private ImageView imagem;
-    private CardView cardView;
+    private CardView cardView,cardViewFeedback;
     private TextView avaliar;
-    private Button btnFechar;
+    private Button btnFechar,btnFecharCard2;
+    private TextView btnVerAvaliacoes;
+    private RecyclerView recyclerView;
+    private TextView semAv;
 
     private AlertDialog.Builder alerta_acesso;
     private AlertDialog.Builder alerta_feedback;
-
 
 
     @Override
@@ -134,9 +140,12 @@ public class Principal_Activity extends AppCompatActivity
         imagem = (ImageView) findViewById(R.id.local_imagem);
         nota = (RatingBar) findViewById(R.id.local_rtnota);
         cardView = (CardView) findViewById(R.id.card_Dados);
+        cardViewFeedback = (CardView) findViewById(R.id.card_feedbacks);
         btnFechar = (Button) findViewById(R.id.local_btnFechar);
+        btnFecharCard2 = (Button) findViewById(R.id.local_btnFecharCard2);
         avaliar = (TextView) findViewById(R.id.local_avaliar);
-
+        btnVerAvaliacoes = (TextView) findViewById(R.id.local_btnVerAvaliacoes);
+        semAv = (TextView) findViewById(R.id.recycle_list_semAv);
 
         testarBotaoEntrar();
         ajusteToolbarNav();
@@ -150,14 +159,17 @@ public class Principal_Activity extends AppCompatActivity
         });
 
         //Mapa
-        mHandler = new Handler();
+
         mDeveExibirDialog = savedInstanceState == null;
         ImageView imv = (ImageView) findViewById(R.id.imgLocal);
 
         imv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ativarMinhaLocalizacao();
+                if (localizacao != null) {
+                    mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+                }
             }
         });
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -167,15 +179,15 @@ public class Principal_Activity extends AppCompatActivity
         googleApiClient.connect();
         locatioRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)
-                .setFastestInterval(1 * 1000);
+                .setInterval(5000)
+                .setFastestInterval(1000);
         mapFragment.getMapAsync(this);
 
     }
 
     private void mostrarSpinner() {
         spnCategorias = (Spinner) findViewById(R.id.spnCategorias);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getBaseContext(), R.layout.layout_spinner, Validacoes.categorias);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.layout_spinner, Validacoes.categorias);
         spnCategorias.setAdapter(arrayAdapter);
 
         spnCategorias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -374,13 +386,10 @@ public class Principal_Activity extends AppCompatActivity
         mMap.setMinZoomPreference(10);
         todosMapeamentos();
         mostrarSpinner();
-        todosMapeamentos();
-
-
+        ativarMinhaLocalizacao();
     }
 
     //Estilo do mapa
-
     private void estilizarMap() {
         try {
             boolean success = mMap.setMapStyle(
@@ -397,35 +406,70 @@ public class Principal_Activity extends AppCompatActivity
 
     //Ativa a localição atual do usuário
     private void ativarMinhaLocalizacao() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permissão para acessar a localização do usuário
-            PermissionUtils.requestPermission(Principal_Activity.this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
-        } else if (mMap != null) {
-            // Conseguiu acessar a localização do android
-            mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-
-            mOrigem = new LatLng(-7.2450288, -39.3363806);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                googleApiClient.connect();
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                mMap.getUiSettings().setMapToolbarEnabled(false);
+                mMap.getUiSettings().setRotateGesturesEnabled(false);
+            } else {
+                checarPermissaoLocalizacao();
+            }
+        }else {
+            googleApiClient.connect();
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setRotateGesturesEnabled(false);
-            //mostrarMarcadores();
         }
     }
+    private void checarPermissaoLocalizacao() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
 
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(this)
+                        .setTitle("Permissão de localização necessária")
+                        .setMessage("Este aplicativo precisa da permissão de localização, aceite para usar a funcionalidade de localização.")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(Principal_Activity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION );
+            }
+        }
+    }
     //Connexão Google play services
 
     @Override
     public void onLocationChanged(Location location) {
         localizacao = location;
-        Toast.makeText(getBaseContext(), "Localização: " + String.valueOf(localizacao.getLongitude()) + "|" + String.valueOf(localizacao.getLongitude()), Toast.LENGTH_SHORT);
-        ativarMinhaLocalizacao();
+        mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+
+        Log.i("local", "Localização: " + String.valueOf(localizacao.getLongitude()) + "|" + String.valueOf(localizacao.getLongitude()));
+
     }
 
     @Override
@@ -438,7 +482,8 @@ public class Principal_Activity extends AppCompatActivity
         if (localizacao == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locatioRequest, this);
         } else {
-            ativarMinhaLocalizacao();
+            mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
         }
 
     }
@@ -471,7 +516,6 @@ public class Principal_Activity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         googleApiClient.connect();
-        ativarMinhaLocalizacao();
         testarBotaoEntrar();
     }
 
@@ -489,7 +533,6 @@ public class Principal_Activity extends AppCompatActivity
         if (googleApiClient != null && googleApiClient.isConnected()) {
             googleApiClient.disconnect();
         }
-        mHandler.removeCallbacksAndMessages(null);
         super.onStop();
 
     }
@@ -510,7 +553,7 @@ public class Principal_Activity extends AppCompatActivity
                 final Status status = locationSettingsResult.getStatus();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        ativarMinhaLocalizacao();
+                        //  ativarMinhaLocalizacao();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         if (mDeveExibirDialog) {
@@ -551,8 +594,6 @@ public class Principal_Activity extends AppCompatActivity
             googleApiClient.connect();
         } else if (requestCode == REQUEST_CHECAR_GPS) {
             if (resultCode == RESULT_OK) {
-                mTentativas = 0;
-                mHandler.removeCallbacks(null);
                 onResume();
             } else {
                 Toast.makeText(this, "É necessário habilitar a configuração de localização para utilizar o aplicativo", Toast.LENGTH_LONG).show();
@@ -675,8 +716,48 @@ public class Principal_Activity extends AppCompatActivity
                                     }).show();
                                 } else {
                                     CaixaDialog_Fragmento caixaDialog_fragmento = CaixaDialog_Fragmento.newInstance(mapeamentos.get(index).getIdMapeamento());
-                                    caixaDialog_fragmento.show(getFragmentManager(),"dialog");
+                                    caixaDialog_fragmento.show(getFragmentManager(), "dialog");
                                 }
+                            }
+                        });
+                        btnVerAvaliacoes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
+                                Call<List<Feedback>> call = service.getFeedBacks(mapeamentos.get(index).getIdMapeamento());
+                                call.enqueue(new Callback<List<Feedback>>() {
+                                    @Override
+                                    public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
+                                        if(response.code() == 200){
+                                           if(response.body().isEmpty()){
+                                               recyclerView.setAdapter(null);
+                                               cardViewFeedback.setVisibility(View.VISIBLE);
+                                               semAv.setVisibility(View.VISIBLE);
+
+                                           }else {
+                                               recyclerView.setAdapter(null);
+                                               recyclerView = (RecyclerView) findViewById(R.id.recycle_list);
+                                               recyclerView.setAdapter(new Feedback_ListAdapter(response.body(), getBaseContext()));
+                                               LinearLayoutManager layout = new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
+                                               recyclerView.setLayoutManager(layout);
+                                               cardViewFeedback.setVisibility(View.VISIBLE);
+                                           }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<List<Feedback>> call, Throwable t) {
+
+                                    }
+                                });
+
+                            }
+                        });
+                        btnFecharCard2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                cardViewFeedback.setVisibility(View.GONE);
+                                semAv.setVisibility(View.GONE);
                             }
                         });
                         return false;
@@ -779,7 +860,6 @@ public class Principal_Activity extends AppCompatActivity
         });
 
     }
-
 
 
 }

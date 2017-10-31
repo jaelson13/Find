@@ -131,9 +131,9 @@ public interface FindApiService {
     //FEEDBACK
 
     //Listar todos os FeedBack
-    @FormUrlEncoded
-    @GET("")
-    Call<Feedback> getFeedBack(@Body Feedback feedback);
+    @Headers("content-type:application/json")
+    @POST("feedback/listar")
+    Call<List<Feedback>> getFeedBacks(@Query("idMapeamento") int idMapeamento);
 
     //Pega dados do FeedBack pelo id
     @FormUrlEncoded

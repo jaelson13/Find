@@ -75,16 +75,20 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
+            android:background="@android:color/transparent"
+            android:textColor="#1dc2c6"
             android:text="Cancelar"
-            android:textSize="13sp" />
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/feedback_btnEnviar"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textColor="#1dc2c6"
             android:layout_marginLeft="10dp"
             android:text="Enviar"
-            android:textSize="13sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 </LinearLayout>
