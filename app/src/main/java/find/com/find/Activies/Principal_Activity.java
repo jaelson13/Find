@@ -730,13 +730,12 @@ public class Principal_Activity extends AppCompatActivity
                                     public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
                                         if(response.code() == 200){
                                            if(response.body().isEmpty()){
-                                               recyclerView.setAdapter(null);
                                                cardViewFeedback.setVisibility(View.VISIBLE);
                                                semAv.setVisibility(View.VISIBLE);
 
                                            }else {
-                                               recyclerView.setAdapter(null);
                                                recyclerView = (RecyclerView) findViewById(R.id.recycle_list);
+                                               recyclerView.setAdapter(null);
                                                recyclerView.setAdapter(new Feedback_ListAdapter(response.body(), getBaseContext()));
                                                LinearLayoutManager layout = new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
                                                recyclerView.setLayoutManager(layout);

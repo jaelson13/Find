@@ -1,6 +1,5 @@
 package find.com.find.Model;
 
-import com.google.firebase.storage.StorageException;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;

@@ -60,7 +60,7 @@ public class Register_Fragmento extends Fragment {
     //Normais
     private EditText edtNome, edtEmail, edtSenha;
     private RadioButton rbFeminino, rbMasculino;
-    private Button btnCadastrar;
+    private Button btnCadastrar,btnEntrar;
     private ImageButton btnVoltar, btnOpImage;
     private ImageView icImage;
 
@@ -90,6 +90,7 @@ public class Register_Fragmento extends Fragment {
         edtEmail = (EditText) view.findViewById(R.id.register_edtEmail);
         edtSenha = (EditText) view.findViewById(R.id.register_edtSenha);
         btnCadastrar = (Button) view.findViewById(R.id.register_btnCadastrar);
+        btnEntrar = (Button) view.findViewById(R.id.register_btnEntrar);
         rbFeminino = (RadioButton) view.findViewById(R.id.register_rbFeminino);
         rbMasculino = (RadioButton) view.findViewById(R.id.register_rbMasculino);
         btnVoltar = (ImageButton) view.findViewById(R.id.register_btnVoltar);
@@ -161,6 +162,12 @@ public class Register_Fragmento extends Fragment {
                         }
                     });
                 }
+            }
+        });
+        btnEntrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
