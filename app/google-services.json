@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "995527108456",
+    "firebase_url": "https://find-1504727574825.firebaseio.com",
+    "project_id": "find-1504727574825",
+    "storage_bucket": "find-1504727574825.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995527108456:android:54dc2ae6cda35c18",
+        "android_client_info": {
+          "package_name": "find.com.find"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995527108456-2t1aq48tcvcd1h14ov07vnt7gis3urt3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjQ1Iy4ibcOcO9Ns00hRRYCsWj3T2o4Wc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
