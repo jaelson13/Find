@@ -13,7 +13,7 @@ public class NotificacaoIdService extends FirebaseInstanceIdService {
 
 
     private static final String TAG = "ServicoIdFirebase";
-    public static final  String token = FirebaseInstanceId.getInstance().getToken();
+    public static String token = FirebaseInstanceId.getInstance().getToken();
 
 
     @Override
@@ -23,6 +23,7 @@ public class NotificacaoIdService extends FirebaseInstanceIdService {
         String tokenAtualizado = FirebaseInstanceId.getInstance().getToken();
         // token = tokenAtualizado;
         //Displaying token on logcat
+        token = tokenAtualizado;
         Log.d(TAG, "Token atualizado: " + tokenAtualizado);
 
     }

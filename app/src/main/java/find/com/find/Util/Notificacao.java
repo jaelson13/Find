@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import find.com.find.Activies.Principal_Activity;
+import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 
 /**
@@ -26,48 +27,55 @@ import find.com.find.R;
  */
 
 public class Notificacao extends FirebaseMessagingService{
-    String type;
+    String type="";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (remoteMessage.getData().size() > 0){
-            type="json";
-            enviarNotificacao(remoteMessage.getData().toString());
-        }
-        if(remoteMessage.getNotification() != null){
-            type = "message";
-            enviarNotificacao(remoteMessage.getNotification().getBody());
-        }
+
+           if (remoteMessage.getData().size() > 0) {
+               type = "json";
+               enviarNotificacao(remoteMessage.getData().toString());
+           }
+           if (remoteMessage.getNotification() != null) {
+               type = "message";
+               enviarNotificacao(remoteMessage.getNotification().getBody());
+           }
+
     }
 
     private void enviarNotificacao(String msg){
-    String id = "",messagem="",titulo="";
+    String id = "",message="",title="";
         if(type.equals("json")){
             try {
                 JSONObject jsonObject = new JSONObject(msg);
                 id = jsonObject.getString("id");
-                messagem = jsonObject.getString("messagem");
-                titulo = jsonObject.getString("titulo");
+                message = jsonObject.getString("message");
+                title = jsonObject.getString("title");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }else if(type.equals("message")){
-            messagem = msg;
+            message = msg;
         }
 
         Intent intent = new Intent(getApplicationContext(),Principal_Activity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0,intent,PendingIntent.FLAG_ONE_SHOT);;
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),"DefaultIDChanel");
-        notificationBuilder.setContentTitle("Find");
-        notificationBuilder.setContentText(messagem);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),"Default");
+        notificationBuilder.setContentTitle("Seu Mapeamento");
+        notificationBuilder.setContentText(message);
+
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         notificationBuilder.setSound(sound);
         notificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
         notificationBuilder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(),R.mipmap.ic_launcher));
         notificationBuilder.setAutoCancel(true);
+
         Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(1000);
+
         notificationBuilder.setContentIntent(pendingIntent);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0,notificationBuilder.build());
