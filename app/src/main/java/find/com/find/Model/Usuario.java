@@ -20,6 +20,8 @@ public class Usuario {
     private String urlImgPerfil;
     @SerializedName("sexo")
     private String sexo;
+    @SerializedName("tokenFirebase")
+    private String tokenFirebase;
 
     public Usuario() {
     }
@@ -66,5 +68,17 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getTokenFirebase() {
+        return tokenFirebase;
+    }
+
+    public void setTokenFirebase(String tokenFirebase) {
+        this.tokenFirebase = tokenFirebase;
+    }
+
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
 }

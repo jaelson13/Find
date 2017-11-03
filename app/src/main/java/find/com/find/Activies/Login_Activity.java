@@ -20,6 +20,7 @@ import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
+import find.com.find.Util.NotificacaoIdService;
 import find.com.find.Util.Validacoes;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -134,6 +135,11 @@ public class Login_Activity extends AppCompatActivity {
                                     Usuario usuario = response.body();
                                     Toast.makeText(getBaseContext(), "Login efetuado", Toast.LENGTH_SHORT).show();
                                     UsuarioApplication.setUsuario(usuario);
+                                    if (UsuarioApplication.getUsuario().getTokenFirebase() == null){
+                                        alterarUsuarioToken();
+                                    }else if(!UsuarioApplication.getUsuario().getTokenFirebase().equals(NotificacaoIdService.token)){
+                                        alterarUsuarioToken();
+                                    }
                                     Intent intent = new Intent(Login_Activity.this, Principal_Activity.class);
                                     startActivity(intent);
                                     finish();
@@ -161,6 +167,25 @@ public class Login_Activity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void alterarUsuarioToken() {
+        UsuarioApplication.getUsuario().setTokenFirebase(NotificacaoIdService.token);
+        FindApiService service = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
+        Call<Usuario> call = service.atualizarUsuario(UsuarioApplication.getUsuario());
+        call.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if(response.code()==200){
+                    Log.i("atualizacao","Usuario Atualizado - Token: "+UsuarioApplication.getUsuario().getTokenFirebase());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+
+            }
+        });
     }
 
     //VALIDAR CAMPOS DO CADASTRO

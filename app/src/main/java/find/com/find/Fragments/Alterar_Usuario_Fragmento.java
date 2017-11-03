@@ -126,7 +126,7 @@ public class Alterar_Usuario_Fragmento extends Fragment {
             @Override
             public void onClick(View v) {
                 if (validarSenha()) {
-                    UsuarioApplication.getUsuario().setSenha(novaSenha.getText().toString());
+                    UsuarioApplication.getUsuario().setSenha(Validacoes.convertSha1(novaSenha.getText().toString().toLowerCase()));
 
                     FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
                     final Call<Usuario> call = servicos.atualizarUsuario(UsuarioApplication.getUsuario());
