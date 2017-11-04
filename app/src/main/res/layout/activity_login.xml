@@ -29,6 +29,17 @@
             android:src="@drawable/ic_voltar" />
     </RelativeLayout>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/logo" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,6 +47,7 @@
         android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
+            android:layout_marginTop="50dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -81,7 +93,7 @@
             android:background="@android:color/transparent"
             android:hint="Esqueceu senha?"
             android:textColorHint="#1dc2c6"
-            android:textSize="15sp" />
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/login_btnLogar"
@@ -94,7 +106,7 @@
             android:background="#1dc2c6"
             android:text="Entrar"
             android:textColor="@android:color/white"
-            android:textSize="7pt" />
+            android:textSize="15sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
