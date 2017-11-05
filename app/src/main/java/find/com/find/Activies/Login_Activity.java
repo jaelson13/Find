@@ -1,5 +1,8 @@
 package find.com.find.Activies;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -14,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import es.dmoral.toasty.Toasty;
 import find.com.find.Fragments.Register_Fragmento;
 import find.com.find.Model.Usuario;
 import find.com.find.Model.UsuarioApplication;
@@ -35,21 +39,24 @@ public class Login_Activity extends AppCompatActivity {
     private ImageButton btnVoltar;
     private CardView card_enviarEmail;
     private EditText card_edtEmail;
-    private Button card_fechar,card_btnRecuperarSenha,login_btnRecupSenha;
+    private Button card_fechar, card_btnRecuperarSenha, login_btnRecupSenha;
+    AlertDialog.Builder alerta_acesso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        alerta_acesso = new AlertDialog.Builder(this, R.style.AlertDialog);
+
         edtEmail = (EditText) findViewById(R.id.login_edtEmail);
-        edtSenha = (EditText)findViewById(R.id.login_edtSenha);
+        edtSenha = (EditText) findViewById(R.id.login_edtSenha);
         btnLogar = (Button) findViewById(R.id.login_btnLogar);
-        btnCadastrar = (Button)findViewById(R.id.btnCriarConta);
+        btnCadastrar = (Button) findViewById(R.id.btnCriarConta);
         btnVoltar = (ImageButton) findViewById(R.id.login_btnVoltar);
 
         //CARDVIEW
-        card_enviarEmail = (CardView)findViewById(R.id.card_enviarEmail);
+        card_enviarEmail = (CardView) findViewById(R.id.card_enviarEmail);
         card_btnRecuperarSenha = (Button) findViewById(R.id.card_btnRecuperarSenha);
         card_fechar = (Button) findViewById(R.id.card_fechar);
         card_edtEmail = (EditText) findViewById(R.id.card_edtEmail);
@@ -60,36 +67,38 @@ public class Login_Activity extends AppCompatActivity {
         card_btnRecuperarSenha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(card_edtEmail.getText().toString())) {
-                    edtEmail.setError("Preecha o email");
-                }else{
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
-                    final Call<Void> call = servicos.recuperarSenha(card_edtEmail.getText().toString());
-                    call.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            switch (response.code()) {
-                                case 200:
-                                    Toast.makeText(getBaseContext(), "Senha enviada, Acesse seu email", Toast.LENGTH_SHORT).show();
-                                    card_enviarEmail.setVisibility(View.GONE);
-                                    break;
-                                case 204:
-                                    Toast.makeText(getBaseContext(), "Email inválido", Toast.LENGTH_SHORT).show();
-                                    card_edtEmail.setError("Email inválido");
-                                    break;
-                                case 404:
-                                    Toast.makeText(getBaseContext(), "Erro inesperado", Toast.LENGTH_SHORT).show();
-                                    break;
+                if (Validacoes.verificaConexao(getBaseContext())) {
+                    if (TextUtils.isEmpty(card_edtEmail.getText().toString())) {
+                        card_edtEmail.setError("Preecha o email");
+                    } else {
+                        FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
+                        final Call<Void> call = servicos.recuperarSenha(card_edtEmail.getText().toString());
+                        call.enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                switch (response.code()) {
+                                    case 200:
+                                        Toasty.success(getBaseContext(), "Senha enviada, Acesse seu email", Toast.LENGTH_SHORT).show();
+                                        card_enviarEmail.setVisibility(View.GONE);
+                                        break;
+                                    case 204:
+                                        card_edtEmail.setError("Email inválido");
+                                        break;
+                                    case 404:
+                                        Toasty.error(getBaseContext(), "Erro inesperado", Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
                             }
-                        }
 
 
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Log.e("erroF", t.getMessage());
-                            // Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Toasty.error(getBaseContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                } else {
+                    Toasty.error(getBaseContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -119,49 +128,61 @@ public class Login_Activity extends AppCompatActivity {
         btnLogar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validarCampos()) {
+                if (Validacoes.verificaConexao(getBaseContext())) {
+                    if (validarCampos()) {
+                        FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
+                        String email = edtEmail.getText().toString();
+                        String senha = edtSenha.getText().toString();
+                        //String senhaSha = Validacoes.convertSha1(senha);
+                        final Call<Usuario> call = servicos.fazerLogin(email, senha);
+                        call.enqueue(new Callback<Usuario>() {
+                            @Override
+                            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                                switch (response.code()) {
+                                    case 200:
+                                        Usuario usuario = response.body();
+                                        UsuarioApplication.setUsuario(usuario);
+                                        if (UsuarioApplication.getUsuario().getTokenFirebase() == null) {
+                                            alterarUsuarioToken();
+                                        } else if (!UsuarioApplication.getUsuario().getTokenFirebase().equals(NotificacaoIdService.token)) {
+                                            alterarUsuarioToken();
+                                        }
+                                        Intent intent = new Intent(Login_Activity.this, Principal_Activity.class);
+                                        startActivity(intent);
+                                        finish();
+                                        Toasty.success(getBaseContext(), "Login efetuado!", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 204:
+                                        alerta_acesso.setMessage("Usuário desativado.")
+                                                .setTitle("Alerta!")
+                                                .setPositiveButton("Ativar", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        card_enviarEmail.setVisibility(View.VISIBLE);
+                                                    }
+                                                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+                                        break;
+                                    case 404:
+                                        Toasty.error(getBaseContext(), "Usuario ou senha invalidos", Toast.LENGTH_SHORT).show();
+                                        break;
 
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
-                    String email = edtEmail.getText().toString();
-                    String senha = edtSenha.getText().toString();
-                    String senhaSha = Validacoes.convertSha1(senha);
-                    Log.i("senha",senhaSha);
-                    final Call<Usuario> call = servicos.fazerLogin(email,senha);
-                    call.enqueue(new Callback<Usuario>() {
-                        @Override
-                        public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                            switch (response.code()) {
-                                case 200:
-                                    Usuario usuario = response.body();
-                                    Toast.makeText(getBaseContext(), "Login efetuado", Toast.LENGTH_SHORT).show();
-                                    UsuarioApplication.setUsuario(usuario);
-                                    if (UsuarioApplication.getUsuario().getTokenFirebase() == null){
-                                        alterarUsuarioToken();
-                                    }else if(!UsuarioApplication.getUsuario().getTokenFirebase().equals(NotificacaoIdService.token)){
-                                        alterarUsuarioToken();
-                                    }
-                                    Intent intent = new Intent(Login_Activity.this, Principal_Activity.class);
-                                    startActivity(intent);
-                                    finish();
-                                    break;
-                                case 204:
-                                    Toast.makeText(getBaseContext(), "Usuario desativado!", Toast.LENGTH_SHORT).show();
-                                    break;
-                                case 404:
-                                    Toast.makeText(getBaseContext(), "Usuario ou senha invalidos", Toast.LENGTH_SHORT).show();
-                                    break;
+                                }
 
                             }
 
-                        }
-
-
-                        @Override
-                        public void onFailure(Call<Usuario> call, Throwable t) {
-                            Log.e("erroF", t.getMessage());
-                            // Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<Usuario> call, Throwable t) {
+                                Toasty.error(getBaseContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                } else {
+                    Toasty.error(getBaseContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -171,13 +192,13 @@ public class Login_Activity extends AppCompatActivity {
 
     private void alterarUsuarioToken() {
         UsuarioApplication.getUsuario().setTokenFirebase(NotificacaoIdService.token);
-        FindApiService service = FindApiAdapter.createService(FindApiService.class,Validacoes.token);
+        FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
         Call<Usuario> call = service.atualizarUsuario(UsuarioApplication.getUsuario());
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                if(response.code()==200){
-                    Log.i("atualizacao","Usuario Atualizado - Token: "+UsuarioApplication.getUsuario().getTokenFirebase());
+                if (response.code() == 200) {
+                    Log.i("atualizacao", "Usuario Atualizado - Token: " + UsuarioApplication.getUsuario().getTokenFirebase());
                 }
             }
 

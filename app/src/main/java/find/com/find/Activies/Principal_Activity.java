@@ -131,7 +131,6 @@ public class Principal_Activity extends AppCompatActivity
     private FloatingActionButton btnTracaRota;
 
     private AlertDialog.Builder alerta_acesso;
-    private AlertDialog.Builder alerta_feedback;
 
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
@@ -144,9 +143,6 @@ public class Principal_Activity extends AppCompatActivity
         setContentView(R.layout.activity_principal);
 
         alerta_acesso = new AlertDialog.Builder(this, R.style.AlertDialog);
-        alerta_feedback = new AlertDialog.Builder(this, R.style.AlertDialog);
-
-
         estabelecimento = (TextView) findViewById(R.id.local_txtestabelecimento);
         endereco = (TextView) findViewById(R.id.local_txtendereco);
         descricao = (TextView) findViewById(R.id.local_txtdescricao);
@@ -616,32 +612,6 @@ public class Principal_Activity extends AppCompatActivity
         }
 
     }
-
-
-    //Verifica se há conexao com a internet
-    public void verificaConexao() {
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                do {
-                    ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                    if (conectivtyManager.getActiveNetworkInfo() != null
-                            && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                            && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-                        conexao = true;
-
-                    } else {
-                        conexao = false;
-                        Toast.makeText(getBaseContext(), "Sem internet", Toast.LENGTH_LONG);
-                    }
-                } while (!conexao);
-            }
-        }, 10000);
-
-    }
-
-
     //Inicio Exibir Marcadores
 
 

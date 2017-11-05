@@ -30,8 +30,8 @@
     </RelativeLayout>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="center"
         android:layout_marginTop="80dp"
         android:layout_centerVertical="true"
@@ -246,8 +246,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="30dp"
-                android:text="Insira seu e-mail para enviarmos uma nova senha"
-                android:textSize="@dimen/texto_size" />
+                android:text="Insira seu e-mail para recuperar sua senha"
+                android:textSize="14sp" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

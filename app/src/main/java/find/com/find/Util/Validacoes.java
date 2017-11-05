@@ -3,6 +3,7 @@ package find.com.find.Util;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
@@ -83,4 +84,16 @@ public class Validacoes {
         }
         return "";
     }
+
+    //Verifica se há conexao com a internet
+    public static boolean verificaConexao(Context context) {
+        ConnectivityManager conectivtyManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+        if (conectivtyManager.getActiveNetworkInfo() != null
+                && conectivtyManager.getActiveNetworkInfo().isAvailable()
+                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
 }
