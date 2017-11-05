@@ -2,6 +2,7 @@ package find.com.find.Fragments;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -36,6 +37,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import es.dmoral.toasty.Toasty;
 import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Usuario;
@@ -70,6 +72,7 @@ public class Register_Fragmento extends Fragment {
     private Uri imagemSelecionada;
     private Call<Usuario> call;
 
+    ProgressDialog progressDialog;
 
     public static Register_Fragmento newInstance() {
         Register_Fragmento fragmento = new Register_Fragmento();
@@ -113,8 +116,10 @@ public class Register_Fragmento extends Fragment {
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            if(Validacoes.verificaConexao(getContext())){
                 if (validarCampos()) {
+                    progressDialog = ProgressDialog.show(getContext(), "Por favor aguarde!",
+                            "Carregando..", true);
                     Usuario usuario = new Usuario();
                     usuario.setNome(edtNome.getText().toString());
                     usuario.setEmail(edtEmail.getText().toString());
@@ -145,23 +150,26 @@ public class Register_Fragmento extends Fragment {
                         public void onResponse(Call<Usuario> call, Response<Usuario> response) {
 
                             if (response.code() == 201) {
-                                Toast.makeText(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                                Toasty.success(getContext(), "Cadastro feito com sucesso", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getActivity(), Login_Activity.class);
                                 startActivity(intent);
                             } else if (response.code() == 204) {
-
+                                progressDialog.dismiss();
                                 edtEmail.setError("Email já existe");
-
                             }
                         }
 
                         @Override
                         public void onFailure(Call<Usuario> call, Throwable t) {
-                            Log.e("Falha", t.getMessage());
-                            Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                            Toasty.error(getContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
+            } else {
+                Toasty.error(getContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
+            }
+
             }
         });
         btnEntrar.setOnClickListener(new View.OnClickListener() {
