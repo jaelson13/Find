@@ -302,7 +302,6 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp"
                     android:hint="Nome"
-                    android:inputType="textPassword"
                     android:maxLines="1"
                     android:textColorHint="#313131"
                     android:textSize="@dimen/texto_size"  />

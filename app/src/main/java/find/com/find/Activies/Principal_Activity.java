@@ -1,6 +1,7 @@
 package find.com.find.Activies;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -64,7 +66,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +85,9 @@ import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Recycles.Feedback_ListAdapter;
 import find.com.find.Recycles.Locais_ListAdapter;
+import find.com.find.Rota.DirectionFinder;
+import find.com.find.Rota.DirectionFinderListener;
+import find.com.find.Rota.Route;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
 import find.com.find.Util.PermissionUtils;
@@ -91,7 +99,7 @@ import retrofit2.Response;
 public class Principal_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener,DirectionFinderListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -120,9 +128,14 @@ public class Principal_Activity extends AppCompatActivity
     private TextView btnVerAvaliacoes;
     private RecyclerView recyclerView;
     private TextView semAv;
+    private FloatingActionButton btnTracaRota;
 
     private AlertDialog.Builder alerta_acesso;
     private AlertDialog.Builder alerta_feedback;
+
+    private List<Polyline> polylinePaths = new ArrayList<>();
+    private ProgressDialog progressDialog;
+
 
 
     @Override
@@ -146,6 +159,7 @@ public class Principal_Activity extends AppCompatActivity
         avaliar = (TextView) findViewById(R.id.local_avaliar);
         btnVerAvaliacoes = (TextView) findViewById(R.id.local_btnVerAvaliacoes);
         semAv = (TextView) findViewById(R.id.recycle_list_semAv);
+        btnTracaRota = (FloatingActionButton) findViewById(R.id.local_btnTracarRota);
 
         testarBotaoEntrar();
         ajusteToolbarNav();
@@ -177,10 +191,7 @@ public class Principal_Activity extends AppCompatActivity
                 .addConnectionCallbacks(this).addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API).addApi(Places.PLACE_DETECTION_API).build();
         googleApiClient.connect();
-        locatioRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(5000)
-                .setFastestInterval(1000);
+        requestLocation();
         mapFragment.getMapAsync(this);
 
     }
@@ -461,13 +472,16 @@ public class Principal_Activity extends AppCompatActivity
         }
     }
     //Connexão Google play services
+    private void requestLocation(){
+        locatioRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5000)
+                .setFastestInterval(1000);
+    }
 
     @Override
     public void onLocationChanged(Location location) {
         localizacao = location;
-        mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-
         Log.i("local", "Localização: " + String.valueOf(localizacao.getLongitude()) + "|" + String.valueOf(localizacao.getLongitude()));
 
     }
@@ -517,6 +531,7 @@ public class Principal_Activity extends AppCompatActivity
         super.onResume();
         googleApiClient.connect();
         testarBotaoEntrar();
+        requestLocation();
     }
 
     @Override
@@ -759,6 +774,15 @@ public class Principal_Activity extends AppCompatActivity
                                 semAv.setVisibility(View.GONE);
                             }
                         });
+                        btnTracaRota.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                cardView.setVisibility(View.GONE);
+                                LatLng localPartida = new LatLng(localizacao.getLatitude(),localizacao.getLongitude());
+                                LatLng localDestino = new LatLng(mapeamentos.get(index).getLatitude(),mapeamentos.get(index).getLongitude());
+                                enviarRequisicao(localPartida,localDestino);
+                            }
+                        });
                         return false;
                     }
                 });
@@ -807,8 +831,8 @@ public class Principal_Activity extends AppCompatActivity
                             marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_turismo));
                             break;
                     }
-
                     marcador.zIndex(cont);
+                    cont++;
 
                     mMap.addMarker(marcador);
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -819,6 +843,16 @@ public class Principal_Activity extends AppCompatActivity
                             endereco.setText(mapeamentos.get(index).getEndereco() + ", " + mapeamentos.get(index).getNumeroLocal());
                             descricao.setText(mapeamentos.get(index).getDescricao());
                             Glide.with(getBaseContext()).load(mapeamentos.get(index).getUrlImagem()).into(imagem);
+                            nota.setRating(mapeamentos.get(index).getNota());
+                            LayerDrawable stars = (LayerDrawable) nota.getProgressDrawable();
+                            if (nota.getRating() < 2) {
+                                stars.getDrawable(2).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                            } else if (nota.getRating() > 1 && nota.getRating() < 4) {
+                                stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+                            } else {
+                                stars.getDrawable(2).setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+                            }
+
                             cardView.setVisibility(View.VISIBLE);
                             btnFechar.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -826,12 +860,84 @@ public class Principal_Activity extends AppCompatActivity
                                     cardView.setVisibility(View.GONE);
                                 }
                             });
+                            avaliar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (UsuarioApplication.getUsuario() == null) {
+                                        alerta_acesso.setMessage("Para avaliar um local você deve está logado.")
+                                                .setTitle("Alerta!")
+                                                .setPositiveButton("Acessar", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        Intent i = new Intent(Principal_Activity.this, Login_Activity.class);
+                                                        startActivity(i);
+                                                    }
+                                                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+                                    } else {
+                                        CaixaDialog_Fragmento caixaDialog_fragmento = CaixaDialog_Fragmento.newInstance(mapeamentos.get(index).getIdMapeamento());
+                                        caixaDialog_fragmento.show(getFragmentManager(), "dialog");
+                                    }
+                                }
+                            });
+                            btnVerAvaliacoes.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
+                                    Call<List<Feedback>> call = service.getFeedBacks(mapeamentos.get(index).getIdMapeamento());
+                                    call.enqueue(new Callback<List<Feedback>>() {
+                                        @Override
+                                        public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
+                                            if(response.code() == 200){
+                                                if(response.body().isEmpty()){
+                                                    cardViewFeedback.setVisibility(View.VISIBLE);
+                                                    semAv.setVisibility(View.VISIBLE);
+
+                                                }else {
+                                                    recyclerView = (RecyclerView) findViewById(R.id.recycle_list);
+                                                    recyclerView.setAdapter(null);
+                                                    recyclerView.setAdapter(new Feedback_ListAdapter(response.body(), getBaseContext()));
+                                                    LinearLayoutManager layout = new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
+                                                    recyclerView.setLayoutManager(layout);
+                                                    cardViewFeedback.setVisibility(View.VISIBLE);
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<List<Feedback>> call, Throwable t) {
+
+                                        }
+                                    });
+
+                                }
+                            });
+                            btnFecharCard2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cardViewFeedback.setVisibility(View.GONE);
+                                    semAv.setVisibility(View.GONE);
+                                }
+                            });
+                            btnTracaRota.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cardView.setVisibility(View.GONE);
+                                    LatLng localPartida = new LatLng(localizacao.getLatitude(),localizacao.getLongitude());
+                                    LatLng localDestino = new LatLng(mapeamentos.get(index).getLatitude(),mapeamentos.get(index).getLongitude());
+                                    enviarRequisicao(localPartida,localDestino);
+                                }
+                            });
                             return false;
                         }
                     });
                     //Log.i("dados", mapeamento.getCategoria());
                 }
-                cont++;
+
             }
         }
         while (mapeamentos == null);
@@ -861,5 +967,42 @@ public class Principal_Activity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onDirectionFinderStart() {
+        progressDialog = ProgressDialog.show(this, "Traçando rota.",
+                "Carregando..", true);
+        if (polylinePaths != null) {
+            for (Polyline polyline:polylinePaths ) {
+                polyline.remove();
+            }
+        }
+    }
+
+    @Override
+    public void onDirectionFinderSuccess(List<Route> routes) {
+        progressDialog.dismiss();
+        polylinePaths = new ArrayList<>();
+
+        for (Route route : routes) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
+            PolylineOptions polylineOptions = new PolylineOptions().
+                    geodesic(true).
+                    color(Color.BLUE).
+                    width(10);
+
+            for (int i = 0; i < route.points.size(); i++)
+                polylineOptions.add(route.points.get(i));
+
+            polylinePaths.add(mMap.addPolyline(polylineOptions));
+        }
+    }
+    private void enviarRequisicao(LatLng localPartida,LatLng localDestino){
+        try {
+            new DirectionFinder(this,localPartida,localDestino).execute();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
 
