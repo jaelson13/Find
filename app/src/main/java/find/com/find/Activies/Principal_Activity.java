@@ -2,7 +2,6 @@ package find.com.find.Activies;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -12,10 +11,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -74,6 +71,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 import find.com.find.Fragments.Alterar_Usuario_Fragmento;
 import find.com.find.Fragments.CaixaDialog_Fragmento;
 import find.com.find.Fragments.Locais_Fragmento;
@@ -84,13 +82,11 @@ import find.com.find.Model.Mapeamento;
 import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 import find.com.find.Recycles.Feedback_ListAdapter;
-import find.com.find.Recycles.Locais_ListAdapter;
 import find.com.find.Rota.DirectionFinder;
 import find.com.find.Rota.DirectionFinderListener;
 import find.com.find.Rota.Route;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
-import find.com.find.Util.PermissionUtils;
 import find.com.find.Util.Validacoes;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -99,7 +95,7 @@ import retrofit2.Response;
 public class Principal_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener,DirectionFinderListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionFinderListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -107,14 +103,14 @@ public class Principal_Activity extends AppCompatActivity
     public static Location localizacao;
     private LatLng mOrigem;
 
-    private Spinner spnCategorias;
+    private static Spinner spnCategorias;
     private NavigationView navigationView;
     private Button btnEntrar;
     private static final String TAG = Principal_Activity.class.getSimpleName(), EXTRA_DIALOG = "dialog";
     private GoogleApiClient googleApiClient;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1, REQUEST_CHECAR_GPS = 2, REQUEST_ERRO_PLAY_SERVICES = 1;
+    private static final int REQUEST_CHECAR_GPS = 2, REQUEST_ERRO_PLAY_SERVICES = 1;
     private boolean mDeveExibirDialog, conexao;
-    private GoogleMap mMap;
+    private static GoogleMap mMap;
     public static List<Mapeamento> mapeamentos = new ArrayList<>();
 
     private TextView estabelecimento;
@@ -122,9 +118,9 @@ public class Principal_Activity extends AppCompatActivity
     private TextView endereco;
     private RatingBar nota;
     private ImageView imagem;
-    private CardView cardView,cardViewFeedback;
+    private CardView cardView, cardViewFeedback;
     private TextView avaliar;
-    private Button btnFechar,btnFecharCard2;
+    private Button btnFechar, btnFecharCard2;
     private TextView btnVerAvaliacoes;
     private RecyclerView recyclerView;
     private TextView semAv;
@@ -135,6 +131,7 @@ public class Principal_Activity extends AppCompatActivity
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
 
+    private int index;
 
 
     @Override
@@ -371,11 +368,7 @@ public class Principal_Activity extends AppCompatActivity
                     }
                 }).show();
                 break;
-            case R.id.nav_mapa:
-                Intent intent2 = new Intent(this, Principal_Activity.class);
-                startActivity(intent2);
-                finish();
-                break;
+
         }
 
 
@@ -424,7 +417,7 @@ public class Principal_Activity extends AppCompatActivity
             } else {
                 checarPermissaoLocalizacao();
             }
-        }else {
+        } else {
             googleApiClient.connect();
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -432,6 +425,7 @@ public class Principal_Activity extends AppCompatActivity
             mMap.getUiSettings().setRotateGesturesEnabled(false);
         }
     }
+
     private void checarPermissaoLocalizacao() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -452,7 +446,7 @@ public class Principal_Activity extends AppCompatActivity
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(Principal_Activity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -463,12 +457,13 @@ public class Principal_Activity extends AppCompatActivity
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
+
     //Connexão Google play services
-    private void requestLocation(){
+    private void requestLocation() {
         locatioRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(5000)
@@ -527,6 +522,7 @@ public class Principal_Activity extends AppCompatActivity
         super.onResume();
         googleApiClient.connect();
         testarBotaoEntrar();
+        todosMapeamentos();
         requestLocation();
     }
 
@@ -651,20 +647,17 @@ public class Principal_Activity extends AppCompatActivity
                         marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_turismo));
                         break;
                 }
-
-                marcador.zIndex(cont);
-                cont++;
-
-                mMap.addMarker(marcador);
+                //marcador.zIndex(cont);
+                mMap.addMarker(marcador).setTag(mapeamento);
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        final int index = Math.round(marker.getZIndex());
-                        estabelecimento.setText(mapeamentos.get(index).getNomeLocal());
-                        endereco.setText(mapeamentos.get(index).getEndereco() + ", " + mapeamentos.get(index).getNumeroLocal());
-                        descricao.setText(mapeamentos.get(index).getDescricao());
-                        Glide.with(getBaseContext()).load(mapeamentos.get(index).getUrlImagem()).into(imagem);
-                        nota.setRating(mapeamentos.get(index).getNota());
+                        final Mapeamento mapeamento = (Mapeamento) marker.getTag();
+                        estabelecimento.setText(mapeamento.getNomeLocal());
+                        endereco.setText(mapeamento.getEndereco() + ", " + mapeamento.getNumeroLocal());
+                        descricao.setText(mapeamento.getDescricao());
+                        Glide.with(getBaseContext()).load(mapeamento.getUrlImagem()).into(imagem);
+                        nota.setRating(mapeamento.getNota());
                         LayerDrawable stars = (LayerDrawable) nota.getProgressDrawable();
                         if (nota.getRating() < 2) {
                             stars.getDrawable(2).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
@@ -700,7 +693,7 @@ public class Principal_Activity extends AppCompatActivity
                                         }
                                     }).show();
                                 } else {
-                                    CaixaDialog_Fragmento caixaDialog_fragmento = CaixaDialog_Fragmento.newInstance(mapeamentos.get(index).getIdMapeamento());
+                                    CaixaDialog_Fragmento caixaDialog_fragmento = CaixaDialog_Fragmento.newInstance(mapeamento.getIdMapeamento());
                                     caixaDialog_fragmento.show(getFragmentManager(), "dialog");
                                 }
                             }
@@ -709,23 +702,23 @@ public class Principal_Activity extends AppCompatActivity
                             @Override
                             public void onClick(View view) {
                                 FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
-                                Call<List<Feedback>> call = service.getFeedBacks(mapeamentos.get(index).getIdMapeamento());
+                                Call<List<Feedback>> call = service.getFeedBacks(mapeamento.getIdMapeamento());
                                 call.enqueue(new Callback<List<Feedback>>() {
                                     @Override
                                     public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
-                                        if(response.code() == 200){
-                                           if(response.body().isEmpty()){
-                                               cardViewFeedback.setVisibility(View.VISIBLE);
-                                               semAv.setVisibility(View.VISIBLE);
+                                        if (response.code() == 200) {
+                                            if (response.body().isEmpty()) {
+                                                cardViewFeedback.setVisibility(View.VISIBLE);
+                                                semAv.setVisibility(View.VISIBLE);
 
-                                           }else {
-                                               recyclerView = (RecyclerView) findViewById(R.id.recycle_list);
-                                               recyclerView.setAdapter(null);
-                                               recyclerView.setAdapter(new Feedback_ListAdapter(response.body(), getBaseContext()));
-                                               LinearLayoutManager layout = new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
-                                               recyclerView.setLayoutManager(layout);
-                                               cardViewFeedback.setVisibility(View.VISIBLE);
-                                           }
+                                            } else {
+                                                recyclerView = (RecyclerView) findViewById(R.id.recycle_list);
+                                                recyclerView.setAdapter(null);
+                                                recyclerView.setAdapter(new Feedback_ListAdapter(response.body(), getBaseContext()));
+                                                LinearLayoutManager layout = new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
+                                                recyclerView.setLayoutManager(layout);
+                                                cardViewFeedback.setVisibility(View.VISIBLE);
+                                            }
                                         }
                                     }
 
@@ -747,16 +740,21 @@ public class Principal_Activity extends AppCompatActivity
                         btnTracaRota.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                cardView.setVisibility(View.GONE);
-                                LatLng localPartida = new LatLng(localizacao.getLatitude(),localizacao.getLongitude());
-                                LatLng localDestino = new LatLng(mapeamentos.get(index).getLatitude(),mapeamentos.get(index).getLongitude());
-                                enviarRequisicao(localPartida,localDestino);
+                                if (Validacoes.verificaConexao(getApplicationContext())) {
+                                    cardView.setVisibility(View.GONE);
+                                    LatLng localPartida = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
+                                    LatLng localDestino = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
+                                    enviarRequisicao(localPartida, localDestino);
+                                } else {
+                                    Toasty.error(getApplicationContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
+                                }
                             }
                         });
-                        return false;
+                        return true;
                     }
                 });
                 //Log.i("dados", mapeamento.getCategoria());
+                cont++;
 
             }
         } while (mapeamentos == null);
@@ -769,13 +767,10 @@ public class Principal_Activity extends AppCompatActivity
         do {
             for (final Mapeamento mapeamento : mapeamentos) {
                 if (mapeamento.getCategoria().equals(categoria)) {
-                    MarkerOptions marcador = new MarkerOptions();
+                    final MarkerOptions marcador = new MarkerOptions();
                     LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
                     marcador.position(local);
                     switch (mapeamento.getCategoria()) {
-                        case "Todas Categorias":
-                            mostrarMarcadores();
-                            break;
                         case "Alimentação / Bebidas":
                             marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_alimentacao_bebidas));
                             break;
@@ -801,19 +796,18 @@ public class Principal_Activity extends AppCompatActivity
                             marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_turismo));
                             break;
                     }
-                    marcador.zIndex(cont);
-                    cont++;
 
-                    mMap.addMarker(marcador);
+                    //marcador.zIndex(cont);
+                    mMap.addMarker(marcador).setTag(mapeamento);
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                         @Override
                         public boolean onMarkerClick(Marker marker) {
-                            final int index = Math.round(marker.getZIndex());
-                            estabelecimento.setText(mapeamentos.get(index).getNomeLocal());
-                            endereco.setText(mapeamentos.get(index).getEndereco() + ", " + mapeamentos.get(index).getNumeroLocal());
-                            descricao.setText(mapeamentos.get(index).getDescricao());
-                            Glide.with(getBaseContext()).load(mapeamentos.get(index).getUrlImagem()).into(imagem);
-                            nota.setRating(mapeamentos.get(index).getNota());
+                            final Mapeamento mapeamento = (Mapeamento) marker.getTag();
+                            estabelecimento.setText(mapeamento.getNomeLocal());
+                            endereco.setText(mapeamento.getEndereco() + ", " + mapeamento.getNumeroLocal());
+                            descricao.setText(mapeamento.getDescricao());
+                            Glide.with(getBaseContext()).load(mapeamento.getUrlImagem()).into(imagem);
+                            nota.setRating(mapeamento.getNota());
                             LayerDrawable stars = (LayerDrawable) nota.getProgressDrawable();
                             if (nota.getRating() < 2) {
                                 stars.getDrawable(2).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
@@ -849,7 +843,7 @@ public class Principal_Activity extends AppCompatActivity
                                             }
                                         }).show();
                                     } else {
-                                        CaixaDialog_Fragmento caixaDialog_fragmento = CaixaDialog_Fragmento.newInstance(mapeamentos.get(index).getIdMapeamento());
+                                        CaixaDialog_Fragmento caixaDialog_fragmento = CaixaDialog_Fragmento.newInstance(mapeamento.getIdMapeamento());
                                         caixaDialog_fragmento.show(getFragmentManager(), "dialog");
                                     }
                                 }
@@ -858,16 +852,16 @@ public class Principal_Activity extends AppCompatActivity
                                 @Override
                                 public void onClick(View view) {
                                     FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
-                                    Call<List<Feedback>> call = service.getFeedBacks(mapeamentos.get(index).getIdMapeamento());
+                                    Call<List<Feedback>> call = service.getFeedBacks(mapeamento.getIdMapeamento());
                                     call.enqueue(new Callback<List<Feedback>>() {
                                         @Override
                                         public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
-                                            if(response.code() == 200){
-                                                if(response.body().isEmpty()){
+                                            if (response.code() == 200) {
+                                                if (response.body().isEmpty()) {
                                                     cardViewFeedback.setVisibility(View.VISIBLE);
                                                     semAv.setVisibility(View.VISIBLE);
 
-                                                }else {
+                                                } else {
                                                     recyclerView = (RecyclerView) findViewById(R.id.recycle_list);
                                                     recyclerView.setAdapter(null);
                                                     recyclerView.setAdapter(new Feedback_ListAdapter(response.body(), getBaseContext()));
@@ -896,18 +890,24 @@ public class Principal_Activity extends AppCompatActivity
                             btnTracaRota.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    cardView.setVisibility(View.GONE);
-                                    LatLng localPartida = new LatLng(localizacao.getLatitude(),localizacao.getLongitude());
-                                    LatLng localDestino = new LatLng(mapeamentos.get(index).getLatitude(),mapeamentos.get(index).getLongitude());
-                                    enviarRequisicao(localPartida,localDestino);
+                                    if (Validacoes.verificaConexao(getApplicationContext())) {
+                                        cardView.setVisibility(View.GONE);
+                                        LatLng localPartida = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
+                                        LatLng localDestino = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
+                                        enviarRequisicao(localPartida, localDestino);
+                                    } else {
+                                        Toasty.error(getApplicationContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
-                            return false;
+                            return true;
                         }
                     });
                     //Log.i("dados", mapeamento.getCategoria());
                 }
 
+
+                cont++;
             }
         }
         while (mapeamentos == null);
@@ -942,7 +942,7 @@ public class Principal_Activity extends AppCompatActivity
         progressDialog = ProgressDialog.show(this, "Traçando rota.",
                 "Carregando..", true);
         if (polylinePaths != null) {
-            for (Polyline polyline:polylinePaths ) {
+            for (Polyline polyline : polylinePaths) {
                 polyline.remove();
             }
         }
@@ -963,16 +963,26 @@ public class Principal_Activity extends AppCompatActivity
             for (int i = 0; i < route.points.size(); i++)
                 polylineOptions.add(route.points.get(i));
 
+            Log.i("duracao", String.valueOf(route.duration.text));
+
             polylinePaths.add(mMap.addPolyline(polylineOptions));
         }
     }
-    private void enviarRequisicao(LatLng localPartida,LatLng localDestino){
+
+    private void enviarRequisicao(LatLng localPartida, LatLng localDestino) {
         try {
-            new DirectionFinder(this,localPartida,localDestino).execute();
+            new DirectionFinder(this, localPartida, localDestino).execute();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
     }
+
+    public static void moverCamera(LatLng local) {
+        //spnCategorias.setSelection(2);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(local, 16));
+        //spnCategorias.setSelection(0);
+    }
+
 }
 

@@ -2,6 +2,7 @@ package find.com.find.Recycles;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -16,7 +17,8 @@ public class Locais_RecycleViewHolder extends RecyclerView.ViewHolder{
     final TextView endereco;
     final CircleImageView imagem;
     final TextView distancia;
-    final TextView nota;
+    final RatingBar nota;
+    final TextView btnVerMapa;
 
     public Locais_RecycleViewHolder(View itemView) {
         super(itemView);
@@ -24,6 +26,7 @@ public class Locais_RecycleViewHolder extends RecyclerView.ViewHolder{
         endereco = (TextView) itemView.findViewById(R.id.local_txtendereco);
         imagem = (CircleImageView) itemView.findViewById(R.id.local_imagem);
         distancia = (TextView) itemView.findViewById(R.id.local_txtdistancia);
-        nota = (TextView) itemView.findViewById(R.id.local_txtnota);
+        nota = (RatingBar) itemView.findViewById(R.id.local_rtNota);
+        btnVerMapa = (TextView) itemView.findViewById(R.id.local_btnVerMapa);
     }
 }

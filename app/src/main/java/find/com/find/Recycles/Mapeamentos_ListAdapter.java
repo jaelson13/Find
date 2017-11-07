@@ -75,73 +75,6 @@ public class Mapeamentos_ListAdapter extends RecyclerView.Adapter {
         lista.descricao.setText(mapeamento.getDescricao());
         Validacoes.carregarImagemMap(context,mapeamento.getUrlImagem(),lista.imagem);
 
-
-        lista.card_descricao.setText(mapeamento.getDescricao());
-        lista.card_estabelecimento.setText(mapeamento.getNomeLocal());
-        lista.card_endereco.setText(mapeamento.getEndereco());
-        lista.card_numero.setText(mapeamento.getNumeroLocal());
-        ArrayAdapter arrayAdapter = new ArrayAdapter(context, R.layout.layout_spinner, Validacoes.categorias);
-        lista.card_spnCategorias.setAdapter(arrayAdapter);
-
-        for(int i = 0;i<Validacoes.categorias.length;i++){
-            if(mapeamento.getCategoria().equals(Validacoes.categorias[i])){
-                lista.card_spnCategorias.setSelection(i);
-            }
-        }
-
-        lista.btnAlterar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lista.card_alterarDados.setVisibility(View.VISIBLE);
-            }
-        });
-
-        lista.card_btnfechar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lista.card_alterarDados.setVisibility(View.GONE);
-            }
-        });
-
-        lista.card_btnAlterDados.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (validarCampos()) {
-                    mapeamento.setCategoria(lista.card_spnCategorias.getSelectedItem().toString());
-                    mapeamento.setDescricao(lista.card_descricao.getText().toString());
-                    mapeamento.setEndereco(lista.card_endereco.getText().toString());
-                    mapeamento.setNumeroLocal(lista.card_numero.getText().toString());
-                    mapeamento.setNomeLocal(lista.card_estabelecimento.getText().toString());
-
-                    FindApiService servicos = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
-                    final Call<Mapeamento> call = servicos.atualizarMapeamento(mapeamento);
-                    call.enqueue(new Callback<Mapeamento>() {
-                        @Override
-                        public void onResponse(Call<Mapeamento> call, Response<Mapeamento> response) {
-                            if (response.code() == 200) {
-                                Toast.makeText(context, "Dados Alterados", Toast.LENGTH_SHORT).show();
-                                lista.card_alterarDados.setVisibility(View.GONE);
-                                lista.descricao.setText(mapeamento.getDescricao());
-                                lista.estabelecimento.setText(mapeamento.getNomeLocal());
-                                lista.endereco.setText(mapeamento.getEndereco());
-                                lista.card_numero.setText(mapeamento.getNumeroLocal());
-                                for(int i = 0;i<Validacoes.categorias.length;i++){
-                                    if(mapeamento.getCategoria().equals(Validacoes.categorias[i])){
-                                        lista.card_spnCategorias.setSelection(i);
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Mapeamento> call, Throwable t) {
-                            Toast.makeText(context, "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-        });
-
     }
 
     @Override
@@ -149,25 +82,5 @@ public class Mapeamentos_ListAdapter extends RecyclerView.Adapter {
         return mapeamentos.size();
     }
 
-    //METODO PARA VALIDAR OS CAMPOS DE ALTERAÇÃO
-    private boolean validarCampos() {
-        if (TextUtils.isEmpty(lista.card_descricao.getText().toString())) {
-            lista.card_descricao.setError("Campo não pode ser vazio");
-            return false;
-        }
-        if (TextUtils.isEmpty(lista.card_endereco.getText().toString())) {
-            lista.card_endereco.setError("Campo não pode ser vazio");
-            return false;
-        }
-        if (TextUtils.isEmpty(lista.card_estabelecimento.getText().toString())) {
-            lista.card_estabelecimento.setError("Campo não pode ser vazio");
-            return false;
-        }
-        if (TextUtils.isEmpty(lista.card_numero.getText().toString())) {
-            lista.card_numero.setError("Campo não pode ser vazio");
-            return false;
-        }
-        return true;
-    }
 
 }

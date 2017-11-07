@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ public class Map_User_Fragmento extends Fragment {
 
     private List<Mapeamento> mapeamentosUser = new ArrayList<>();
     private RecyclerView recyclerView;
+    private TextView tvMapeamentos;
     private int arg;
     private Spinner spnCategorias;
     private ProgressDialog dialog;
@@ -57,6 +59,7 @@ public class Map_User_Fragmento extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_mapeamentos_ususario, container, false);
+        tvMapeamentos = (TextView) view.findViewById(R.id.tvMapeamentos);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycle_list);
         FindApiService service = FindApiAdapter.createService(FindApiService.class, Validacoes.token);
         Call<List<Mapeamento>> call = service.getMapeamentosUser(UsuarioApplication.getUsuario().getIdUsuario());
@@ -67,14 +70,24 @@ public class Map_User_Fragmento extends Fragment {
                     mapeamentosUser = response.body();
                     switch (arg) {
                         case 1:
-                            recyclerView.setAdapter(new Mapeamentos_ListAdapter(montarLista(), getContext()));
-                            LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-                            recyclerView.setLayoutManager(layout);
+                            if (!mapeamentosUser.isEmpty()) {
+                                tvMapeamentos.setVisibility(View.GONE);
+                                recyclerView.setAdapter(new Mapeamentos_ListAdapter(montarLista(), getContext()));
+                                LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                                recyclerView.setLayoutManager(layout);
+                            } else {
+                                tvMapeamentos.setVisibility(View.VISIBLE);
+                            }
                             break;
                         case 2:
-                            recyclerView.setAdapter(new Mapeamentos_ListAdapter(montarLista(), getContext()));
-                            layout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-                            recyclerView.setLayoutManager(layout);
+                            if (!mapeamentosUser.isEmpty()) {
+                                tvMapeamentos.setVisibility(View.GONE);
+                                recyclerView.setAdapter(new Mapeamentos_ListAdapter(montarLista(), getContext()));
+                                LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                                recyclerView.setLayoutManager(layout);
+                            } else {
+                                tvMapeamentos.setVisibility(View.VISIBLE);
+                            }
                             break;
                     }
 

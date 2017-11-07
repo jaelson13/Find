@@ -150,7 +150,7 @@ public class Login_Activity extends AppCompatActivity {
                                         Intent intent = new Intent(Login_Activity.this, Principal_Activity.class);
                                         startActivity(intent);
                                         finish();
-                                        Toasty.success(getBaseContext(), "Login efetuado!", Toast.LENGTH_SHORT).show();
+                                        //Toasty.success(getBaseContext(), "Login efetuado!", Toast.LENGTH_SHORT).show();
                                         break;
                                     case 204:
                                         alerta_acesso.setMessage("Usuário desativado.")

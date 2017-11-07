@@ -1,11 +1,17 @@
 package find.com.find.Recycles;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,10 +32,12 @@ import find.com.find.Util.Validacoes;
 public class Locais_ListAdapter extends RecyclerView.Adapter {
     private List<Mapeamento> mapeamentos;
     private Context context;
+    private Activity activity;
 
-    public Locais_ListAdapter(List<Mapeamento> mapeamentos, Context context) {
+    public Locais_ListAdapter(List<Mapeamento> mapeamentos, Context context, Activity activity) {
         this.mapeamentos = mapeamentos;
         this.context = context;
+        this.activity = activity;
     }
 
     @Override
@@ -41,12 +49,12 @@ public class Locais_ListAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Locais_RecycleViewHolder lista = (Locais_RecycleViewHolder) holder;
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        final Locais_RecycleViewHolder lista = (Locais_RecycleViewHolder) holder;
         organizar();
-        Mapeamento mapeamento = mapeamentos.get(position);
+        final Mapeamento mapeamento = mapeamentos.get(position);
         lista.estabelecimento.setText(mapeamento.getNomeLocal());
-        lista.endereco.setText(mapeamento.getEndereco());
+        lista.endereco.setText(mapeamento.getEndereco()+", "+mapeamento.getNumeroLocal());
         Validacoes.carregarImagemMap(context, mapeamento.getUrlImagem(), lista.imagem);
         Location local = new Location("local");
         local.setLatitude(mapeamento.getLatitude());
@@ -54,11 +62,32 @@ public class Locais_ListAdapter extends RecyclerView.Adapter {
         float distancia = Principal_Activity.localizacao.distanceTo(local) / 1000;
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
         if (distancia < 1) {
-            lista.distancia.setText("Há " + decimalFormat.format(distancia) + "m");
+            lista.distancia.setText(decimalFormat.format(distancia) + "m");
         } else {
-            lista.distancia.setText("Há " + decimalFormat.format(distancia) + "Km");
+            lista.distancia.setText(decimalFormat.format(distancia) + "Km");
 
         }
+
+        lista.nota.setRating(mapeamento.getNota());
+
+        LayerDrawable stars = (LayerDrawable) lista.nota.getProgressDrawable();
+        if (lista.nota.getRating() < 2) {
+            stars.getDrawable(2).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+        } else if (lista.nota.getRating() > 1 && lista.nota.getRating() < 4) {
+            stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+        } else {
+            stars.getDrawable(2).setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+        }
+
+        lista.btnVerMapa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LatLng local = new LatLng(mapeamentos.get(position).getLatitude(),mapeamentos.get(position).getLongitude());
+                activity.getFragmentManager().popBackStack();
+                activity.onBackPressed();
+                Principal_Activity.moverCamera(local);
+        }
+        });
 
     }
 
@@ -84,4 +113,5 @@ public class Locais_ListAdapter extends RecyclerView.Adapter {
             }
         });
     }
+
 }

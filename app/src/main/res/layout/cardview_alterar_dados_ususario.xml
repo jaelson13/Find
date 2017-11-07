@@ -2,11 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:background="@android:color/white">
 
@@ -167,7 +168,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_alignParentRight="true"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="10dp"
                         android:background="#1dc2c6"
                         android:src="@drawable/ic_edit"
                         />
@@ -360,214 +361,5 @@
                     android:textSize="7pt" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
-        <!-- CardView Alterar Desativar Conta -->
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_Desativar"
-            android:layout_width="match_parent"
-            android:layout_height="350dp"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="60dp"
-            android:background="@drawable/borda"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/card_fecharCardDesativar"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginRight="5dp"
-                android:background="@android:color/transparent"
-                android:text="X"
-                android:textColor="#7f8484"
-                android:textSize="8pt" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="30dp"
-                    android:text="Deseja realmente desativar sua conta?"
-                    android:textSize="16sp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/card_btnDesativarNao"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="15dp"
-                        android:layout_marginTop="15dp"
-                        android:background="#da0d10"
-                        android:text="Não"
-                        android:textColor="@android:color/white"
-                        android:textSize="7pt" />
-
-                    <Button
-                        android:id="@+id/card_btnDesativarSim"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginTop="15dp"
-                        android:background="#1dc2c6"
-                        android:text="Sim"
-                        android:textColor="@android:color/white"
-                        android:textSize="7pt" />
-                </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
     </FrameLayout>
-</ScrollView><!--
-<LinearLayout
-android:id="@+id/linear"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_gravity="center_vertical"
-android:layout_marginLeft="15dp"
-android:layout_marginRight="15dp"
-android:layout_marginTop="10dp"
-android:background="@drawable/borda"
-android:orientation="vertical"
-android:paddingBottom="20dp"
-android:paddingTop="10dp">
-
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="left"
-    android:layout_marginLeft="30dp"
-    android:layout_marginTop="10dp"
-    android:text="Nome"
-    android:textSize="6pt" />
-
-<EditText
-    android:id="@+id/alterar_edtNome"
-    android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:layout_gravity="center"
-    android:layout_marginLeft="30dp"
-    android:layout_marginRight="30dp"
-    android:layout_marginTop="7dp"
-    android:background="#eaecec"
-    android:drawableLeft="@android:color/transparent"
-    android:drawablePadding="5dp"
-    android:textSize="5.5pt" />
-
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="left"
-    android:layout_marginLeft="30dp"
-    android:layout_marginTop="7dp"
-    android:text="Sexo"
-    android:textSize="6pt" />
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="30dp">
-
-    <RadioGroup
-        android:id="@+id/radioGenero"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/alterar_rbMasculino"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0.9"
-            android:text="Masculino"
-            android:textSize="7pt" />
-
-        <RadioButton
-            android:id="@+id/alterar_rbFeminino"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0.9"
-            android:text="Feminino"
-            android:textSize="7pt" />
-
-    </RadioGroup>
-</LinearLayout>
-
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="left"
-    android:layout_marginLeft="30dp"
-    android:layout_marginTop="7dp"
-    android:text="Email"
-    android:textSize="6pt" />
-
-<TextView
-    android:id="@+id/alterar_edtEmail"
-    android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:layout_gravity="center"
-    android:layout_marginLeft="30dp"
-    android:layout_marginRight="30dp"
-    android:layout_marginTop="7dp"
-    android:background="#eaecec"
-    android:drawableLeft="@android:color/transparent"
-    android:drawablePadding="5dp"
-    android:textColor="@android:color/black"
-    android:textSize="6pt" />
-
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="left"
-    android:layout_marginLeft="30dp"
-    android:layout_marginTop="10dp"
-    android:text="Senha"
-    android:textSize="6pt" />
-
-<TextView
-    android:id="@+id/alterar_edtSenha"
-    android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:layout_gravity="center"
-    android:layout_marginLeft="30dp"
-    android:layout_marginRight="30dp"
-    android:layout_marginTop="7dp"
-    android:background="#eaecec"
-    android:drawableLeft="@android:color/transparent"
-    android:drawablePadding="5dp"
-    android:inputType="textPassword"
-    android:textColor="@android:color/black"
-    android:textSize="6pt"
-    />
-
-<Button
-    android:id="@+id/alterar_btnAlterar"
-    android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:layout_gravity="center"
-    android:layout_marginLeft="30dp"
-    android:layout_marginRight="30dp"
-    android:layout_marginTop="20dp"
-    android:background="#1dc2c6"
-    android:text="Alterar"
-    android:textColor="@android:color/white"
-    android:textSize="7pt" />
-
-</LinearLayout>-->
+</ScrollView>

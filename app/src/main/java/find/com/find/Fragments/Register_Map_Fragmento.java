@@ -1,6 +1,8 @@
 package find.com.find.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Address;
@@ -35,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Mapeamento;
 import find.com.find.Model.UsuarioApplication;
@@ -69,6 +72,8 @@ public class Register_Map_Fragmento extends Fragment {
     private Uri imagemSelecionada;
     private File file;
 
+    AlertDialog.Builder alerta;
+
     public static Register_Map_Fragmento newInstance() {
         Register_Map_Fragmento fragmento = new Register_Map_Fragmento();
         return fragmento;
@@ -83,6 +88,8 @@ public class Register_Map_Fragmento extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_cadastro_mapeamento, container, false);
+
+        alerta = new AlertDialog.Builder(getActivity(), R.style.AlertDialog);
 
         //Pegar imagem
         btnOpImage = (ImageButton) view.findViewById(R.id.register_btnOpImage);
@@ -111,6 +118,7 @@ public class Register_Map_Fragmento extends Fragment {
         btnSolicitar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(imagemSelecionada != null){
                 if (validarCampos()) {
                     Mapeamento mapeamento = new Mapeamento();
                     mapeamento.setNomeLocal(edtEstabelecimento.getText().toString());
@@ -153,6 +161,22 @@ public class Register_Map_Fragmento extends Fragment {
                         }
                     });
                 }
+                }else{
+                    alerta.setMessage("Faça o upload da imagem")
+                            .setTitle("Alerta!")
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+                }
+
             }
         });
 
