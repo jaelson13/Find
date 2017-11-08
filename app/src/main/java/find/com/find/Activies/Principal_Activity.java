@@ -126,6 +126,11 @@ public class Principal_Activity extends AppCompatActivity
     private TextView semAv;
     private FloatingActionButton btnTracaRota;
 
+    private TextView rotaDistancia;
+    private TextView rotaDuracao;
+    private TextView rotaFinalizarRota;
+    private CardView rotaCardRota;
+
     private AlertDialog.Builder alerta_acesso;
 
     private List<Polyline> polylinePaths = new ArrayList<>();
@@ -153,6 +158,11 @@ public class Principal_Activity extends AppCompatActivity
         btnVerAvaliacoes = (TextView) findViewById(R.id.local_btnVerAvaliacoes);
         semAv = (TextView) findViewById(R.id.recycle_list_semAv);
         btnTracaRota = (FloatingActionButton) findViewById(R.id.local_btnTracarRota);
+
+        rotaDistancia = (TextView) findViewById(R.id.rota_txtdistancia);
+        rotaDuracao = (TextView) findViewById(R.id.rota_txtduracao);
+        rotaFinalizarRota = (TextView) findViewById(R.id.rota_finalizarota);
+        rotaCardRota = (CardView) findViewById(R.id.card_rota);
 
         testarBotaoEntrar();
         ajusteToolbarNav();
@@ -186,6 +196,7 @@ public class Principal_Activity extends AppCompatActivity
         googleApiClient.connect();
         requestLocation();
         mapFragment.getMapAsync(this);
+        mostrarSpinner();
 
     }
 
@@ -382,28 +393,11 @@ public class Principal_Activity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        estilizarMap();
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this,R.raw.style_json));
         mMap.setMinZoomPreference(10);
-        todosMapeamentos();
-        mostrarSpinner();
         ativarMinhaLocalizacao();
+        todosMapeamentos();
     }
-
-    //Estilo do mapa
-    private void estilizarMap() {
-        try {
-            boolean success = mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.style_json));
-
-            if (!success) {
-                Log.e(TAG, "Erro ao estilizar");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e(TAG, "Can't find style. Error: ", e);
-        }
-    }
-
     //Ativa a localição atual do usuário
     private void ativarMinhaLocalizacao() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -960,11 +954,25 @@ public class Principal_Activity extends AppCompatActivity
                     color(Color.BLUE).
                     width(10);
 
+            rotaCardRota.setVisibility(View.VISIBLE);
+            rotaDuracao.setText(route.duration.text);
+            rotaDistancia.setText(route.distance.text);
+            rotaFinalizarRota.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (polylinePaths != null) {
+                        for (Polyline polyline : polylinePaths) {
+                            polyline.remove();
+                        }
+                    }
+                    rotaCardRota.setVisibility(View.GONE);
+                }
+            });
+
             for (int i = 0; i < route.points.size(); i++)
                 polylineOptions.add(route.points.get(i));
 
             Log.i("duracao", String.valueOf(route.duration.text));
-
             polylinePaths.add(mMap.addPolyline(polylineOptions));
         }
     }
