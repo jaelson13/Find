@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
+
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -19,9 +19,9 @@
     <application
         android:name=".Model.UsuarioApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_iconexhdpi"
+        android:icon="@drawable/logoapp"
         android:label="Find"
-        android:roundIcon="@drawable/ic_iconemdpi"
+        android:roundIcon="@drawable/logoapp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
@@ -29,13 +29,15 @@
             android:value="@string/API_KEY" />
 
         <activity android:name=".Activies.Login_Activity"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".Activies.Principal_Activity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

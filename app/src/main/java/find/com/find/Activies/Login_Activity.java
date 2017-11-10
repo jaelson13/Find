@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import es.dmoral.toasty.Toasty;
 import find.com.find.Fragments.Register_Fragmento;
@@ -150,7 +153,15 @@ public class Login_Activity extends AppCompatActivity {
                                         Intent intent = new Intent(Login_Activity.this, Principal_Activity.class);
                                         startActivity(intent);
                                         finish();
-                                        //Toasty.success(getBaseContext(), "Login efetuado!", Toast.LENGTH_SHORT).show();
+
+                                        //Salvar nas preferencias
+                                        SharedPreferences preferencias = getSharedPreferences("usuario",MODE_PRIVATE);
+                                        SharedPreferences.Editor prefEditor = preferencias.edit();
+                                        Gson gson = new Gson();
+                                        String json = gson.toJson(UsuarioApplication.getUsuario());
+                                        prefEditor.putString("dadosusuario", json);
+                                        prefEditor.apply();
+
                                         break;
                                     case 204:
                                         alerta_acesso.setMessage("Usuário desativado.")

@@ -2,6 +2,7 @@ package find.com.find.Model;
 
 import android.app.Application;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;

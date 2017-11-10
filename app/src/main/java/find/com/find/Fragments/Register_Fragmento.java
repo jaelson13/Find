@@ -162,6 +162,7 @@ public class Register_Fragmento extends Fragment {
 
                         @Override
                         public void onFailure(Call<Usuario> call, Throwable t) {
+                            progressDialog.dismiss();
                             Toasty.error(getContext(), "Sem conexão..", Toast.LENGTH_LONG).show();
                         }
                     });
@@ -188,7 +189,7 @@ public class Register_Fragmento extends Fragment {
 
             @Override
             public void onClick(View v) {
-                CropImage.startPickImageActivity(getContext(), Register_Fragmento.this);
+                CropImage.startPickImageActivity(getActivity(),Register_Fragmento.this);
             }
         });
     }

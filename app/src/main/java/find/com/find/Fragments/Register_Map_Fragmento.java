@@ -2,6 +2,7 @@ package find.com.find.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 import find.com.find.Activies.Login_Activity;
 import find.com.find.Activies.Principal_Activity;
 import find.com.find.Model.Mapeamento;
@@ -61,7 +63,7 @@ public class Register_Map_Fragmento extends Fragment {
     //Constantites
     private static final int PICK_IMAGE = 123;
     private static final int CAM_IMAGE = 124;
-    private String[] categorias = {"Escolha uma categoria", "Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer", "Religião", "Turismo"};
+    private String[] categorias = {"Escolha uma categoria", "Alimentação / Bebidas", "Banco", "Compras", "Hospedagem", "Lazer","Saúde","Religião", "Turismo"};
 
     private EditText edtEstabelecimento, edtEndereco, edtNumero, edtDescricao;
     private Button btnSolicitar;
@@ -73,6 +75,7 @@ public class Register_Map_Fragmento extends Fragment {
     private File file;
 
     AlertDialog.Builder alerta;
+    ProgressDialog progressDialog;
 
     public static Register_Map_Fragmento newInstance() {
         Register_Map_Fragmento fragmento = new Register_Map_Fragmento();
@@ -120,6 +123,8 @@ public class Register_Map_Fragmento extends Fragment {
             public void onClick(View v) {
                 if(imagemSelecionada != null){
                 if (validarCampos()) {
+                    progressDialog = ProgressDialog.show(getContext(), "Por favor aguarde!",
+                            "Carregando..", true);
                     Mapeamento mapeamento = new Mapeamento();
                     mapeamento.setNomeLocal(edtEstabelecimento.getText().toString());
                     mapeamento.setCategoria(spnCategoria.getSelectedItem().toString());
@@ -148,7 +153,8 @@ public class Register_Map_Fragmento extends Fragment {
                         @Override
                         public void onResponse(Call<Mapeamento> call, Response<Mapeamento> response) {
                             if (response.code() == 200) {
-                                Toast.makeText(getContext(), "Solicitação feita com sucesso!", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                                Toasty.success(getContext(), "Solicitação feita com sucesso!", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getActivity(), Principal_Activity.class);
                                 startActivity(intent);
                                 getActivity().finish();
@@ -157,7 +163,8 @@ public class Register_Map_Fragmento extends Fragment {
 
                         @Override
                         public void onFailure(Call<Mapeamento> call, Throwable t) {
-                            Toast.makeText(getContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Sem conexão..", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -182,7 +189,6 @@ public class Register_Map_Fragmento extends Fragment {
 
         return view;
     }
-
     //vALIDAR cAMPOS DA SOLICITAÇÃO
     private boolean validarCampos() {
 
