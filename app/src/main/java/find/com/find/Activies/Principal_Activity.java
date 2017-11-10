@@ -112,7 +112,7 @@ public class Principal_Activity extends AppCompatActivity
     private static final String TAG = Principal_Activity.class.getSimpleName(), EXTRA_DIALOG = "dialog";
     private GoogleApiClient googleApiClient;
     private static final int REQUEST_CHECAR_GPS = 2, REQUEST_ERRO_PLAY_SERVICES = 1;
-    private boolean mDeveExibirDialog, conexao;
+    private boolean mDeveExibirDialog;
     private static GoogleMap mMap;
     public static List<Mapeamento> mapeamentos = new ArrayList<>();
 
@@ -182,7 +182,7 @@ public class Principal_Activity extends AppCompatActivity
         mapFragment.getMapAsync(Principal_Activity.this);
 
         mDeveExibirDialog = savedInstanceState == null;
-        ImageView imv = (ImageView) findViewById(R.id.imgLocal);
+        FloatingActionButton imv = (FloatingActionButton) findViewById(R.id.imgLocal);
 
         imv.setOnClickListener(new View.OnClickListener() {
             @Override

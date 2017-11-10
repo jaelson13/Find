@@ -31,7 +31,7 @@
                     android:layout_centerHorizontal="true"
                     android:background="@android:color/transparent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_imagelog" />
+                    android:src="@drawable/ic_imagedefault" />
 
                 <ImageButton
                     android:id="@+id/register_btnOpImage"
@@ -169,8 +169,8 @@
                         android:layout_height="40dp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="10dp"
-                        android:background="#1dc2c6"
-                        android:src="@drawable/ic_edit"
+                        android:backgroundTint="#1dc2c6"
+                        android:src="@drawable/ic_editar"
                         />
                 </RelativeLayout>
 
