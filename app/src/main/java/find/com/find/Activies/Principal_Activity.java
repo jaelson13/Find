@@ -2,6 +2,7 @@ package find.com.find.Activies;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -12,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -49,6 +51,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -414,7 +417,7 @@ public class Principal_Activity extends AppCompatActivity
     private void requestLocation() {
         locatioRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(1000)
+                .setInterval(5*1000)
                 .setFastestInterval(1000);
     }
 
@@ -433,7 +436,7 @@ public class Principal_Activity extends AppCompatActivity
         }
         localizacao = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (localizacao == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locatioRequest, this);
+           LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locatioRequest, this);
         } else {
             mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
@@ -472,9 +475,9 @@ public class Principal_Activity extends AppCompatActivity
 
     @Override
     protected void onStart() {
+        super.onStart();
         googleApiClient.connect();
         testarBotaoEntrar();
-        super.onStart();
     }
 
     @Override
@@ -488,10 +491,11 @@ public class Principal_Activity extends AppCompatActivity
 
     @Override
     public void onStop() {
+        super.onStop();
         if (googleApiClient != null && googleApiClient.isConnected()) {
             googleApiClient.disconnect();
         }
-        super.onStop();
+
 
     }
 

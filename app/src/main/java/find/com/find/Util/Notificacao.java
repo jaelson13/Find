@@ -67,7 +67,7 @@ public class Notificacao extends FirebaseMessagingService{
 
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         notificationBuilder.setSound(sound);
-        notificationBuilder.setSmallIcon(R.drawable.ic_logo);
+        notificationBuilder.setSmallIcon(R.drawable.ic_logonotify);
         notificationBuilder.setAutoCancel(true);
 
         Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);

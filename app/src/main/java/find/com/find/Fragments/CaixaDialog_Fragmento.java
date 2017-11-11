@@ -3,6 +3,7 @@ package find.com.find.Fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -37,6 +38,7 @@ public class CaixaDialog_Fragmento extends DialogFragment {
     private RatingBar notaF;
     private Button btnCancelar,btnEnviar;
     private int idMapeamento;
+    ProgressDialog progressDialog;
 
     public static CaixaDialog_Fragmento newInstance(int idMapeamento) {
         Bundle args = new Bundle();
@@ -76,6 +78,8 @@ public class CaixaDialog_Fragmento extends DialogFragment {
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog = ProgressDialog.show(getActivity(), "Por favor aguarde!",
+                        "Carregando..", true);
                 Feedback feedback = new Feedback();
                 feedback.setComentario(comentario.getText().toString());
                 feedback.setNota(notaF.getRating());
@@ -89,6 +93,7 @@ public class CaixaDialog_Fragmento extends DialogFragment {
                     public void onResponse(Call<Feedback> call, Response<Feedback> response) {
                         if(response.code() == 200){
                             Toast.makeText(getActivity(), "Obrigado pelo seu feedback!",Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
                             dismiss();
                         }
                     }
