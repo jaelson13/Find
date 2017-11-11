@@ -19,9 +19,9 @@
     <application
         android:name=".Model.UsuarioApplication"
         android:allowBackup="true"
-        android:icon="@drawable/logoapp"
+        android:icon="@drawable/ic_logo"
         android:label="Find"
-        android:roundIcon="@drawable/logoapp"
+        android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data

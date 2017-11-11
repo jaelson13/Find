@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Vibrator;
@@ -19,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import find.com.find.Activies.Principal_Activity;
-import find.com.find.Model.UsuarioApplication;
 import find.com.find.R;
 
 /**
@@ -69,7 +67,7 @@ public class Notificacao extends FirebaseMessagingService{
 
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         notificationBuilder.setSound(sound);
-        notificationBuilder.setSmallIcon(R.drawable.logo);
+        notificationBuilder.setSmallIcon(R.drawable.ic_logo);
         notificationBuilder.setAutoCancel(true);
 
         Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
