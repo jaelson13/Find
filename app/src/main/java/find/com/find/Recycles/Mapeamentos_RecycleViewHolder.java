@@ -23,6 +23,7 @@ public class Mapeamentos_RecycleViewHolder extends RecyclerView.ViewHolder{
     final TextView descricao;
     final TextView endereco;
     final ImageView imagem;
+    final TextView notaAvaliacoes;
     final RatingBar nota;
 
     public Mapeamentos_RecycleViewHolder(View itemView) {
@@ -33,5 +34,6 @@ public class Mapeamentos_RecycleViewHolder extends RecyclerView.ViewHolder{
         descricao = (TextView) itemView.findViewById(R.id.local_txtdescricao);
         imagem = (ImageView) itemView.findViewById(R.id.local_imagem);
         nota = (RatingBar) itemView.findViewById(R.id.local_rtnota);
+        notaAvaliacoes = (TextView) itemView.findViewById(R.id.local_avaliacoes);
     }
 }

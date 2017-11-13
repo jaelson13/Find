@@ -65,9 +65,9 @@ public class Locais_ListAdapter extends RecyclerView.Adapter {
         float distancia = Principal_Activity.localizacao.distanceTo(local) / 1000;
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
         if (distancia < 1) {
-            lista.distancia.setText(decimalFormat.format(distancia) + "m");
+            lista.distancia.setText(decimalFormat.format(distancia) + " m");
         } else {
-            lista.distancia.setText(decimalFormat.format(distancia) + "Km");
+            lista.distancia.setText(decimalFormat.format(distancia) + " Km");
 
         }
 
@@ -86,7 +86,7 @@ public class Locais_ListAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View view) {
                 LatLng local = new LatLng(mapeamentos.get(position).getLatitude(),mapeamentos.get(position).getLongitude());
-                activity.getFragmentManager().popBackStack();
+                activity.getFragmentManager().popBackStack(null, android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 activity.onBackPressed();
                 Principal_Activity.moverCamera(local);
         }

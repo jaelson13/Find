@@ -2,6 +2,9 @@ package find.com.find.Recycles;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -73,6 +76,16 @@ public class Mapeamentos_ListAdapter extends RecyclerView.Adapter {
         lista.estabelecimento.setText(mapeamento.getNomeLocal());
         lista.endereco.setText(mapeamento.getEndereco());
         lista.descricao.setText(mapeamento.getDescricao());
+        lista.nota.setRating(mapeamento.getNota());
+        lista.notaAvaliacoes.setText("Nota "+String.valueOf(mapeamento.getNota()));
+        LayerDrawable stars = (LayerDrawable) lista.nota.getProgressDrawable();
+        if (lista.nota.getRating() < 2) {
+            stars.getDrawable(2).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+        } else if (lista.nota.getRating() > 1 && lista.nota.getRating() < 4) {
+            stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+        } else {
+            stars.getDrawable(2).setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+        }
         Validacoes.carregarImagemMap(context,mapeamento.getUrlImagem(),lista.imagem);
 
     }

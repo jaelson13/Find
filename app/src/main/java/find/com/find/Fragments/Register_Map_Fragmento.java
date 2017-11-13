@@ -214,7 +214,7 @@ public class Register_Map_Fragmento extends Fragment {
         }
 
         if (TextUtils.isEmpty(edtDescricao.getText().toString())) {
-            edtNumero.setError("Preecha a descricao");
+            edtDescricao.setError("Preecha a descricao");
             return false;
         }
 

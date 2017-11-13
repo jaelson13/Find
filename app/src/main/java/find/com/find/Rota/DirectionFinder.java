@@ -26,13 +26,13 @@ public class DirectionFinder {
     private static final String DIRECTION_URL_API = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_API_KEY = "AIzaSyCdh6CwXiHKkOx-R0wt3agK-dMmrXanEWw";
     private DirectionFinderListener listener;
-    private LatLng origin;
-    private LatLng destination;
+    private LatLng origem;
+    private LatLng destino;
 
-    public DirectionFinder(DirectionFinderListener listener, LatLng origin, LatLng destination) {
+    public DirectionFinder(DirectionFinderListener listener, LatLng origem, LatLng destino) {
         this.listener = listener;
-        this.origin = origin;
-        this.destination = destination;
+        this.origem = origem;
+        this.destino = destino;
     }
 
     public void execute() throws UnsupportedEncodingException {
@@ -41,8 +41,8 @@ public class DirectionFinder {
     }
 
     private String createUrl() throws UnsupportedEncodingException {
-        String origem = origin.latitude+","+origin.longitude;
-        String destino = destination.latitude+","+destination.longitude;
+        String origem = this.origem.latitude+","+this.origem.longitude;
+        String destino = this.destino.latitude+","+this.destino.longitude;
         String urlOrigin = URLEncoder.encode(origem, "utf-8");
         String urlDestination = URLEncoder.encode(destino, "utf-8");
 
@@ -101,15 +101,11 @@ public class DirectionFinder {
             JSONObject jsonLeg = jsonLegs.getJSONObject(0);
             JSONObject jsonDistance = jsonLeg.getJSONObject("distance");
             JSONObject jsonDuration = jsonLeg.getJSONObject("duration");
-            JSONObject jsonEndLocation = jsonLeg.getJSONObject("end_location");
             JSONObject jsonStartLocation = jsonLeg.getJSONObject("start_location");
 
             route.distance = new Distance(jsonDistance.getString("text"), jsonDistance.getInt("value"));
             route.duration = new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value"));
-            route.endAddress = jsonLeg.getString("end_address");
-            route.startAddress = jsonLeg.getString("start_address");
             route.startLocation = new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng"));
-            route.endLocation = new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng"));
             route.points = decodePolyLine(overview_polylineJson.getString("points"));
 
             routes.add(route);

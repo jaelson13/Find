@@ -343,34 +343,41 @@ public class Principal_Activity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_mapearlocal:
-                onResume();
+                finalizarRota();
                 fm = getSupportFragmentManager();
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 ft = fm.beginTransaction().replace(R.id.container, Register_Map_Fragmento.newInstance());
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
             case R.id.nav_ativos:
-                onResume();
+                finalizarRota();
                 fm = getSupportFragmentManager();
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 ft = fm.beginTransaction().replace(R.id.container, Map_User_Fragmento.newInstance(1));
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
             case R.id.nav_pendentes:
-                onResume();
+                finalizarRota();
                 fm = getSupportFragmentManager();
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 ft = fm.beginTransaction().replace(R.id.container, Map_User_Fragmento.newInstance(2));
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
             case R.id.nav_alterardados:
+                finalizarRota();
                 fm = getSupportFragmentManager();
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 ft = fm.beginTransaction().replace(R.id.container, Alterar_Usuario_Fragmento.newInstance());
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
             case R.id.nav_locais:
+                finalizarRota();
                 fm = getSupportFragmentManager();
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 ft = fm.beginTransaction().replace(R.id.container, Locais_Fragmento.newInstance());
                 ft.addToBackStack(null);
                 ft.commit();
@@ -975,12 +982,7 @@ public class Principal_Activity extends AppCompatActivity
             rotaFinalizarRota.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (polylinePaths != null) {
-                        for (Polyline polyline : polylinePaths) {
-                            polyline.remove();
-                        }
-                    }
-                    rotaCardRota.setVisibility(View.GONE);
+                   finalizarRota();
                 }
             });
 
@@ -1005,6 +1007,15 @@ public class Principal_Activity extends AppCompatActivity
         //spnCategorias.setSelection(2);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(local, 16));
         //spnCategorias.setSelection(0);
+    }
+
+    private void finalizarRota(){
+        if (polylinePaths != null) {
+            for (Polyline polyline : polylinePaths) {
+                polyline.remove();
+            }
+        }
+        rotaCardRota.setVisibility(View.GONE);
     }
 
 }
