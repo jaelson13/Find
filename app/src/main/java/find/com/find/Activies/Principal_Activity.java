@@ -8,13 +8,11 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -94,6 +92,7 @@ import find.com.find.Rota.DirectionFinderListener;
 import find.com.find.Rota.Route;
 import find.com.find.Services.FindApiAdapter;
 import find.com.find.Services.FindApiService;
+import find.com.find.Util.GPSTrack;
 import find.com.find.Util.Validacoes;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -105,19 +104,20 @@ public class Principal_Activity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener, LocationListener, DirectionFinderListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private LocationRequest locatioRequest;
+
     public static Location localizacao;
     private LatLng mOrigem;
+    private static GoogleMap mMap;
+    private GoogleApiClient googleApiClient;
+    private boolean flagGPS = false;
 
     private static Spinner spnCategorias;
     private NavigationView navigationView;
     private Button btnEntrar;
     private static final String TAG = Principal_Activity.class.getSimpleName(), EXTRA_DIALOG = "dialog";
-    private GoogleApiClient googleApiClient;
     private static final int REQUEST_CHECAR_GPS = 2, REQUEST_ERRO_PLAY_SERVICES = 1;
     private boolean mDeveExibirDialog;
-    private static GoogleMap mMap;
+
     public static List<Mapeamento> mapeamentos = new ArrayList<>();
 
     private TextView estabelecimento;
@@ -149,7 +149,6 @@ public class Principal_Activity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
-
         imgLocal = (ImageButton) findViewById(R.id.imgLocal);
         alerta_acesso = new AlertDialog.Builder(this, R.style.AlertDialog);
         estabelecimento = (TextView) findViewById(R.id.local_txtestabelecimento);
@@ -174,8 +173,10 @@ public class Principal_Activity extends AppCompatActivity
 
         mDeveExibirDialog = savedInstanceState == null;
 
+
         testarBotaoEntrar();
         ajusteToolbarNav();
+        mostrarSpinner();
 
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,24 +193,27 @@ public class Principal_Activity extends AppCompatActivity
         imgLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (localizacao != null) {
+                if (!flagGPS) {
+                    GPSTrack gt = new GPSTrack(getApplicationContext());
+                    localizacao = gt.getLocation();
+                    onMapReady(mMap);
                     mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-                } else {
-                    googleApiClient.reconnect();
+                    Log.i("localizacaoGPS", "localizacao" + localizacao);
+                }else{
+                    mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+                    Log.i("localizacaoAPI", "localizacao" + localizacao);
                 }
+
             }
         });
-
-        if (googleApiClient == null) {
-            googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
-            googleApiClient.connect();
-        }
-        requestLocation();
-        mostrarSpinner();
+        checarPermissaoLocalizacao();
+        todosMapeamentos();
+        conectarGoogleApi();
 
     }
+
 
     private void mostrarSpinner() {
         spnCategorias = (Spinner) findViewById(R.id.spnCategorias);
@@ -420,36 +424,53 @@ public class Principal_Activity extends AppCompatActivity
         return true;
     }
 
-    //Connexão Google play services
-    private void requestLocation() {
-        locatioRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(5*1000)
-                .setFastestInterval(1000);
+    //CONEXÃO COM O GOOGLE PLAY SERVICES
+    private synchronized void conectarGoogleApi() {
+
+        Log.i(TAG, "Conectando GoogleApiClient");
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+    }
+
+    private void createRequestLocation() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        LocationRequest locatioRequest = LocationRequest.create()
+                .setInterval(5 * 1000)
+                .setFastestInterval(1 * 1000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locatioRequest, this);
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        localizacao.setLongitude(location.getLongitude());
-        localizacao.setLongitude(location.getLatitude());
+        Log.i("localizacao", "Localizacao mudou: " + location);
+        localizacao = location;
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         verificarGPS();
-        checarPermissaoLocalizacao();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        createRequestLocation();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {return;
         }
         localizacao = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (localizacao == null) {
-           LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locatioRequest, this);
-        } else {
+            createRequestLocation();
+        }
+        if (localizacao != null) {
+            flagGPS = true;
             mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+            Log.i("localizacaoAPI", "localização: " + localizacao);
         }
     }
-
     //Caso a conexão seja suspensa, connecta de novo
     @Override
     public void onConnectionSuspended(int i) {
@@ -459,27 +480,10 @@ public class Principal_Activity extends AppCompatActivity
     //Caso a conexão seja falha
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                // Inicie uma atividade que tente resolver o erro
-                connectionResult.startResolutionForResult(this,
-                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.i(TAG, "Conexão de serviços de localização falhou com o código" +
-                    connectionResult.getErrorCode());
-        }
+
     }
 
     //Ao retornar o app mostra localização do usuário
-    @Override
-    protected void onResume() {
-        super.onResume();
-        requestLocation();
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -488,24 +492,12 @@ public class Principal_Activity extends AppCompatActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (googleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-            googleApiClient.disconnect();
-        }
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         if (googleApiClient != null && googleApiClient.isConnected()) {
             googleApiClient.disconnect();
         }
-
-
     }
-
     // CONFIGURAÇÃO MAPA
 
     //Carregar o mapa no fragmento
@@ -514,15 +506,13 @@ public class Principal_Activity extends AppCompatActivity
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json));
         mMap.setMinZoomPreference(10.0f);
+        if (localizacao == null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-7.2262943, -39.3273011), 15));
+        }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.setMyLocationEnabled(true);
-        if(localizacao == null){
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-7.2262943,-39.3273011), 15));
-            googleApiClient.reconnect();
-        }
-        todosMapeamentos();
     }
     //Ativa a localição atual do usuário
 
@@ -547,6 +537,7 @@ public class Principal_Activity extends AppCompatActivity
                                 ActivityCompat.requestPermissions(Principal_Activity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                         MY_PERMISSIONS_REQUEST_LOCATION);
+
                             }
                         })
                         .create()
@@ -638,7 +629,6 @@ public class Principal_Activity extends AppCompatActivity
                 MarkerOptions marcador = new MarkerOptions();
                 LatLng local = new LatLng(mapeamento.getLatitude(), mapeamento.getLongitude());
                 marcador.position(local);
-                Log.i("categoria", mapeamento.getCategoria());
                 switch (mapeamento.getCategoria()) {
                     case "Alimentação / Bebidas":
                         marcador.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_alimentacao_bebidas));
@@ -725,11 +715,11 @@ public class Principal_Activity extends AppCompatActivity
                                     @Override
                                     public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
                                         if (response.code() == 200) {
-                                            if(response.body().isEmpty()){
+                                            if (response.body().isEmpty()) {
                                                 cardViewFeedback.setVisibility(View.VISIBLE);
                                                 semAv.setVisibility(View.VISIBLE);
                                                 recyclerView.setAdapter(null);
-                                            }else {
+                                            } else {
                                                 recyclerView.setAdapter(null);
                                                 recyclerView.setAdapter(new Feedback_ListAdapter(response.body(), getBaseContext()));
                                                 LinearLayoutManager layout = new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
@@ -874,11 +864,11 @@ public class Principal_Activity extends AppCompatActivity
                                         @Override
                                         public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
                                             if (response.code() == 200) {
-                                                if(response.body().isEmpty()){
+                                                if (response.body().isEmpty()) {
                                                     cardViewFeedback.setVisibility(View.VISIBLE);
                                                     semAv.setVisibility(View.VISIBLE);
                                                     recyclerView.setAdapter(null);
-                                                }else {
+                                                } else {
                                                     recyclerView.setAdapter(null);
                                                     recyclerView.setAdapter(new Feedback_ListAdapter(response.body(), getBaseContext()));
                                                     LinearLayoutManager layout = new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
@@ -982,7 +972,7 @@ public class Principal_Activity extends AppCompatActivity
             rotaFinalizarRota.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   finalizarRota();
+                    finalizarRota();
                 }
             });
 
@@ -1009,7 +999,7 @@ public class Principal_Activity extends AppCompatActivity
         //spnCategorias.setSelection(0);
     }
 
-    private void finalizarRota(){
+    private void finalizarRota() {
         if (polylinePaths != null) {
             for (Polyline polyline : polylinePaths) {
                 polyline.remove();
