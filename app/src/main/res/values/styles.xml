@@ -22,7 +22,6 @@
     </style>
 
     <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:textColor">#b60713</item>
         <item name="android:textColorPrimary">@android:color/black</item>
     </style>
 

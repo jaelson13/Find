@@ -140,6 +140,7 @@ public class Principal_Activity extends AppCompatActivity
     private CardView rotaCardRota;
 
     private AlertDialog.Builder alerta_acesso;
+    private AlertDialog.Builder alerta_local;
 
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
@@ -151,6 +152,7 @@ public class Principal_Activity extends AppCompatActivity
         setContentView(R.layout.activity_principal);
         imgLocal = (ImageButton) findViewById(R.id.imgLocal);
         alerta_acesso = new AlertDialog.Builder(this, R.style.AlertDialog);
+        alerta_local = new AlertDialog.Builder(this, R.style.AlertDialog);
         estabelecimento = (TextView) findViewById(R.id.local_txtestabelecimento);
         endereco = (TextView) findViewById(R.id.local_txtendereco);
         descricao = (TextView) findViewById(R.id.local_txtdescricao);
@@ -196,11 +198,29 @@ public class Principal_Activity extends AppCompatActivity
                 if (!flagGPS) {
                     GPSTrack gt = new GPSTrack(getApplicationContext());
                     localizacao = gt.getLocation();
-                    onMapReady(mMap);
-                    mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
-                    Log.i("localizacaoGPS", "localizacao" + localizacao);
-                }else{
+                    if (localizacao != null) {
+                        onMapReady(mMap);
+                        mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
+                        Log.i("localizacaoGPS", "localizacao" + localizacao);
+                    } else {
+                        alerta_local.setMessage("Sua localização não foi encontrada!")
+                                .setTitle("Alerta!")
+                                .setPositiveButton("Tentar Novamente", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent i = new Intent(Principal_Activity.this, Principal_Activity.class);
+                                        startActivity(i);
+                                    }
+                                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                        Intent i = new Intent(Principal_Activity.this, Principal_Activity.class);
+                                        startActivity(i);
+                            }
+                        }).show();
+                    }
+                } else {
                     mOrigem = new LatLng(localizacao.getLatitude(), localizacao.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigem, 15));
                     Log.i("localizacaoAPI", "localizacao" + localizacao);
@@ -458,7 +478,8 @@ public class Principal_Activity extends AppCompatActivity
     public void onConnected(Bundle bundle) {
         verificarGPS();
         createRequestLocation();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {return;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
         localizacao = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (localizacao == null) {
@@ -471,6 +492,7 @@ public class Principal_Activity extends AppCompatActivity
             Log.i("localizacaoAPI", "localização: " + localizacao);
         }
     }
+
     //Caso a conexão seja suspensa, connecta de novo
     @Override
     public void onConnectionSuspended(int i) {
@@ -835,7 +857,7 @@ public class Principal_Activity extends AppCompatActivity
                                 @Override
                                 public void onClick(View view) {
                                     if (UsuarioApplication.getUsuario() == null) {
-                                        alerta_acesso.setMessage("Para avaliar um local você deve está logado.")
+                                        alerta_acesso.setMessage("Para avaliar um local faça login.")
                                                 .setTitle("Alerta!")
                                                 .setPositiveButton("Acessar", new DialogInterface.OnClickListener() {
                                                     @Override
