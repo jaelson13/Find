@@ -37,7 +37,6 @@ public class Locais_Fragmento extends Fragment {
     private RecyclerView recyclerView;
     private Spinner spnCategorias;
 
-
     public static Locais_Fragmento newInstance() {
         Locais_Fragmento fragmento = new Locais_Fragmento();
         return fragmento;
@@ -49,17 +48,16 @@ public class Locais_Fragmento extends Fragment {
 
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_locais, container, false);
         Log.i("lista",String.valueOf(Principal_Activity.mapeamentos.size()));
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycle_list);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycle_listLocais);
         recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
         LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layout);
 
-        spnCategorias = (Spinner) view.findViewById(R.id.spnCategorias);
+        spnCategorias = (Spinner) view.findViewById(R.id.spnCategoriasLocais);
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), R.layout.layout_spinner, Validacoes.categorias);
         spnCategorias.setAdapter(arrayAdapter);
         mostrarSpinner();
@@ -85,7 +83,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext(),getActivity()));
                         break;
                     case "Banco":
                         listaMapeamentoCategoria.clear();
@@ -95,7 +93,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext(),getActivity()));
                         break;
                     case "Compras":
                         listaMapeamentoCategoria.clear();
@@ -105,7 +103,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext(),getActivity()));
                         break;
                     case "Hospedagem":
                         listaMapeamentoCategoria.clear();
@@ -115,7 +113,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext(),getActivity()));
                         break;
                     case "Lazer":
                         listaMapeamentoCategoria.clear();
@@ -125,7 +123,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext(),getActivity()));
                         break;
                     case "Religião":
                         listaMapeamentoCategoria.clear();
@@ -135,7 +133,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext(),getActivity()));
                         break;
                     case "Saúde":
                         listaMapeamentoCategoria.clear();
@@ -145,7 +143,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext(),getActivity()));
                         break;
                     case "Turismo":
                         listaMapeamentoCategoria.clear();
@@ -155,7 +153,7 @@ public class Locais_Fragmento extends Fragment {
                             }
                         }
                         recyclerView.setAdapter(null);
-                        recyclerView.setAdapter(new Locais_ListAdapter(Principal_Activity.mapeamentos, getContext(),getActivity()));
+                        recyclerView.setAdapter(new Locais_ListAdapter(listaMapeamentoCategoria, getContext(),getActivity()));
                         break;
                 }
             }

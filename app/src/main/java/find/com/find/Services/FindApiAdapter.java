@@ -62,27 +62,3 @@ public class FindApiAdapter {
     }
 
 }
-/*
-public static <S> S createService(Class<S> serviceClass){
-
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-                .readTimeout(15, TimeUnit.SECONDS);
-
-        httpClient.addInterceptor(loggingInterceptor);
-        AuthenticationInterceptor interceptor =
-                new AuthenticationInterceptor("root:toor");
-        httpClient.addInterceptor(interceptor);
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory
-                        .create())
-                .client(httpClient.build())
-                .build();
-
-        return retrofit.create(serviceClass);
-    }
- */

@@ -44,11 +44,11 @@ public interface FindApiService {
     Call<Integer> getUsuarioPorId(@Field("idUsuario") int idUsuario);
 
     //Inserção de um Usuario
-    //FindWebService/webresources/com.find.usuario/create
     @Headers("Content-type:application/json")
     @POST("user/add")
     Call<Usuario> salvarUsuario(@Body Usuario usuario);
 
+    //Inserção usuário com imagem
     @Multipart
     @POST("user/add")
     Call<Usuario> salvarUsuarioImagem(@Query("nome") String nome
@@ -60,6 +60,7 @@ public interface FindApiService {
     @PUT("user/atualizar")
     Call<Usuario> atualizarUsuario(@Body Usuario usuario);
 
+    //Atualização de um Usuario com imagem
     @Multipart
     @POST("user/atualizarImg")
     Call<ResponseBody> atualizarUsuarioImagem(@Query("idUsuario") int idUsuario, @Query("email") String email, @Part MultipartBody.Part imagem);

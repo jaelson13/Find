@@ -42,13 +42,11 @@ public class Notificacao extends FirebaseMessagingService{
     }
 
     private void enviarNotificacao(String msg){
-    String id = "",message="",title="";
+    String message="";
         if(type.equals("json")){
             try {
                 JSONObject jsonObject = new JSONObject(msg);
-                id = jsonObject.getString("id");
                 message = jsonObject.getString("message");
-                title = jsonObject.getString("title");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
